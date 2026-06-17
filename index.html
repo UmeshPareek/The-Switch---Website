@@ -7,291 +7,303 @@
   <meta name="description" content="Managed co-living in Bengaluru. Fully furnished. Zero broker. Walk in with a suitcase.">
   <link rel="stylesheet" href="/assets/css/main.css">
   <style>
-    /* ── Hero ── */
-    .hero {
-      position: relative; min-height: 100vh;
-      display: flex; align-items: center; justify-content: center;
-      overflow: hidden; padding-top: var(--nav-h);
-    }
-    .hero-bg {
-      position: absolute; inset: 0; z-index: 0;
-    }
-    .hero-bg img {
-      width: 100%; height: 100%; object-fit: cover; opacity: .35;
-    }
-    .hero-bg::after {
-      content: ''; position: absolute; inset: 0;
-      background: linear-gradient(to bottom, rgba(17,16,9,.4) 0%, rgba(17,16,9,.7) 60%, var(--bg) 100%);
-    }
-    .hero-content {
-      position: relative; z-index: 1; text-align: center;
-      max-width: 780px; padding: 0 24px;
-    }
-    .hero-status {
-      display: inline-flex; align-items: center; gap: 8px;
-      font-size: 11px; font-weight: 500; letter-spacing: .12em; text-transform: uppercase;
-      color: var(--muted); margin-bottom: 32px;
-      border: 1px solid var(--border); padding: 6px 14px; border-radius: 20px;
-    }
-    .hero-status .dot-live { width: 7px; height: 7px; background: var(--orange); border-radius: 50%; animation: pulse 2s infinite; }
-    @keyframes pulse { 0%,100%{opacity:1} 50%{opacity:.4} }
-    .hero-h1 { font-size: clamp(56px, 9vw, 104px); line-height: 1.02; margin-bottom: 24px; }
-    .hero-h1 em { font-style: italic; color: var(--gold); }
-    .hero-sub { font-size: 17px; font-weight: 300; color: var(--cream-2); margin-bottom: 40px; line-height: 1.7; }
-    .hero-actions { display: flex; align-items: center; justify-content: center; gap: 16px; flex-wrap: wrap; }
-    .hero-scroll {
-      position: absolute; bottom: 32px; left: 50%; transform: translateX(-50%);
-      font-size: 11px; letter-spacing: .1em; text-transform: uppercase; color: var(--muted);
-      display: flex; flex-direction: column; align-items: center; gap: 8px; z-index: 1;
-    }
-    .hero-scroll-line { width: 1px; height: 40px; background: linear-gradient(var(--muted), transparent); animation: scrollline 2s ease-in-out infinite; }
-    @keyframes scrollline { 0%{opacity:0;transform:scaleY(0);transform-origin:top} 50%{opacity:1;transform:scaleY(1)} 100%{opacity:0;transform:scaleY(1);transform-origin:bottom} }
+    /* ── Video Hero ── */
+    .hero{position:relative;height:100vh;min-height:600px;display:flex;align-items:flex-end;overflow:hidden;background:var(--ink)}
+    .hero-video{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;opacity:.55}
+    .hero-overlay{position:absolute;inset:0;background:linear-gradient(to bottom,rgba(14,13,10,.1) 0%,rgba(14,13,10,.3) 40%,rgba(14,13,10,.85) 100%)}
+    .hero-content{position:relative;z-index:1;padding:0 32px 72px;max-width:var(--max);margin:0 auto;width:100%}
+    .hero-issue{font-size:10px;letter-spacing:.18em;text-transform:uppercase;color:rgba(247,244,239,.5);margin-bottom:24px}
+    .hero-h1{font-family:var(--font-display);font-weight:300;font-size:clamp(72px,11vw,148px);line-height:.95;color:var(--paper);margin-bottom:32px;letter-spacing:-.02em}
+    .hero-h1 em{font-style:italic;color:rgba(247,244,239,.7)}
+    .hero-tagline{font-size:15px;color:rgba(247,244,239,.7);font-weight:300;margin-bottom:40px;max-width:420px;line-height:1.75}
+    .hero-actions{display:flex;align-items:center;gap:16px;flex-wrap:wrap}
+    .hero-btn-light{display:inline-flex;align-items:center;gap:8px;background:var(--paper);color:var(--ink);font-size:12px;font-weight:500;letter-spacing:.06em;padding:14px 28px;border-radius:2px;transition:background .2s}
+    .hero-btn-light:hover{background:var(--paper-2)}
+    .hero-btn-outline{display:inline-flex;align-items:center;gap:8px;border:1px solid rgba(247,244,239,.4);color:var(--paper);font-size:12px;letter-spacing:.04em;padding:13px 27px;border-radius:2px;transition:border-color .2s}
+    .hero-btn-outline:hover{border-color:var(--paper)}
+    .hero-scroll{position:absolute;bottom:32px;right:48px;z-index:1;display:flex;flex-direction:column;align-items:center;gap:10px}
+    .hero-scroll-label{font-size:9px;letter-spacing:.16em;text-transform:uppercase;color:rgba(247,244,239,.4);writing-mode:vertical-rl}
+    .hero-scroll-line{width:1px;height:48px;background:linear-gradient(rgba(247,244,239,.3),transparent);animation:scrollline 2s ease-in-out infinite}
+    @keyframes scrollline{0%{opacity:0;transform:scaleY(0);transform-origin:top}50%{opacity:1;transform:scaleY(1)}100%{opacity:0;transform:scaleY(1);transform-origin:bottom}}
+    .hero-stats{position:absolute;bottom:72px;right:48px;z-index:1;display:flex;flex-direction:column;gap:20px;align-items:flex-end}
+    .hero-stat{text-align:right}
+    .hero-stat-num{font-family:var(--font-serif);font-size:28px;color:var(--paper);line-height:1}
+    .hero-stat-label{font-size:9px;letter-spacing:.12em;text-transform:uppercase;color:rgba(247,244,239,.4);margin-top:4px}
+
+    /* ── Issue header ── */
+    .issue-bar{background:var(--paper-2);border-top:1px solid var(--rule);border-bottom:1px solid var(--rule);padding:14px 0}
+    .issue-bar-inner{display:flex;justify-content:space-between;align-items:center;max-width:var(--max);margin:0 auto;padding:0 32px}
+    .issue-bar-left{font-size:10px;letter-spacing:.12em;text-transform:uppercase;color:var(--muted)}
+    .issue-bar-right{font-family:var(--font-serif);font-size:16px;font-style:italic;color:var(--muted)}
+
+    /* ── Lead editorial ── */
+    .lead{padding:80px 0 64px;border-bottom:1px solid var(--rule)}
+    .lead-grid{display:grid;grid-template-columns:1fr 2px 1fr;gap:64px;align-items:start}
+    .lead-divider{background:var(--rule)}
+    .lead-left h2{font-size:clamp(36px,5vw,60px);line-height:1.1;margin-bottom:24px}
+    .lead-left p{font-size:15px;color:var(--ink-3);line-height:1.85;margin-bottom:16px}
+    .lead-right{padding-top:8px}
+    .lead-quote{font-family:var(--font-serif);font-size:clamp(22px,3vw,32px);font-style:italic;line-height:1.45;color:var(--ink-2);margin-bottom:20px;border-left:2px solid var(--orange);padding-left:24px}
+    .lead-quote-attr{font-size:11px;letter-spacing:.1em;text-transform:uppercase;color:var(--muted);padding-left:26px}
+
+    /* ── Properties editorial ── */
+    .props-header{display:grid;grid-template-columns:1fr auto;align-items:baseline;margin-bottom:40px}
+    .props-header h2{font-size:clamp(32px,4vw,52px)}
+    .props-grid{display:grid;grid-template-columns:repeat(3,1fr);border-left:1px solid var(--rule)}
+    .props-grid .property-card{border-left:none;border-right:1px solid var(--rule);border-bottom:none;border-top:none}
+
+    /* ── Stats editorial ── */
+    .stats-editorial{background:var(--ink);color:var(--paper);padding:64px 0;border-top:1px solid var(--rule)}
+    .stats-inner{display:grid;grid-template-columns:repeat(4,1fr);border-left:1px solid rgba(247,244,239,.08)}
+    .stat-col{padding:0 40px 0 32px;border-right:1px solid rgba(247,244,239,.08)}
+    .stat-big{font-family:var(--font-serif);font-size:clamp(48px,6vw,80px);line-height:1;margin-bottom:8px}
+    .stat-big em{font-style:italic;color:rgba(247,244,239,.4)}
+    .stat-desc{font-size:12px;color:rgba(247,244,239,.45);line-height:1.6;margin-top:8px;max-width:160px}
+
+    /* ── Process strip ── */
+    .process{padding:80px 0;border-top:1px solid var(--rule);border-bottom:1px solid var(--rule)}
+    .process-grid{display:grid;grid-template-columns:repeat(5,1fr);border-left:1px solid var(--rule)}
+    .process-item{padding:32px 24px;border-right:1px solid var(--rule)}
+    .process-num{font-family:var(--font-serif);font-size:40px;color:var(--rule-2);line-height:1;margin-bottom:14px}
+    .process-title{font-family:var(--font-serif);font-size:17px;margin-bottom:8px}
+    .process-desc{font-size:12px;color:var(--muted);line-height:1.7}
 
     /* ── Promises ── */
-    .promises-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 1px; background: var(--border); border: 1px solid var(--border); border-radius: var(--r-lg); overflow: hidden; }
-    .promise-item { background: var(--bg-2); padding: 40px 32px; }
-    .promise-num { font-family: var(--font-serif); font-size: 48px; color: var(--border-2); line-height: 1; margin-bottom: 16px; }
-    .promise-title { font-family: var(--font-serif); font-size: 22px; margin-bottom: 10px; }
-    .promise-desc { font-size: 14px; color: var(--muted); line-height: 1.7; }
-
-    /* ── Properties strip ── */
-    .props-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 24px; }
-
-    /* ── How it works ── */
-    .how-steps { display: grid; grid-template-columns: repeat(5, 1fr); gap: 0; position: relative; }
-    .how-steps::before {
-      content: ''; position: absolute; top: 28px; left: 10%; right: 10%; height: 1px; background: var(--border);
-    }
-    .how-step { text-align: center; padding: 0 12px; }
-    .how-step-num {
-      width: 56px; height: 56px; border-radius: 50%;
-      background: var(--bg-2); border: 1px solid var(--border-2);
-      display: flex; align-items: center; justify-content: center;
-      font-family: var(--font-serif); font-size: 20px; color: var(--gold);
-      margin: 0 auto 16px; position: relative; z-index: 1;
-    }
-    .how-step-title { font-size: 14px; font-weight: 500; margin-bottom: 6px; }
-    .how-step-desc { font-size: 12px; color: var(--muted); }
-
-    /* ── Stats bar ── */
-    .stats-bar { display: grid; grid-template-columns: repeat(4, 1fr); gap: 1px; background: var(--border); border-radius: var(--r-lg); overflow: hidden; }
-    .stat-item { background: var(--bg-2); padding: 32px 24px; text-align: center; }
-    .stat-num { font-family: var(--font-serif); font-size: 40px; color: var(--cream); line-height: 1; margin-bottom: 6px; }
-    .stat-num em { font-style: italic; color: var(--gold); }
-    .stat-label { font-size: 12px; color: var(--muted); }
+    .promises{padding:80px 0;background:var(--paper-2);border-top:1px solid var(--rule);border-bottom:1px solid var(--rule)}
+    .promises-grid{display:grid;grid-template-columns:repeat(3,1fr);border-left:1px solid var(--rule);margin-top:40px}
+    .promise-item{padding:40px 32px;border-right:1px solid var(--rule)}
+    .promise-roman{font-family:var(--font-serif);font-size:52px;color:var(--rule-2);line-height:1;margin-bottom:20px}
+    .promise-title{font-family:var(--font-serif);font-size:24px;margin-bottom:10px}
+    .promise-desc{font-size:13px;color:var(--muted);line-height:1.8}
 
     /* ── Grid teaser ── */
-    .grid-teaser { display: grid; grid-template-columns: 1fr 1fr; gap: 64px; align-items: center; }
-    .grid-teaser-imgs { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
-    .grid-teaser-imgs img { border-radius: var(--r-md); aspect-ratio: 1; object-fit: cover; }
-    .grid-teaser-imgs img:first-child { grid-column: span 2; aspect-ratio: 16/9; }
-    .grid-teaser-text h2 { font-size: clamp(32px, 4vw, 48px); margin-bottom: 20px; }
-    .grid-teaser-text p { color: var(--cream-2); font-size: 15px; line-height: 1.8; margin-bottom: 28px; }
+    .grid-teaser{padding:80px 0;border-top:1px solid var(--rule)}
+    .grid-layout{display:grid;grid-template-columns:1fr 1fr;gap:80px;align-items:center}
+    .grid-mosaic{display:grid;grid-template-columns:1fr 1fr;grid-template-rows:280px 200px;gap:8px}
+    .grid-mosaic-img{overflow:hidden}
+    .grid-mosaic-img img{width:100%;height:100%;object-fit:cover;transition:transform .5s}
+    .grid-mosaic-img:hover img{transform:scale(1.04)}
+    .grid-mosaic-img:first-child{grid-column:span 2}
+    .grid-text h2{font-size:clamp(32px,4vw,52px);margin-bottom:20px}
+    .grid-text p{font-size:15px;color:var(--ink-3);line-height:1.85;margin-bottom:12px}
+    .grid-pull{font-family:var(--font-serif);font-size:20px;font-style:italic;color:var(--muted);border-top:1px solid var(--rule);padding-top:16px;margin:20px 0 28px}
 
-    /* ── CTA banner ── */
-    .cta-banner {
-      background: var(--bg-2); border: 1px solid var(--border); border-radius: var(--r-lg);
-      padding: 64px 48px; text-align: center;
+    /* ── CTA ── */
+    .cta-editorial{background:var(--ink);color:var(--paper);padding:96px 0;text-align:center}
+    .cta-editorial h2{font-size:clamp(48px,7vw,96px);line-height:.95;margin-bottom:28px}
+    .cta-editorial h2 em{font-style:italic;color:rgba(247,244,239,.35)}
+    .cta-editorial p{color:rgba(247,244,239,.5);font-size:14px;margin-bottom:40px}
+    .cta-actions{display:flex;justify-content:center;gap:14px;flex-wrap:wrap}
+
+    @media(max-width:900px){
+      .hero-stats{display:none}
+      .lead-grid{grid-template-columns:1fr;gap:40px}
+      .lead-divider{display:none}
+      .props-grid{grid-template-columns:1fr;border-left:none}
+      .props-grid .property-card{border-right:none;border-bottom:1px solid var(--rule)}
+      .stats-inner{grid-template-columns:1fr 1fr}
+      .process-grid{grid-template-columns:1fr 1fr}
+      .promises-grid{grid-template-columns:1fr}
+      .grid-layout{grid-template-columns:1fr;gap:40px}
     }
-    .cta-banner h2 { font-size: clamp(32px, 4vw, 52px); margin-bottom: 16px; }
-    .cta-banner p { color: var(--cream-2); margin-bottom: 32px; font-size: 15px; }
-    .cta-actions { display: flex; justify-content: center; gap: 16px; flex-wrap: wrap; }
-
-    @media (max-width: 900px) {
-      .props-grid { grid-template-columns: 1fr; max-width: 480px; margin: 0 auto; }
-      .how-steps { grid-template-columns: 1fr 1fr; gap: 24px; }
-      .how-steps::before { display: none; }
-      .promises-grid { grid-template-columns: 1fr; }
-      .stats-bar { grid-template-columns: 1fr 1fr; }
-      .grid-teaser { grid-template-columns: 1fr; }
+    @media(max-width:600px){
+      .hero-h1{font-size:clamp(56px,14vw,80px)}
+      .stats-inner{grid-template-columns:1fr}
+      .process-grid{grid-template-columns:1fr}
+      .hero-content{padding:0 20px 56px}
     }
   </style>
 </head>
 <body>
+<div id="nav-mount"></div>
 
-  <!-- Nav injected by JS -->
-  <div id="nav-mount"></div>
-
-  <!-- ── Hero ── -->
-  <section class="hero">
-    <div class="hero-bg">
-      <img src="https://images.unsplash.com/photo-1560448204-603b3fc33ddc?w=2000&q=85&fit=crop" alt="Modern furnished apartment">
-    </div>
+<!-- ── Video Hero ── -->
+<section class="hero">
+  <video class="hero-video" autoplay muted loop playsinline poster="https://images.pexels.com/videos/11630727/pexels-photo-11630727.jpeg?auto=compress&cs=tinysrgb&h=627&fit=crop&w=1200">
+    <source src="https://videos.pexels.com/video-files/11630727/11630727-hd_1920_1080_25fps.mp4" type="video/mp4">
+    <source src="https://videos.pexels.com/video-files/3773486/3773486-hd_1920_1080_25fps.mp4" type="video/mp4">
+  </video>
+  <div class="hero-overlay"></div>
+  <div style="position:relative;z-index:1;width:100%;max-width:var(--max);margin:0 auto">
     <div class="hero-content">
-      <div class="hero-status"><span class="dot-live"></span> Bengaluru, India · Est. 2026</div>
+      <div class="hero-issue">Bengaluru, India · Est. 2026 · Managed Co-Living</div>
       <h1 class="hero-h1">the<br><em>switch.</em></h1>
-      <p class="hero-sub">Walk in with a suitcase.<br>Everything else is already there.</p>
+      <p class="hero-tagline">Walk in with a suitcase.<br>Everything else is already there.</p>
       <div class="hero-actions">
-        <a href="/properties.html" class="btn-primary">See our properties →</a>
-        <a href="/the-grid.html" class="btn-ghost">Meet your neighbours</a>
+        <a href="/properties.html" class="hero-btn-light">See our properties →</a>
+        <a href="/the-grid.html" class="hero-btn-outline">Meet your neighbours</a>
       </div>
     </div>
-    <div class="hero-scroll"><span>scroll</span><div class="hero-scroll-line"></div></div>
-  </section>
-
-  <!-- ── Ticker ── -->
-  <div class="ticker">
-    <div class="ticker-inner" id="tickerInner"></div>
+    <div class="hero-scroll">
+      <div class="hero-scroll-line"></div>
+      <span class="hero-scroll-label">scroll</span>
+    </div>
   </div>
+</section>
 
-  <!-- ── Stats ── -->
-  <section class="section-sm">
-    <div class="container">
-      <div class="stats-bar fade-up">
-        <div class="stat-item"><div class="stat-num">₹0</div><div class="stat-label">Broker fee. Ever.</div></div>
-        <div class="stat-item"><div class="stat-num"><em>3</em></div><div class="stat-label">Buildings in Bengaluru</div></div>
-        <div class="stat-item"><div class="stat-num">1</div><div class="stat-label">Suitcase. That's the checklist.</div></div>
-        <div class="stat-item"><div class="stat-num">11mo</div><div class="stat-label">Leave & Licence</div></div>
-      </div>
-    </div>
-  </section>
+<!-- ── Issue bar ── -->
+<div class="issue-bar">
+  <div class="issue-bar-inner">
+    <span class="issue-bar-left">No broker · One month deposit · 11-month L&L · Caretaker on-site</span>
+    <span class="issue-bar-right">just show up.</span>
+  </div>
+</div>
 
-  <!-- ── Properties ── -->
-  <section class="section">
-    <div class="container">
-      <div style="display:flex;justify-content:space-between;align-items:flex-end;margin-bottom:48px">
-        <div>
-          <div class="eyebrow" style="margin-bottom:10px">where we are</div>
-          <h2 style="font-size:clamp(32px,4vw,48px)">Three buildings.<br><em class="serif-italic">One city.</em></h2>
-        </div>
-        <a href="/properties.html" class="btn-text" style="white-space:nowrap">View all →</a>
-      </div>
-      <div class="props-grid" id="propsGrid">
-        <!-- Injected by JS -->
-      </div>
-    </div>
-  </section>
+<!-- ── Ticker ── -->
+<div class="ticker">
+  <div class="ticker-inner" id="tickerInner"></div>
+</div>
 
-  <!-- ── How it works ── -->
-  <section class="section" style="background:var(--bg-2);border-top:1px solid var(--border);border-bottom:1px solid var(--border)">
-    <div class="container">
-      <div style="text-align:center;margin-bottom:56px" class="fade-up">
-        <div class="eyebrow" style="margin-bottom:10px">the process</div>
-        <h2 style="font-size:clamp(28px,3.5vw,44px)">Five steps.<br><em class="serif-italic">That's it.</em></h2>
+<!-- ── Lead editorial ── -->
+<section class="lead">
+  <div class="container">
+    <div class="lead-grid">
+      <div class="lead-left fade-up">
+        <div class="eyebrow rule-above" style="margin-bottom:20px">About the switch.</div>
+        <h2>Not a developer.<br>Not a broker.<br><em class="serif">An operator.</em></h2>
+        <p style="margin-top:24px">We master-lease entire buildings, furnish every flat, and sub-let directly. No broker, no middleman, no drama. You deal with us from the first message to the keys.</p>
+        <p>Three buildings in Bengaluru. Sarjapur. Yemlur. And Yemlur again.</p>
+        <a href="/about.html" class="btn-text" style="margin-top:20px">Read our story →</a>
       </div>
-      <div class="how-steps fade-up">
-        <div class="how-step"><div class="how-step-num">1</div><div class="how-step-title">You message us.</div><div class="how-step-desc">Not a broker. Us. Same day response.</div></div>
-        <div class="how-step"><div class="how-step-num">2</div><div class="how-step-title">See the flat.</div><div class="how-step-desc">In person or virtually. No pressure.</div></div>
-        <div class="how-step"><div class="how-step-num">3</div><div class="how-step-title">One month deposit.</div><div class="how-step-desc">No negotiation. No extra fees.</div></div>
-        <div class="how-step"><div class="how-step-num">4</div><div class="how-step-title">You get the keys.</div><div class="how-step-desc">WiFi password. Caretaker's number.</div></div>
-        <div class="how-step"><div class="how-step-num">5</div><div class="how-step-title">Walk in.</div><div class="how-step-desc">With a suitcase. Like we said.</div></div>
-      </div>
-    </div>
-  </section>
-
-  <!-- ── Promises ── -->
-  <section class="section">
-    <div class="container">
-      <div style="text-align:center;margin-bottom:48px" class="fade-up">
-        <div class="eyebrow" style="margin-bottom:10px">rules.</div>
-        <h2 style="font-size:clamp(28px,3.5vw,44px)">Our promises.<br><em class="serif-italic">No small print.</em></h2>
-        <p style="color:var(--muted);margin-top:12px;font-size:14px">Three things we will never do — not once, not for anyone, not for any reason.</p>
-      </div>
-      <div class="promises-grid fade-up">
-        <div class="promise-item">
-          <div class="promise-num">i.</div>
-          <div class="promise-title">No broker. Ever.</div>
-          <p class="promise-desc">Not a small one. Not a "just this once." No broker. Full stop. You pay us the rent. That's it.</p>
-        </div>
-        <div class="promise-item">
-          <div class="promise-num">ii.</div>
-          <div class="promise-title">One month deposit.</div>
-          <p class="promise-desc">Your savings are yours. We don't need two months to prove you're real.</p>
-        </div>
-        <div class="promise-item">
-          <div class="promise-num">iii.</div>
-          <div class="promise-title">The caretaker picks up.</div>
-          <p class="promise-desc">Not on the third call. Not after a WhatsApp at 11pm. Just — picks up.</p>
+      <div class="lead-divider"></div>
+      <div class="lead-right fade-up delay-2">
+        <div class="eyebrow rule-above" style="margin-bottom:24px">What residents say</div>
+        <blockquote class="lead-quote">"The building is already alive when you move in. Met my co-founder in the corridor."</blockquote>
+        <div class="lead-quote-attr">— Switch Volt Resident, 2026</div>
+        <div style="margin-top:40px;padding-top:28px;border-top:1px solid var(--rule)">
+          <blockquote class="lead-quote" style="font-size:clamp(18px,2.5vw,24px)">"No broker. Just a flat that works, from day one."</blockquote>
+          <div class="lead-quote-attr">— Switch Arc Resident, 2026</div>
         </div>
       </div>
     </div>
-  </section>
+  </div>
+</section>
 
-  <!-- ── The Grid teaser ── -->
-  <section class="section" style="background:var(--bg-2);border-top:1px solid var(--border);border-bottom:1px solid var(--border)">
-    <div class="container">
-      <div class="grid-teaser">
-        <div class="grid-teaser-imgs fade-up">
-          <img src="https://images.unsplash.com/photo-1529156069898-49953e39b3ac?w=900&q=80&fit=crop" alt="Residents hanging out">
-          <img src="https://images.unsplash.com/photo-1522202176988-66273c2fd55f?w=600&q=80&fit=crop" alt="Working together">
-          <img src="https://images.unsplash.com/photo-1543269865-cbf427effbad?w=600&q=80&fit=crop" alt="Chai break">
-        </div>
-        <div class="grid-teaser-text fade-up">
-          <div class="eyebrow" style="margin-bottom:12px">the grid. by the switch.</div>
-          <h2>Your building has a startup founder in it.</h2>
-          <p>the grid. is our resident community. Not a WhatsApp group. An actual network of people who live near each other and are worth knowing.</p>
-          <p style="margin-bottom:28px;color:var(--muted);font-size:14px;font-style:italic">"Met my co-founder in the corridor."</p>
-          <div style="display:flex;gap:12px;flex-wrap:wrap">
-            <a href="/the-grid.html" class="btn-primary">See the full grid →</a>
-            <a href="/the-grid.html#join" class="btn-ghost">Request to join</a>
-          </div>
+<!-- ── Properties ── -->
+<section class="section" style="padding-bottom:0">
+  <div class="container">
+    <div class="props-header">
+      <div>
+        <div class="eyebrow" style="margin-bottom:12px">Where we are</div>
+        <h2>Three buildings.<br><em class="serif">One city.</em></h2>
+      </div>
+      <a href="/properties.html" class="btn-text">View all →</a>
+    </div>
+  </div>
+  <div style="max-width:var(--max);margin:0 auto;padding:0 32px">
+    <div class="props-grid" id="propsGrid"></div>
+  </div>
+</section>
+
+<!-- ── Stats ── -->
+<section class="stats-editorial">
+  <div class="container">
+    <div style="margin-bottom:48px"><div class="eyebrow" style="color:rgba(247,244,239,.35);margin-bottom:8px">By the numbers</div><div style="font-family:var(--font-serif);font-size:clamp(24px,3vw,36px);color:rgba(247,244,239,.6);font-style:italic">The case for switching.</div></div>
+    <div class="stats-inner">
+      <div class="stat-col fade-up"><div class="stat-big counter-num" data-count="0" data-target="0">₹0</div><div style="font-size:11px;letter-spacing:.1em;text-transform:uppercase;color:rgba(247,244,239,.35);margin-top:6px">Broker Fee</div><div class="stat-desc">We don't believe in paying someone to unlock a door for you.</div></div>
+      <div class="stat-col fade-up delay-1"><div class="stat-big">3</div><div style="font-size:11px;letter-spacing:.1em;text-transform:uppercase;color:rgba(247,244,239,.35);margin-top:6px">Buildings</div><div class="stat-desc">Sarjapur, Yemlur, and Yemlur again. All fully managed.</div></div>
+      <div class="stat-col fade-up delay-2"><div class="stat-big">1<em>mo</em></div><div style="font-size:11px;letter-spacing:.1em;text-transform:uppercase;color:rgba(247,244,239,.35);margin-top:6px">Deposit</div><div class="stat-desc">Your savings are yours. One month. That's it.</div></div>
+      <div class="stat-col fade-up delay-3"><div class="stat-big">11<em>mo</em></div><div style="font-size:11px;letter-spacing:.1em;text-transform:uppercase;color:rgba(247,244,239,.35);margin-top:6px">Tenancy</div><div class="stat-desc">Long enough to feel like home. Short enough if life changes its mind.</div></div>
+    </div>
+  </div>
+</section>
+
+<!-- ── Process ── -->
+<section class="process">
+  <div class="container">
+    <div style="margin-bottom:40px"><div class="eyebrow" style="margin-bottom:10px">The process</div><h2 style="font-size:clamp(28px,3.5vw,44px)">Five steps.<br><em class="serif">That's it.</em></h2></div>
+    <div class="process-grid fade-up">
+      <div class="process-item"><div class="process-num">01</div><div class="process-title">You message us.</div><div class="process-desc">Not a broker. Us. Same day response.</div></div>
+      <div class="process-item"><div class="process-num">02</div><div class="process-title">See the flat.</div><div class="process-desc">In person or virtually. No pressure.</div></div>
+      <div class="process-item"><div class="process-num">03</div><div class="process-title">One month deposit.</div><div class="process-desc">No negotiation. No extra fees.</div></div>
+      <div class="process-item"><div class="process-num">04</div><div class="process-title">You get the keys.</div><div class="process-desc">WiFi password. Caretaker's number.</div></div>
+      <div class="process-item" style="border-right:none"><div class="process-num">05</div><div class="process-title">Walk in.</div><div class="process-desc">With a suitcase. Like we said.</div></div>
+    </div>
+  </div>
+</section>
+
+<!-- ── Promises ── -->
+<section class="promises">
+  <div class="container">
+    <div><div class="eyebrow" style="margin-bottom:10px">Rules.</div><h2 style="font-size:clamp(28px,3.5vw,44px)">Our promises.<br><em class="serif">No small print.</em></h2><p style="font-size:13px;color:var(--muted);margin-top:10px;max-width:480px">Three things we will never do — not once, not for anyone, not for any reason.</p></div>
+    <div class="promises-grid fade-up">
+      <div class="promise-item"><div class="promise-roman">i.</div><div class="promise-title">No broker. Ever.</div><p class="promise-desc">Not a small one. Not a "just this once." No broker. Full stop. You pay us the rent. That's it.</p></div>
+      <div class="promise-item"><div class="promise-roman">ii.</div><div class="promise-title">One month deposit.</div><p class="promise-desc">Your savings are yours. We don't need two months to prove you're real.</p></div>
+      <div class="promise-item" style="border-right:none"><div class="promise-roman">iii.</div><div class="promise-title">The caretaker picks up.</div><p class="promise-desc">Not on the third call. Not after a WhatsApp at 11pm. Just — picks up.</p></div>
+    </div>
+  </div>
+</section>
+
+<!-- ── Grid teaser ── -->
+<section class="grid-teaser">
+  <div class="container">
+    <div class="grid-layout">
+      <div class="grid-mosaic fade-up">
+        <div class="grid-mosaic-img"><img src="https://images.unsplash.com/photo-1529156069898-49953e39b3ac?w=900&q=80&fit=crop" alt="Residents together" loading="lazy"></div>
+        <div class="grid-mosaic-img"><img src="https://images.unsplash.com/photo-1522202176988-66273c2fd55f?w=600&q=80&fit=crop" alt="Working together" loading="lazy"></div>
+        <div class="grid-mosaic-img"><img src="https://images.unsplash.com/photo-1543269865-cbf427effbad?w=600&q=80&fit=crop" alt="Chai break" loading="lazy"></div>
+      </div>
+      <div class="grid-text fade-up delay-2">
+        <div class="eyebrow rule-above" style="margin-bottom:16px">the grid. by the switch.</div>
+        <h2>Your building has a startup founder in it.</h2>
+        <p style="margin-top:20px">the grid. is our resident community. Not a WhatsApp group. An actual network of people who live near each other and are worth knowing.</p>
+        <div class="grid-pull">"Met my co-founder in the corridor."</div>
+        <div style="display:flex;gap:12px;flex-wrap:wrap">
+          <a href="/the-grid.html" class="btn-primary">See the full grid →</a>
+          <a href="/the-grid.html#join" class="btn-ghost">Request to join</a>
         </div>
       </div>
     </div>
-  </section>
+  </div>
+</section>
 
-  <!-- ── CTA ── -->
-  <section class="section">
-    <div class="container">
-      <div class="cta-banner fade-up">
-        <div class="eyebrow" style="margin-bottom:16px">make the switch.</div>
-        <h2>One suitcase.<br><em class="serif-italic">One city.</em></h2>
-        <p>One building full of people worth knowing.</p>
-        <div class="cta-actions">
-          <a href="/properties.html" class="btn-primary">See our properties</a>
-          <a href="/the-grid.html#join" class="btn-ghost">Join the grid →</a>
-        </div>
-      </div>
+<!-- ── CTA ── -->
+<section class="cta-editorial">
+  <div class="container">
+    <div class="eyebrow" style="color:rgba(247,244,239,.3);margin-bottom:20px">Make the switch.</div>
+    <h2>One suitcase.<br><em>One city.</em></h2>
+    <p>One building full of people worth knowing.</p>
+    <div class="cta-actions">
+      <a href="/properties.html" class="hero-btn-light">See our properties</a>
+      <a href="/the-grid.html#join" class="hero-btn-outline">Join the grid →</a>
     </div>
-  </section>
+  </div>
+</section>
 
-  <!-- Footer injected by JS -->
-  <div id="footer-mount"></div>
+<div id="footer-mount"></div>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
+<script src="/assets/js/supabase.js"></script>
+<script>
+document.getElementById('nav-mount').innerHTML = navComponent();
+document.getElementById('footer-mount').innerHTML = footerComponent();
 
-  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
-  <script src="/assets/js/supabase.js"></script>
-  <script>
-    // ── Mount nav + footer ──
-    document.getElementById('nav-mount').innerHTML = navComponent();
-    document.getElementById('footer-mount').innerHTML = footerComponent();
+const items=['₹0 Broker Fee','Walk in with a suitcase','11-month tenancy','One month deposit','Caretaker on-site','Fully furnished','Zero broker','just show up.','No middleman','Same day response'];
+const doubled=[...items,...items];
+document.getElementById('tickerInner').innerHTML=doubled.map(t=>`<span class="ticker-item">${t}<span class="sep">·</span></span>`).join('');
 
-    // ── Ticker ──
-    const tickerItems = ['₹0 Broker Fee', 'Walk in with a suitcase', '11-month tenancy', 'One month deposit', 'Caretaker on-site', 'Fully furnished', 'Zero broker', 'just show up.'];
-    const doubled = [...tickerItems, ...tickerItems];
-    document.getElementById('tickerInner').innerHTML = doubled.map(t => `<span class="ticker-item">${t}<span class="dot">·</span></span>`).join('');
-
-    // ── Load properties ──
-    async function loadProperties() {
-      const props = await getProperties();
-      const grid  = document.getElementById('propsGrid');
-      grid.innerHTML = props.slice(0,3).map(p => `
-        <div class="property-card fade-up">
-          <div class="property-card-img">
-            <img src="${p.images?.[0] || 'https://images.unsplash.com/photo-1560448204-603b3fc33ddc?w=800&q=80'}" alt="${p.name}" loading="lazy">
-            ${statusBadge(p.status)}
-          </div>
-          <div class="property-card-body">
-            <div class="property-card-loc">
-              <svg width="10" height="12" viewBox="0 0 10 12" fill="none"><path d="M5 0C2.24 0 0 2.24 0 5c0 3.75 5 7 5 7s5-3.25 5-7c0-2.76-2.24-5-5-5zm0 6.5A1.5 1.5 0 115 3.5a1.5 1.5 0 010 3z" fill="currentColor"/></svg>
-              ${p.location}, ${p.area}
-            </div>
-            <div class="property-card-name">${p.name}</div>
-            <div class="property-card-rent">${formatRent(p.rent)} <span>· ${p.bhk} · ${p.units} flats</span></div>
-            <div class="property-card-tags">${(p.amenities||[]).slice(0,4).map(a=>`<span class="property-card-tag">${a}</span>`).join('')}</div>
-          </div>
-          <div class="property-card-footer">
-            <a href="/property/${p.slug}.html" class="btn-text">
-              ${p.status === 'coming-soon' ? 'Join waitlist' : 'Enquire now'} →
-            </a>
-          </div>
+async function loadProps(){
+  const props=await getProperties();
+  document.getElementById('propsGrid').innerHTML=props.slice(0,3).map(p=>{
+    const hero=getHeroImage(p.images);
+    return`<div class="property-card fade-up">
+      <div class="property-card-img"><img src="${hero}" alt="${p.name}" loading="lazy">${statusBadge(p.status)}</div>
+      <div class="property-card-body">
+        <div class="property-card-loc">
+          <svg width="9" height="11" viewBox="0 0 10 12" fill="none"><path d="M5 0C2.24 0 0 2.24 0 5c0 3.75 5 7 5 7s5-3.25 5-7c0-2.76-2.24-5-5-5zm0 6.5A1.5 1.5 0 115 3.5a1.5 1.5 0 010 3z" fill="currentColor"/></svg>
+          ${p.location}, ${p.area}
         </div>
-      `).join('');
-      initFadeUp();
-    }
-
-    loadProperties();
-    initFadeUp();
-    initNav();
-  </script>
+        <div class="property-card-name">${p.name}</div>
+        <div class="property-card-rent">${formatRent(p.rent)} <span>· ${p.bhk} · ${p.units} flats</span></div>
+        <div class="property-card-tags">${(p.amenities||[]).slice(0,4).map(a=>`<span class="property-card-tag">${a}</span>`).join('')}</div>
+      </div>
+      <div class="property-card-footer"><a href="/property/${p.slug}.html" class="btn-text">${p.status==='coming-soon'?'Join waitlist':'Enquire now'} →</a></div>
+    </div>`;
+  }).join('');
+  initFadeUp();
+}
+loadProps();
+initFadeUp();
+initNav();
+</script>
 </body>
 </html>
