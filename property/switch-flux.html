@@ -1,0 +1,247 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Switch Flux — the switch.</title>
+  <link rel="stylesheet" href="/assets/css/main.css">
+  <style>
+    .prop-hero{position:relative;height:72vh;min-height:480px;overflow:hidden;background:var(--ink);padding-top:var(--nav-h)}
+    .prop-hero-img{width:100%;height:100%;object-fit:cover;opacity:.75;transition:opacity .5s}
+    .prop-hero::after{content:'';position:absolute;inset:0;background:linear-gradient(to bottom,transparent 30%,rgba(14,13,10,.85) 100%)}
+    .prop-hero-info{position:absolute;bottom:0;left:0;right:0;z-index:1;padding:0 0 40px}
+    .prop-hero-info .container{display:flex;align-items:flex-end;justify-content:space-between;gap:24px}
+    .prop-name{font-family:var(--font-display);font-weight:300;font-size:clamp(48px,7vw,88px);color:var(--paper);line-height:.95;margin-bottom:10px}
+    .prop-loc{color:rgba(247,244,239,.6);font-size:13px;display:flex;align-items:center;gap:5px;margin-bottom:6px}
+    .prop-rent-box{text-align:right;flex-shrink:0}
+    .prop-rent{font-family:var(--font-serif);font-size:40px;color:var(--paper)}
+    .prop-rent-meta{font-size:12px;color:rgba(247,244,239,.5);margin-top:4px}
+
+    /* ── Room gallery ── */
+    .gallery-section{padding:48px 0;border-bottom:1px solid var(--rule);background:var(--paper-2)}
+    .gallery-tabs{display:flex;gap:0;border-bottom:1px solid var(--rule);margin-bottom:32px;overflow-x:auto}
+    .gallery-tab{font-size:11px;font-weight:500;letter-spacing:.1em;text-transform:uppercase;padding:12px 20px;color:var(--muted);border-bottom:2px solid transparent;white-space:nowrap;transition:color .2s,border-color .2s;cursor:pointer}
+    .gallery-tab:hover{color:var(--ink)}
+    .gallery-tab.active{color:var(--orange);border-bottom-color:var(--orange)}
+    .gallery-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(280px,1fr));gap:3px}
+    .gallery-img-wrap{overflow:hidden;aspect-ratio:4/3;cursor:pointer;background:var(--paper-3)}
+    .gallery-img-wrap img{width:100%;height:100%;object-fit:cover;transition:transform .4s}
+    .gallery-img-wrap:hover img{transform:scale(1.04)}
+    .gallery-empty{padding:40px;text-align:center;color:var(--muted);font-size:13px;font-style:italic;grid-column:span 3}
+
+    /* ── Content ── */
+    .prop-content{display:grid;grid-template-columns:1fr 380px;gap:64px;align-items:start;padding:64px 0}
+    .detail-section{margin-bottom:48px}
+    .detail-section h3{font-family:var(--font-serif);font-size:24px;margin-bottom:20px;padding-bottom:12px;border-bottom:1px solid var(--rule)}
+    .amenities-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+    .amenity-item{display:flex;align-items:center;gap:10px;font-size:13px;color:var(--ink-3);padding:8px 0;border-bottom:1px solid var(--rule)}
+    .amenity-check{color:var(--orange);font-size:13px}
+    .prop-map{border:1px solid var(--rule);margin-top:10px}
+    .prop-map iframe{width:100%;height:300px;border:none;display:block}
+
+    /* ── Enquiry ── */
+    .enquiry-card{background:var(--paper-2);border:1px solid var(--rule);padding:32px;position:sticky;top:calc(var(--nav-h)+24px)}
+    .enquiry-card h3{font-family:var(--font-serif);font-size:22px;margin-bottom:6px}
+    .enquiry-form{display:flex;flex-direction:column;gap:14px}
+    .form-success{display:none;text-align:center;padding:24px}
+    .form-success-icon{font-size:32px;margin-bottom:12px;color:var(--orange)}
+
+    /* ── Lightbox ── */
+    .lightbox{display:none;position:fixed;inset:0;z-index:200;background:rgba(14,13,10,.96);align-items:center;justify-content:center}
+    .lightbox.open{display:flex}
+    .lightbox img{max-width:90vw;max-height:88vh;object-fit:contain}
+    .lb-close{position:absolute;top:20px;right:24px;color:var(--paper);font-size:28px;cursor:pointer;opacity:.6}
+    .lb-close:hover{opacity:1}
+    .lb-prev,.lb-next{position:absolute;top:50%;transform:translateY(-50%);color:var(--paper);font-size:32px;cursor:pointer;padding:16px;opacity:.5}
+    .lb-prev:hover,.lb-next:hover{opacity:1}
+    .lb-prev{left:16px}
+    .lb-next{right:16px}
+    .lb-caption{position:absolute;bottom:20px;left:50%;transform:translateX(-50%);font-size:11px;letter-spacing:.1em;text-transform:uppercase;color:rgba(247,244,239,.4)}
+
+    @media(max-width:900px){
+      .prop-content{grid-template-columns:1fr}
+      .enquiry-card{position:static}
+      .prop-hero-info .container{flex-direction:column;align-items:flex-start}
+      .prop-rent-box{text-align:left}
+    }
+  </style>
+</head>
+<body>
+<div id="nav-mount"></div>
+
+<div class="prop-hero">
+  <img class="prop-hero-img" id="heroImg" src="" alt="">
+  <div class="prop-hero-info">
+    <div class="container">
+      <div>
+        <div id="heroBadge"></div>
+        <div class="prop-name" id="propName">Loading…</div>
+        <div class="prop-loc" id="propLoc"></div>
+      </div>
+      <div class="prop-rent-box">
+        <div class="prop-rent" id="propRent"></div>
+        <div class="prop-rent-meta" id="propMeta"></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Room gallery -->
+<div class="gallery-section">
+  <div class="container">
+    <div class="gallery-tabs" id="galleryTabs"></div>
+    <div class="gallery-grid" id="galleryGrid"></div>
+  </div>
+</div>
+
+<!-- Content -->
+<div class="container">
+  <div class="prop-content">
+    <div>
+      <div class="detail-section fade-up">
+        <h3>About this property</h3>
+        <p id="propDesc" style="font-size:15px;color:var(--ink-3);line-height:1.85"></p>
+      </div>
+      <div class="detail-section fade-up">
+        <h3>What's included</h3>
+        <div class="amenities-grid" id="amenitiesGrid"></div>
+      </div>
+      <div class="detail-section fade-up">
+        <h3>Location</h3>
+        <p style="font-size:12px;color:var(--muted);margin-bottom:10px;letter-spacing:.04em">Find us on the map</p>
+        <div class="prop-map"><iframe id="propMap" loading="lazy" allowfullscreen referrerpolicy="no-referrer-when-downgrade" title="Location"></iframe></div>
+      </div>
+    </div>
+    <div>
+      <div class="enquiry-card fade-up">
+        <h3 id="formTitle">Enquire now</h3>
+        <p style="font-size:12px;color:var(--muted);margin-bottom:24px;letter-spacing:.02em">We respond the same day. No broker involved.</p>
+        <div class="enquiry-form" id="enquiryForm">
+          <div class="form-group"><label>Full Name</label><input type="text" id="eName" placeholder="Your name" required></div>
+          <div class="form-row">
+            <div class="form-group"><label>Phone</label><input type="tel" id="ePhone" placeholder="+91…"></div>
+            <div class="form-group"><label>Email</label><input type="email" id="eEmail" placeholder="you@email.com"></div>
+          </div>
+          <div class="form-row">
+            <div class="form-group"><label>Move-in</label><input type="date" id="eMoveIn"></div>
+            <div class="form-group"><label>Budget/mo</label>
+              <select id="eBudget">
+                <option value="">Select</option>
+                <option>Under ₹20,000</option>
+                <option>₹20,000–₹25,000</option>
+                <option>₹25,000–₹30,000</option>
+                <option>₹30,000+</option>
+              </select>
+            </div>
+          </div>
+          <div class="form-group"><label>Message</label><textarea id="eMessage" rows="3" placeholder="Anything we should know…"></textarea></div>
+          <button class="form-submit" id="enquirySubmit" onclick="doEnquiry()">Send enquiry →</button>
+        </div>
+        <div class="form-success" id="formSuccess">
+          <div class="form-success-icon">✓</div>
+          <strong>We've got your message.</strong><br>
+          <span style="font-size:12px;color:var(--muted)">Expect a reply within the day. No broker will call you.</span>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="lightbox" id="lightbox">
+  <span class="lb-close" onclick="closeLB()">×</span>
+  <span class="lb-prev" onclick="lbNav(-1)">‹</span>
+  <img id="lbImg" src="" alt="">
+  <span class="lb-next" onclick="lbNav(1)">›</span>
+  <span class="lb-caption" id="lbCaption"></span>
+</div>
+
+<div id="footer-mount"></div>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
+<script src="/assets/js/supabase.js"></script>
+<script>
+document.getElementById('nav-mount').innerHTML = navComponent('Properties');
+document.getElementById('footer-mount').innerHTML = footerComponent();
+
+const slug = location.pathname.split('/').pop().replace('.html','');
+let propImages = []; let lbImages = []; let lbIdx = 0;
+
+const TAG_LABELS = {'living-room':'Living Room','bedroom':'Bedroom','kitchen':'Kitchen','bathroom':'Bathroom','balcony':'Balcony','common-area':'Common Area','building':'Building','other':'Other'};
+
+async function load() {
+  const p = await getProperty(slug);
+  if (!p) { document.getElementById('propName').textContent = 'Not found'; return; }
+  propImages = p.images || [];
+  document.title = p.name + ' — the switch.';
+
+  // Hero
+  const heroUrl = getHeroImage(propImages);
+  document.getElementById('heroImg').src = heroUrl;
+  document.getElementById('heroImg').alt = p.name;
+  document.getElementById('heroBadge').innerHTML = statusBadge(p.status);
+  document.getElementById('propName').textContent = p.name;
+  document.getElementById('propLoc').innerHTML = `<svg width="9" height="11" viewBox="0 0 10 12" fill="none"><path d="M5 0C2.24 0 0 2.24 0 5c0 3.75 5 7 5 7s5-3.25 5-7c0-2.76-2.24-5-5-5zm0 6.5A1.5 1.5 0 115 3.5a1.5 1.5 0 010 3z" fill="currentColor"/></svg>${p.location}, ${p.area}`;
+  document.getElementById('propRent').textContent = formatRent(p.rent);
+  document.getElementById('propMeta').textContent = `${p.bhk} · ${p.units} flats`;
+
+  // Gallery tabs
+  const tags = ['all', ...new Set(propImages.map(i => i.tag).filter(Boolean))];
+  document.getElementById('galleryTabs').innerHTML = tags.map((t,i) => `
+    <div class="gallery-tab ${i===0?'active':''}" onclick="filterGallery('${t}', this)">
+      ${t === 'all' ? 'All Photos' : (TAG_LABELS[t] || t)}
+    </div>`).join('');
+
+  renderGallery('all');
+
+  // Description + amenities
+  document.getElementById('propDesc').textContent = p.description;
+  document.getElementById('amenitiesGrid').innerHTML = (p.amenities||[]).map(a =>
+    `<div class="amenity-item"><span class="amenity-check">✓</span>${a}</div>`).join('');
+
+  if (p.map_embed) document.getElementById('propMap').src = p.map_embed;
+  if (p.status === 'coming-soon') {
+    document.getElementById('formTitle').textContent = 'Join the waitlist';
+    document.getElementById('enquirySubmit').textContent = 'Join waitlist →';
+  }
+  initFadeUp();
+}
+
+function renderGallery(tag) {
+  const imgs = tag === 'all' ? propImages : propImages.filter(i => i.tag === tag);
+  lbImages = imgs;
+  if (!imgs.length) {
+    document.getElementById('galleryGrid').innerHTML = `<div class="gallery-empty">No photos in this room yet.</div>`;
+    return;
+  }
+  document.getElementById('galleryGrid').innerHTML = imgs.map((img, i) => `
+    <div class="gallery-img-wrap" onclick="openLB(${i})">
+      <img src="${img.url}" alt="${TAG_LABELS[img.tag]||img.tag||''}" loading="lazy">
+    </div>`).join('');
+}
+
+function filterGallery(tag, el) {
+  document.querySelectorAll('.gallery-tab').forEach(t => t.classList.remove('active'));
+  el.classList.add('active');
+  renderGallery(tag);
+}
+
+function openLB(i) { lbIdx = i; document.getElementById('lbImg').src = lbImages[i].url; document.getElementById('lbCaption').textContent = TAG_LABELS[lbImages[i].tag]||lbImages[i].tag||''; document.getElementById('lightbox').classList.add('open'); }
+function closeLB() { document.getElementById('lightbox').classList.remove('open'); }
+function lbNav(d) { lbIdx = (lbIdx + d + lbImages.length) % lbImages.length; document.getElementById('lbImg').src = lbImages[lbIdx].url; document.getElementById('lbCaption').textContent = TAG_LABELS[lbImages[lbIdx].tag]||''; }
+document.getElementById('lightbox').addEventListener('click', e => { if (e.target === e.currentTarget) closeLB(); });
+document.addEventListener('keydown', e => { if (e.key === 'Escape') closeLB(); if (e.key === 'ArrowRight') lbNav(1); if (e.key === 'ArrowLeft') lbNav(-1); });
+
+async function doEnquiry() {
+  const name = document.getElementById('eName').value.trim();
+  const phone = document.getElementById('ePhone').value.trim();
+  const email = document.getElementById('eEmail').value.trim();
+  if (!name || (!phone && !email)) { alert('Please fill in your name and phone or email.'); return; }
+  const btn = document.getElementById('enquirySubmit');
+  btn.textContent = 'Sending…'; btn.disabled = true;
+  const result = await submitEnquiry({ name, phone, email, move_in_date: document.getElementById('eMoveIn').value, budget: document.getElementById('eBudget').value, message: document.getElementById('eMessage').value.trim(), property_slug: slug, created_at: new Date().toISOString() });
+  if (result.ok) { document.getElementById('enquiryForm').style.display = 'none'; document.getElementById('formSuccess').style.display = 'block'; }
+  else { btn.textContent = 'Send enquiry →'; btn.disabled = false; alert('Something went wrong. Please WhatsApp us.'); }
+}
+
+load(); initNav();
+</script>
+</body>
+</html>
