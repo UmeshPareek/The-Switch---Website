@@ -1,1186 +1,166 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Admin — the switch.</title>
-  <style>
-    @import url('https://fonts.googleapis.com/css2?family=EB+Garamond:ital,wght@0,400;1,400&family=Inter:wght@300;400;500;600&display=swap');
-    :root {
-      --bg:     #111009; --bg-2: #1C1A14; --bg-3: #252319;
-      --orange: #C44B1A; --orange-2: #E05A22;
-      --gold:   #C49A4A; --cream: #F0EAE0; --cream-2: #D4CCBF;
-      --muted:  #7A7568; --border: rgba(240,234,224,0.08); --border-2: rgba(240,234,224,0.16);
-      --green:  #4ade80; --red: #f87171;
-      --sidebar-w: 240px;
-    }
-    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
-    html, body { height: 100%; }
-    body { background: var(--bg); color: var(--cream); font-family: 'Inter', sans-serif; font-weight: 300; font-size: 14px; -webkit-font-smoothing: antialiased; overflow-x: hidden; }
-    input, textarea, select, button { font-family: inherit; font-size: inherit; }
-    button { cursor: pointer; border: none; background: none; }
+/* ============================================================
+   the switch. — main.css  v2  Editorial Magazine
+   ============================================================ */
+@import url('https://fonts.googleapis.com/css2?family=EB+Garamond:ital,wght@0,400;0,500;0,600;1,400;1,500;1,600&family=Inter:wght@300;400;500&family=Cormorant+Garamond:ital,wght@0,300;1,300;1,400&display=swap');
 
-    /* ── Login ── */
-    #loginScreen {
-      position: fixed; inset: 0; z-index: 200;
-      display: flex; align-items: center; justify-content: center;
-      background: var(--bg);
-    }
-    .login-card {
-      width: 400px; background: var(--bg-2); border: 1px solid var(--border-2);
-      border-radius: 12px; padding: 48px 40px;
-    }
-    .login-logo { font-family: 'EB Garamond', serif; font-size: 32px; margin-bottom: 8px; }
-    .login-logo span { color: var(--orange); }
-    .login-sub { font-size: 12px; color: var(--muted); margin-bottom: 32px; }
-    .login-form { display: flex; flex-direction: column; gap: 14px; }
-    .login-input {
-      background: var(--bg-3); border: 1px solid var(--border-2); color: var(--cream);
-      padding: 12px 14px; border-radius: 6px; outline: none; width: 100%;
-      transition: border-color .2s;
-    }
-    .login-input:focus { border-color: var(--orange); }
-    .login-btn {
-      background: var(--orange); color: var(--cream); padding: 13px;
-      border-radius: 6px; font-weight: 500; transition: background .2s;
-    }
-    .login-btn:hover { background: var(--orange-2); }
-    .login-error { color: var(--red); font-size: 12px; display: none; }
-
-    /* ── App shell ── */
-    #app { display: none; height: 100vh; }
-    #app.visible { display: flex; }
-
-    /* ── Sidebar ── */
-    .sidebar {
-      width: var(--sidebar-w); flex-shrink: 0; background: var(--bg-2);
-      border-right: 1px solid var(--border);
-      display: flex; flex-direction: column;
-      overflow-y: auto;
-    }
-    .sidebar-logo {
-      padding: 24px 20px 20px;
-      border-bottom: 1px solid var(--border);
-      font-family: 'EB Garamond', serif; font-size: 20px;
-    }
-    .sidebar-logo span { color: var(--orange); }
-    .sidebar-label {
-      font-size: 10px; font-weight: 500; letter-spacing: .1em; text-transform: uppercase;
-      color: var(--muted); padding: 20px 20px 8px;
-    }
-    .sidebar-nav { padding: 0 12px; display: flex; flex-direction: column; gap: 2px; }
-    .nav-item {
-      display: flex; align-items: center; gap: 10px;
-      padding: 9px 12px; border-radius: 6px; color: var(--muted); font-size: 13px;
-      transition: background .15s, color .15s; cursor: pointer;
-    }
-    .nav-item:hover { background: var(--bg-3); color: var(--cream-2); }
-    .nav-item.active { background: rgba(196,75,26,.15); color: var(--cream); }
-    .nav-item .icon { font-size: 15px; width: 18px; text-align: center; }
-    .sidebar-footer {
-      margin-top: auto; padding: 16px 20px;
-      border-top: 1px solid var(--border);
-      font-size: 12px; color: var(--muted);
-      display: flex; justify-content: space-between; align-items: center;
-    }
-    .logout-btn { font-size: 12px; color: var(--muted); transition: color .2s; }
-    .logout-btn:hover { color: var(--red); }
-
-    /* ── Main ── */
-    .main { flex: 1; overflow-y: auto; }
-    .topbar {
-      display: flex; align-items: center; justify-content: space-between;
-      padding: 20px 32px; border-bottom: 1px solid var(--border);
-      background: var(--bg-2); position: sticky; top: 0; z-index: 10;
-    }
-    .topbar h1 { font-size: 18px; font-weight: 500; }
-    .topbar-actions { display: flex; gap: 10px; }
-    .btn-sm {
-      font-size: 12px; font-weight: 500; padding: 7px 14px; border-radius: 5px;
-      display: inline-flex; align-items: center; gap: 6px; transition: .15s;
-    }
-    .btn-primary-sm { background: var(--orange); color: var(--cream); }
-    .btn-primary-sm:hover { background: var(--orange-2); }
-    .btn-ghost-sm { border: 1px solid var(--border-2); color: var(--cream-2); }
-    .btn-ghost-sm:hover { border-color: var(--cream); color: var(--cream); }
-    .btn-red-sm { background: rgba(248,113,113,.15); color: var(--red); border: 1px solid rgba(248,113,113,.2); }
-    .btn-red-sm:hover { background: rgba(248,113,113,.25); }
-    .content { padding: 32px; }
-
-    /* ── Pages ── */
-    .page { display: none; }
-    .page.active { display: block; }
-
-    /* ── Stats cards ── */
-    .stats-row { display: grid; grid-template-columns: repeat(4, 1fr); gap: 16px; margin-bottom: 28px; }
-    .stat-card { background: var(--bg-2); border: 1px solid var(--border); border-radius: 8px; padding: 20px 24px; }
-    .stat-card .label { font-size: 11px; color: var(--muted); text-transform: uppercase; letter-spacing: .08em; margin-bottom: 8px; }
-    .stat-card .value { font-size: 28px; font-weight: 300; }
-    .stat-card .value em { font-style: normal; color: var(--orange); }
-    .stat-card .change { font-size: 11px; color: var(--green); margin-top: 4px; }
-
-    /* ── Table ── */
-    .table-card { background: var(--bg-2); border: 1px solid var(--border); border-radius: 8px; overflow: hidden; }
-    .table-header { display: flex; align-items: center; justify-content: space-between; padding: 16px 20px; border-bottom: 1px solid var(--border); }
-    .table-header h3 { font-size: 14px; font-weight: 500; }
-    .table-search input { background: var(--bg-3); border: 1px solid var(--border); color: var(--cream); padding: 7px 12px; border-radius: 5px; font-size: 12px; outline: none; width: 200px; }
-    .table-search input::placeholder { color: var(--muted); }
-    table { width: 100%; border-collapse: collapse; }
-    th { font-size: 11px; font-weight: 500; letter-spacing: .06em; text-transform: uppercase; color: var(--muted); padding: 12px 16px; text-align: left; border-bottom: 1px solid var(--border); }
-    td { padding: 13px 16px; border-bottom: 1px solid var(--border); font-size: 13px; color: var(--cream-2); }
-    tr:last-child td { border-bottom: none; }
-    tr:hover td { background: var(--bg-3); }
-    .badge-sm { font-size: 10px; font-weight: 500; letter-spacing: .05em; text-transform: uppercase; padding: 3px 8px; border-radius: 20px; }
-    .badge-sm.available { background: rgba(74,222,128,.12); color: var(--green); }
-    .badge-sm.filling    { background: rgba(196,155,74,.15); color: var(--gold); }
-    .badge-sm.full       { background: rgba(196,75,26,.12); color: var(--orange-2); }
-    .badge-sm.soon       { background: rgba(122,117,104,.12); color: var(--muted); }
-    .badge-sm.new        { background: rgba(96,165,250,.12); color: #60a5fa; }
-    .badge-sm.contacted  { background: rgba(74,222,128,.12); color: var(--green); }
-
-    /* ── Property form panel ── */
-    .panel-overlay {
-      position: fixed; inset: 0; background: rgba(0,0,0,.6); z-index: 50;
-      display: none; align-items: flex-start; justify-content: flex-end;
-    }
-    .panel-overlay.open { display: flex; }
-    .panel {
-      width: 560px; height: 100vh; background: var(--bg-2);
-      border-left: 1px solid var(--border); overflow-y: auto;
-      display: flex; flex-direction: column;
-    }
-    .panel-header {
-      display: flex; align-items: center; justify-content: space-between;
-      padding: 20px 24px; border-bottom: 1px solid var(--border);
-      position: sticky; top: 0; background: var(--bg-2); z-index: 1;
-    }
-    .panel-header h2 { font-size: 16px; font-weight: 500; }
-    .panel-close { font-size: 20px; color: var(--muted); padding: 4px; }
-    .panel-close:hover { color: var(--cream); }
-    .panel-body { padding: 24px; flex: 1; }
-    .panel-footer { padding: 16px 24px; border-top: 1px solid var(--border); display: flex; gap: 10px; justify-content: flex-end; background: var(--bg-2); }
-    .field-group { margin-bottom: 18px; }
-    .field-group label { display: block; font-size: 11px; font-weight: 500; letter-spacing: .06em; text-transform: uppercase; color: var(--muted); margin-bottom: 7px; }
-    .field-input { background: var(--bg-3); border: 1px solid var(--border-2); color: var(--cream); padding: 10px 12px; border-radius: 5px; outline: none; width: 100%; transition: border-color .2s; }
-    .field-input:focus { border-color: var(--orange); }
-    .field-row { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; }
-    .field-section { font-size: 11px; font-weight: 500; letter-spacing: .08em; text-transform: uppercase; color: var(--muted); padding: 16px 0 10px; border-top: 1px solid var(--border); margin-top: 8px; }
-    .img-manager { display: flex; flex-direction: column; gap: 10px; margin-bottom: 10px; }
-    .img-card { background: var(--bg); border: 1px solid var(--border); border-radius: 6px; padding: 10px 12px; }
-    .img-card-row { display: flex; gap: 10px; align-items: center; }
-    .img-preview { width: 64px; height: 46px; border-radius: 3px; object-fit: cover; background: var(--bg-3); flex-shrink: 0; border: 1px solid var(--border); }
-    .img-preview-empty { width: 64px; height: 46px; border-radius: 3px; background: var(--bg-3); flex-shrink: 0; border: 1px solid var(--border); display: flex; align-items: center; justify-content: center; color: var(--muted); font-size: 14px; }
-    .img-card-meta { flex: 1; display: flex; flex-direction: column; gap: 6px; }
-    .img-card-controls { display: flex; align-items: center; gap: 8px; flex-wrap: wrap; }
-    .img-tag-sel { background: var(--bg-3); border: 1px solid var(--border-2); color: var(--cream); padding: 5px 8px; border-radius: 4px; font-size: 11px; font-family: inherit; outline: none; }
-    .img-tag-sel:focus { border-color: var(--orange); }
-    .img-hero-btn { font-size: 11px; color: var(--muted); border: 1px solid var(--border); padding: 4px 10px; border-radius: 4px; transition: .15s; display: inline-flex; align-items: center; gap: 4px; }
-    .img-hero-btn.active { background: rgba(196,75,26,.15); color: var(--orange); border-color: var(--orange); }
-    .img-del { color: var(--muted); font-size: 15px; padding: 4px; transition: color .15s; margin-left: auto; }
-    .img-del:hover { color: var(--red); }
-    .add-img-btn { font-size: 12px; color: var(--orange); display: inline-flex; align-items: center; gap: 5px; padding: 6px 0; }
-    .img-thumb-strip { display: flex; gap: 6px; flex-wrap: wrap; margin-top: 8px; }
-    .img-thumb { position: relative; width: 72px; height: 52px; border-radius: 3px; overflow: hidden; border: 1px solid var(--border); flex-shrink: 0; }
-    .img-thumb img { width: 100%; height: 100%; object-fit: cover; }
-    .img-thumb-tag { position: absolute; bottom: 2px; left: 2px; background: rgba(17,16,9,.85); font-size: 8px; letter-spacing: .04em; text-transform: uppercase; padding: 2px 4px; border-radius: 2px; color: var(--cream-2); white-space: nowrap; }
-    .img-thumb-hero-badge { position: absolute; top: 2px; right: 2px; background: var(--orange); color: white; font-size: 8px; padding: 1px 4px; border-radius: 2px; }
-    .amenity-tags { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 8px; }
-    .amenity-tag { font-size: 11px; color: var(--cream-2); background: var(--bg); border: 1px solid var(--border); padding: 4px 10px; border-radius: 20px; display: inline-flex; align-items: center; gap: 5px; }
-    .amenity-tag button { color: var(--muted); font-size: 12px; }
-    .amenity-tag button:hover { color: var(--red); }
-    .amenity-add { display: flex; gap: 6px; margin-top: 8px; }
-    .amenity-add input { flex: 1; }
-
-    /* ── Enquiry detail ── */
-    .enquiry-panel-body dl { display: grid; grid-template-columns: 120px 1fr; gap: 12px 16px; }
-    .enquiry-panel-body dt { font-size: 11px; text-transform: uppercase; letter-spacing: .06em; color: var(--muted); padding-top: 2px; }
-    .enquiry-panel-body dd { font-size: 13px; color: var(--cream-2); }
-
-    /* ── Grid members ── */
-    .members-admin-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px; }
-    .member-admin-card { background: var(--bg-2); border: 1px solid var(--border); border-radius: 8px; overflow: hidden; }
-    .member-admin-img { height: 120px; position: relative; }
-    .member-admin-img img { width: 100%; height: 100%; object-fit: cover; }
-    .member-admin-body { padding: 14px; }
-    .member-admin-role { font-size: 14px; font-weight: 500; margin-bottom: 4px; }
-    .member-admin-quote { font-size: 11px; color: var(--muted); font-style: italic; margin-bottom: 12px; }
-    .member-admin-actions { display: flex; gap: 6px; }
-
-    /* ── Settings ── */
-    .settings-section { background: var(--bg-2); border: 1px solid var(--border); border-radius: 8px; padding: 24px; margin-bottom: 16px; }
-    .settings-section h3 { font-size: 14px; font-weight: 500; margin-bottom: 16px; padding-bottom: 12px; border-bottom: 1px solid var(--border); }
-    .settings-row { display: flex; align-items: center; justify-content: space-between; padding: 12px 0; border-bottom: 1px solid var(--border); }
-    .settings-row:last-child { border-bottom: none; }
-    .settings-row-info h4 { font-size: 13px; font-weight: 400; }
-    .settings-row-info p { font-size: 11px; color: var(--muted); margin-top: 2px; }
-    .toggle { position: relative; width: 40px; height: 22px; flex-shrink: 0; }
-    .toggle input { opacity: 0; width: 0; height: 0; }
-    .toggle-slider { position: absolute; inset: 0; background: var(--bg-3); border: 1px solid var(--border-2); border-radius: 11px; cursor: pointer; transition: .2s; }
-    .toggle input:checked + .toggle-slider { background: var(--orange); border-color: var(--orange); }
-    .toggle-slider::after { content: ''; position: absolute; left: 3px; top: 3px; width: 14px; height: 14px; background: white; border-radius: 50%; transition: .2s; }
-    .toggle input:checked + .toggle-slider::after { transform: translateX(18px); }
-    .danger-zone { background: rgba(248,113,113,.05); border: 1px solid rgba(248,113,113,.15); border-radius: 8px; padding: 24px; }
-    .danger-zone h3 { color: var(--red); font-size: 14px; margin-bottom: 12px; }
-
-    /* ── Content editor ── */
-    .content-editor { background: var(--bg-2); border: 1px solid var(--border); border-radius: 8px; padding: 24px; margin-bottom: 16px; }
-    .content-editor h3 { font-size: 14px; font-weight: 500; margin-bottom: 16px; }
-    .content-editor textarea { background: var(--bg-3); border: 1px solid var(--border-2); color: var(--cream); padding: 10px 12px; border-radius: 5px; width: 100%; outline: none; resize: vertical; }
-    .content-editor textarea:focus { border-color: var(--orange); }
-
-    /* ── Toast ── */
-    #toast {
-      position: fixed; bottom: 24px; right: 24px; z-index: 300;
-      background: var(--bg-2); border: 1px solid var(--border-2);
-      border-radius: 8px; padding: 14px 20px;
-      font-size: 13px; display: none;
-      align-items: center; gap: 10px;
-      box-shadow: 0 8px 32px rgba(0,0,0,.4);
-    }
-    #toast.show { display: flex; }
-    #toast.success { border-color: rgba(74,222,128,.3); }
-    #toast.error { border-color: rgba(248,113,113,.3); }
-    #toast .toast-icon { font-size: 16px; }
-
-    /* ── Empty state ── */
-    .empty-state { text-align: center; padding: 48px 24px; color: var(--muted); }
-    .empty-state .icon { font-size: 32px; margin-bottom: 12px; }
-    .empty-state p { font-size: 13px; }
-
-    /* ── Responsive ── */
-    @media (max-width: 900px) {
-      .sidebar { width: 60px; overflow: hidden; }
-      .sidebar .nav-item span:not(.icon) { display: none; }
-      .sidebar-logo, .sidebar-label, .sidebar-footer .ver { display: none; }
-      .stats-row { grid-template-columns: 1fr 1fr; }
-      .panel { width: 100%; }
-      .members-admin-grid { grid-template-columns: 1fr 1fr; }
-    }
-  </style>
-</head>
-<body>
-
-<!-- ── Login ── -->
-<div id="loginScreen">
-  <div class="login-card">
-    <div class="login-logo">the switch<span>.</span></div>
-    <div class="login-sub">Admin Dashboard · Authorised access only</div>
-    <div class="login-form">
-      <input type="email" class="login-input" id="loginEmail" placeholder="Email address" autocomplete="username">
-      <input type="password" class="login-input" id="loginPassword" placeholder="Password" autocomplete="current-password">
-      <div class="login-error" id="loginError">Invalid credentials. Please try again.</div>
-      <button class="login-btn" onclick="doLogin()">Sign in →</button>
-    </div>
-  </div>
-</div>
-
-<!-- ── App ── -->
-<div id="app">
-
-  <!-- Sidebar -->
-  <aside class="sidebar">
-    <div class="sidebar-logo">the switch<span>.</span></div>
-    <div class="sidebar-label">Manage</div>
-    <div class="sidebar-nav">
-      <div class="nav-item active" onclick="goto('dashboard')"><span class="icon">⊞</span><span>Dashboard</span></div>
-      <div class="nav-item" onclick="goto('properties')"><span class="icon">🏠</span><span>Properties</span></div>
-      <div class="nav-item" onclick="goto('enquiries')"><span class="icon">📬</span><span>Enquiries</span></div>
-      <div class="nav-item" onclick="goto('grid')"><span class="icon">👥</span><span>The Grid</span></div>
-      <div class="nav-item" onclick="goto('content')"><span class="icon">✏️</span><span>Content</span></div>
-      <div class="nav-item" onclick="goto('settings')"><span class="icon">⚙️</span><span>Settings</span></div>
-    </div>
-    <div class="sidebar-footer">
-      <span class="ver">v1.0</span>
-      <button class="logout-btn" onclick="doLogout()">Sign out</button>
-    </div>
-  </aside>
-
-  <!-- Main -->
-  <div class="main">
-
-    <!-- ══ Dashboard ══ -->
-    <div class="page active" id="page-dashboard">
-      <div class="topbar"><h1>Dashboard</h1><div class="topbar-actions"><button class="btn-sm btn-primary-sm" onclick="goto('properties')">+ Add Property</button></div></div>
-      <div class="content">
-        <div class="stats-row" id="dashStats">
-          <div class="stat-card"><div class="label">Total Properties</div><div class="value" id="ds-props">—</div></div>
-          <div class="stat-card"><div class="label">Available</div><div class="value" id="ds-avail">—</div></div>
-          <div class="stat-card"><div class="label">Enquiries</div><div class="value" id="ds-enq">—</div></div>
-          <div class="stat-card"><div class="label">Grid Members</div><div class="value" id="ds-grid">—</div></div>
-        </div>
-        <div class="table-card">
-          <div class="table-header"><h3>Recent Enquiries</h3><button class="btn-sm btn-ghost-sm" onclick="goto('enquiries')">View all</button></div>
-          <table><thead><tr><th>Name</th><th>Property</th><th>Date</th><th>Status</th><th></th></tr></thead>
-          <tbody id="dashEnquiries"><tr><td colspan="5" class="empty-state" style="text-align:center;padding:24px;color:var(--muted)">Loading…</td></tr></tbody></table>
-        </div>
-      </div>
-    </div>
-
-    <!-- ══ Properties ══ -->
-    <div class="page" id="page-properties">
-      <div class="topbar"><h1>Properties</h1><div class="topbar-actions"><button class="btn-sm btn-primary-sm" onclick="openPropertyPanel()">+ Add Property</button></div></div>
-      <div class="content">
-        <div class="table-card">
-          <div class="table-header">
-            <h3>All Properties</h3>
-            <div class="table-search"><input type="text" placeholder="Search…" oninput="filterTable(this.value, 'propsTable')"></div>
-          </div>
-          <table id="propsTable">
-            <thead><tr><th>Name</th><th>Location</th><th>Rent</th><th>Units</th><th>Status</th><th>Actions</th></tr></thead>
-            <tbody id="propsBody"><tr><td colspan="6" style="text-align:center;padding:24px;color:var(--muted)">Loading…</td></tr></tbody>
-          </table>
-        </div>
-      </div>
-    </div>
-
-    <!-- ══ Enquiries ══ -->
-    <div class="page" id="page-enquiries">
-      <div class="topbar"><h1>Enquiries</h1><div class="topbar-actions"><button class="btn-sm btn-ghost-sm" onclick="exportCSV()">↓ Export CSV</button></div></div>
-      <div class="content">
-        <div style="display:flex;gap:8px;margin-bottom:16px;flex-wrap:wrap">
-          <button class="btn-sm btn-ghost-sm enq-filter active" onclick="filterEnq('all', this)">All</button>
-          <button class="btn-sm btn-ghost-sm enq-filter" onclick="filterEnq('new', this)">New</button>
-          <button class="btn-sm btn-ghost-sm enq-filter" onclick="filterEnq('contacted', this)">Contacted</button>
-          <div style="margin-left:auto"><input type="text" style="background:var(--bg-3);border:1px solid var(--border);color:var(--cream);padding:7px 12px;border-radius:5px;font-size:12px;outline:none;width:220px" placeholder="Search by name, email…" oninput="searchEnq(this.value)"></div>
-        </div>
-        <div class="table-card">
-          <table id="enqTable">
-            <thead><tr><th>Name</th><th>Property</th><th>Phone</th><th>Email</th><th>Move-In</th><th>Date</th><th>Status</th><th>Actions</th></tr></thead>
-            <tbody id="enqBody"><tr><td colspan="8" style="text-align:center;padding:24px;color:var(--muted)">Loading…</td></tr></tbody>
-          </table>
-        </div>
-      </div>
-    </div>
-
-    <!-- ══ Grid Members ══ -->
-    <div class="page" id="page-grid">
-      <div class="topbar"><h1>The Grid</h1><div class="topbar-actions"><button class="btn-sm btn-primary-sm" onclick="openGridPanel()">+ Add Member Type</button></div></div>
-      <div class="content">
-        <div class="members-admin-grid" id="gridMembersAdmin"></div>
-        <div style="margin-top:32px">
-          <div class="table-card">
-            <div class="table-header"><h3>Grid Join Requests</h3></div>
-            <table><thead><tr><th>Name</th><th>What they do</th><th>Property</th><th>Moving When</th><th>Date</th><th>Actions</th></tr></thead>
-            <tbody id="gridRequests"><tr><td colspan="6" style="text-align:center;padding:24px;color:var(--muted)">Loading…</td></tr></tbody></table>
-          </div>
-        </div>
-      </div>
-    </div>
-
-    <!-- ══ Content ══ -->
-    <div class="page" id="page-content">
-      <div class="topbar"><h1>Content</h1><div class="topbar-actions"><button class="btn-sm btn-primary-sm" onclick="saveContent()">Save Changes</button></div></div>
-      <div class="content">
-        <div class="content-editor">
-          <h3>Homepage Hero</h3>
-          <div class="field-group"><label>Tagline</label><input class="field-input" id="c-tagline" value="Walk in with a suitcase. Everything else is already there."></div>
-          <div class="field-group"><label>Sub-tagline</label><input class="field-input" id="c-sub" value="just show up."></div>
-        </div>
-        <div class="content-editor">
-          <h3>Contact Details</h3>
-          <div class="field-row">
-            <div class="field-group"><label>Phone / WhatsApp</label><input class="field-input" id="c-phone" value="+91 78922 78953"></div>
-            <div class="field-group"><label>Main Email</label><input class="field-input" id="c-email" value="hello@theswitch.living"></div>
-          </div>
-          <div class="field-row">
-            <div class="field-group"><label>Instagram URL</label><input class="field-input" id="c-ig" value="#"></div>
-            <div class="field-group"><label>LinkedIn URL</label><input class="field-input" id="c-li" value="#"></div>
-          </div>
-        </div>
-        <div class="content-editor">
-          <h3>Our Promises</h3>
-          <div class="field-group"><label>Promise i — Title</label><input class="field-input" value="No broker. Ever."></div>
-          <div class="field-group"><label>Promise i — Description</label><textarea class="field-input" rows="2">Not a small one. Not a "just this once." No broker. Full stop. You pay us the rent. That's it.</textarea></div>
-          <div class="field-group"><label>Promise ii — Title</label><input class="field-input" value="One month deposit."></div>
-          <div class="field-group"><label>Promise iii — Title</label><input class="field-input" value="The caretaker picks up."></div>
-        </div>
-        <div class="content-editor">
-          <h3>WhatsApp Float Button</h3>
-          <div class="settings-row">
-            <div class="settings-row-info"><h4>Show WhatsApp Button</h4><p>Float button on all public pages</p></div>
-            <label class="toggle"><input type="checkbox" id="c-wa" checked><span class="toggle-slider"></span></label>
-          </div>
-        </div>
-      </div>
-    </div>
-
-    <!-- ══ Settings ══ -->
-    <div class="page" id="page-settings">
-      <div class="topbar"><h1>Settings</h1></div>
-      <div class="content">
-        <div class="settings-section">
-          <h3>Supabase Connection</h3>
-          <div class="field-group"><label>Supabase Project URL</label><input class="field-input" id="s-url" value="https://ncosbgwexgyzrpwynsfc.supabase.co"></div>
-          <div class="field-group"><label>Supabase Anon Key</label><input class="field-input" id="s-key" value="eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im5jb3NiZ3dleGd5enJwd3luc2ZjIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODE2ODI0OTEsImV4cCI6MjA5NzI1ODQ5MX0.T3mCCzPzIx8hE1GIpiPdj6BQhtKhSozZteFoywys_ps"></div>
-          <div id="s-status" style="font-size:12px;color:var(--green);margin-bottom:12px">✓ Connected — ncosbgwexgyzrpwynsfc.supabase.co</div>
-          <button class="btn-sm btn-primary-sm" onclick="saveSupabase()">Update Connection</button>
-        </div>
-        <div class="settings-section">
-          <h3>Admin Password</h3>
-          <div class="field-row">
-            <div class="field-group"><label>New Password</label><input class="field-input" type="password" id="s-pw1" placeholder="New password"></div>
-            <div class="field-group"><label>Confirm Password</label><input class="field-input" type="password" id="s-pw2" placeholder="Confirm password"></div>
-          </div>
-          <button class="btn-sm btn-primary-sm" onclick="changePassword()">Update Password</button>
-        </div>
-        <div class="settings-section">
-          <h3>Site Preferences</h3>
-          <div class="settings-row">
-            <div class="settings-row-info"><h4>WhatsApp Button</h4><p>Show float button on all pages</p></div>
-            <label class="toggle"><input type="checkbox" checked><span class="toggle-slider"></span></label>
-          </div>
-          <div class="settings-row">
-            <div class="settings-row-info"><h4>Maintenance Mode</h4><p>Show "coming soon" on public site</p></div>
-            <label class="toggle"><input type="checkbox"><span class="toggle-slider"></span></label>
-          </div>
-          <div class="settings-row">
-            <div class="settings-row-info"><h4>Enquiry Notifications</h4><p>Email alert on new enquiry</p></div>
-            <label class="toggle"><input type="checkbox" checked><span class="toggle-slider"></span></label>
-          </div>
-        </div>
-        <div class="danger-zone">
-          <h3>⚠ Danger Zone</h3>
-          <div class="settings-row">
-            <div class="settings-row-info"><h4>Clear all enquiries</h4><p>Permanently delete all enquiry records</p></div>
-            <button class="btn-sm btn-red-sm" onclick="confirm('Are you sure? This cannot be undone.') && showToast('Enquiries cleared', 'success')">Clear</button>
-          </div>
-          <div class="settings-row" style="border-bottom:none">
-            <div class="settings-row-info"><h4>Reset to seed data</h4><p>Restore default property & grid data</p></div>
-            <button class="btn-sm btn-red-sm" onclick="confirm('Reset to defaults?') && showToast('Data reset to defaults', 'success')">Reset</button>
-          </div>
-        </div>
-      </div>
-    </div>
-
-  </div><!-- /.main -->
-</div><!-- /#app -->
-
-<!-- ── Property Panel ── -->
-<div class="panel-overlay" id="propPanel">
-  <div class="panel">
-    <div class="panel-header">
-      <h2 id="propPanelTitle">Add Property</h2>
-      <button class="panel-close" onclick="closePanel('propPanel')">×</button>
-    </div>
-    <div class="panel-body">
-      <input type="hidden" id="propId">
-      <div class="field-group"><label>Property Name</label><input class="field-input" id="pName" placeholder="e.g. Switch Volt"></div>
-      <div class="field-group"><label>Slug (URL)</label><input class="field-input" id="pSlug" placeholder="e.g. switch-volt"></div>
-      <div class="field-row">
-        <div class="field-group"><label>Location</label><input class="field-input" id="pLocation" placeholder="Sarjapur"></div>
-        <div class="field-group"><label>Area / City</label><input class="field-input" id="pArea" value="Bengaluru"></div>
-      </div>
-      <div class="field-row">
-        <div class="field-group"><label>BHK Type</label><input class="field-input" id="pBhk" placeholder="1BHK"></div>
-        <div class="field-group"><label>No. of Units</label><input class="field-input" id="pUnits" type="number" placeholder="50"></div>
-      </div>
-      <div class="field-row">
-        <div class="field-group"><label>Monthly Rent (₹)</label><input class="field-input" id="pRent" type="number" placeholder="25000"></div>
-        <div class="field-group"><label>Status</label>
-          <select class="field-input" id="pStatus">
-            <option value="available">Available Now</option>
-            <option value="filling-fast">Filling Fast</option>
-            <option value="full">Full</option>
-            <option value="coming-soon">Coming Soon</option>
-          </select>
-        </div>
-      </div>
-      <div class="field-group"><label>Description</label><textarea class="field-input" id="pDesc" rows="3" placeholder="Short property description…"></textarea></div>
-
-      <div class="field-section">Amenities</div>
-      <div class="amenity-tags" id="amenityTags"></div>
-      <div class="amenity-add">
-        <input class="field-input" id="amenityInput" placeholder="Add amenity…" onkeydown="if(event.key==='Enter'){event.preventDefault();addAmenity()}">
-        <button class="btn-sm btn-ghost-sm" onclick="addAmenity()">Add</button>
-      </div>
-
-      <div class="field-section">Photos</div>
-      <p style="font-size:11px;color:var(--muted);margin-bottom:10px">Add photos with room tags. Mark one as the hero (shown on cards and detail page header).</p>
-      <div class="img-manager" id="imgManager"></div>
-      <button class="add-img-btn" onclick="addImgCard()">+ Add photo URL</button>
-      <div id="imgThumbStrip" class="img-thumb-strip"></div>
-
-      <div class="field-section">Location</div>
-      <div class="field-group"><label>Google Maps Embed URL <span style="color:var(--muted);font-weight:300">(optional — auto-generated from location if empty)</span></label>
-        <div style="display:flex;gap:8px">
-          <input class="field-input" id="pMap" placeholder="Leave empty to auto-generate from location name">
-          <button class="btn-sm btn-ghost-sm" onclick="autoFillMap()" style="white-space:nowrap;flex-shrink:0">Auto-fill</button>
-        </div>
-      </div>
-      <div id="mapPreview" style="margin-top:8px;display:none;border:1px solid var(--border);border-radius:5px;overflow:hidden">
-        <iframe id="mapPreviewFrame" style="width:100%;height:200px;border:none" loading="lazy"></iframe>
-      </div>
-      <p style="font-size:11px;color:var(--muted);margin-top:6px">Or: Google Maps → Share → Embed a map → copy the src="" value</p>
-
-      <div class="field-section">Sort Order</div>
-      <div class="field-group"><label>Order (lower = first)</label><input class="field-input" id="pOrder" type="number" value="1"></div>
-    </div>
-    <div class="panel-footer">
-      <button class="btn-sm btn-ghost-sm" onclick="closePanel('propPanel')">Cancel</button>
-      <button class="btn-sm btn-red-sm" id="deletePropBtn" style="display:none" onclick="deleteProperty()">Delete</button>
-      <button class="btn-sm btn-primary-sm" onclick="saveProperty()">Save Property</button>
-    </div>
-  </div>
-</div>
-
-<!-- ── Enquiry Panel ── -->
-<div class="panel-overlay" id="enqPanel">
-  <div class="panel">
-    <div class="panel-header">
-      <h2>Enquiry Details</h2>
-      <button class="panel-close" onclick="closePanel('enqPanel')">×</button>
-    </div>
-    <div class="panel-body enquiry-panel-body" id="enqPanelBody"></div>
-    <div class="panel-footer">
-      <button class="btn-sm btn-ghost-sm" onclick="closePanel('enqPanel')">Close</button>
-      <button class="btn-sm btn-primary-sm" id="enqMarkBtn" onclick="markContacted()">Mark as Contacted</button>
-    </div>
-  </div>
-</div>
-
-<!-- ── Grid Member Panel ── -->
-<div class="panel-overlay" id="gridPanel">
-  <div class="panel">
-    <div class="panel-header">
-      <h2 id="gridPanelTitle">Add Member Type</h2>
-      <button class="panel-close" onclick="closePanel('gridPanel')">×</button>
-    </div>
-    <div class="panel-body">
-      <input type="hidden" id="gmId">
-      <div class="field-row">
-        <div class="field-group"><label>Role / Title</label><input class="field-input" id="gmRole" placeholder="Startup Founder"></div>
-        <div class="field-group"><label>Time Label</label><input class="field-input" id="gmTime" placeholder="Work / 6am / Weekend"></div>
-      </div>
-      <div class="field-group"><label>Quote</label><input class="field-input" id="gmQuote" placeholder="Always hiring. Always caffeinated."></div>
-      <div class="field-group"><label>Image URL</label><input class="field-input" id="gmImg" placeholder="https://images.unsplash.com/…"></div>
-    </div>
-    <div class="panel-footer">
-      <button class="btn-sm btn-ghost-sm" onclick="closePanel('gridPanel')">Cancel</button>
-      <button class="btn-sm btn-red-sm" id="deleteGmBtn" style="display:none" onclick="deleteGridMember()">Delete</button>
-      <button class="btn-sm btn-primary-sm" onclick="saveGridMember()">Save</button>
-    </div>
-  </div>
-</div>
-
-<!-- Toast -->
-<div id="toast"><span class="toast-icon" id="toastIcon"></span><span id="toastMsg"></span></div>
-
-<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
-<script src="/assets/js/supabase.js"></script>
-<script>
-// ── Auth ──────────────────────────────────────────────────
-const ADMIN_EMAIL = localStorage.getItem('admin_email') || 'admin@theswitch.living';
-const ADMIN_PASS  = localStorage.getItem('admin_password') || 'switch2026';
-
-function doLogin() {
-  const email = document.getElementById('loginEmail').value;
-  const pass  = document.getElementById('loginPassword').value;
-  const storedEmail = localStorage.getItem('admin_email') || 'admin@theswitch.living';
-  const storedPass  = localStorage.getItem('admin_password') || 'switch2026';
-  if (email === storedEmail && pass === storedPass) {
-    localStorage.setItem('switch_admin_logged', '1');
-    document.getElementById('loginScreen').style.display = 'none';
-    document.getElementById('app').classList.add('visible');
-    initDashboard();
-  } else {
-    document.getElementById('loginError').style.display = 'block';
-  }
-}
-function doLogout() {
-  localStorage.removeItem('switch_admin_logged');
-  location.reload();
-}
-// Auto-login if session exists
-if (localStorage.getItem('switch_admin_logged') === '1') {
-  document.getElementById('loginScreen').style.display = 'none';
-  document.getElementById('app').classList.add('visible');
-  setTimeout(initDashboard, 100);
-}
-document.getElementById('loginPassword').addEventListener('keydown', e => { if (e.key === 'Enter') doLogin(); });
-
-// ── Navigation ────────────────────────────────────────────
-function goto(page) {
-  document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
-  document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
-  document.getElementById('page-' + page).classList.add('active');
-  document.querySelector(`.nav-item[onclick="goto('${page}')"]`).classList.add('active');
-  if (page === 'properties') loadPropertiesAdmin();
-  if (page === 'enquiries')  loadEnquiriesAdmin();
-  if (page === 'grid')       loadGridAdmin();
+:root {
+  --ink:      #0E0D0A;
+  --ink-2:    #2A2820;
+  --ink-3:    #3D3B35;
+  --rule:     rgba(14,13,10,0.10);
+  --rule-2:   rgba(14,13,10,0.18);
+  --paper:    #F7F4EF;
+  --paper-2:  #EDE9E1;
+  --paper-3:  #E4DFD4;
+  --orange:   #B8410F;
+  --orange-2: #D04E14;
+  --gold:     #8B6914;
+  --muted:    #7A7568;
+  --font-serif: 'EB Garamond', Georgia, serif;
+  --font-display: 'Cormorant Garamond', Georgia, serif;
+  --font-sans:  'Inter', system-ui, sans-serif;
+  --max:      1200px;
+  --nav-h:    64px;
 }
 
-// ── Toast ─────────────────────────────────────────────────
-function showToast(msg, type = 'success') {
-  const t = document.getElementById('toast');
-  document.getElementById('toastMsg').textContent = msg;
-  document.getElementById('toastIcon').textContent = type === 'success' ? '✓' : '⚠';
-  t.className = 'show ' + type;
-  setTimeout(() => { t.className = ''; }, 3000);
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+html{scroll-behavior:smooth;-webkit-font-smoothing:antialiased}
+body{background:var(--paper);color:var(--ink);font-family:var(--font-sans);font-weight:300;font-size:16px;line-height:1.6;overflow-x:hidden}
+img{display:block;max-width:100%}
+a{color:inherit;text-decoration:none}
+button{cursor:pointer;border:none;background:none;font-family:inherit}
+input,textarea,select{font-family:inherit;font-size:inherit;background:var(--paper);border:1px solid var(--rule-2);color:var(--ink);padding:12px 16px;outline:none;transition:border-color .2s;width:100%}
+input:focus,textarea:focus,select:focus{border-color:var(--orange)}
+input::placeholder,textarea::placeholder{color:var(--muted)}
+select option{background:var(--paper-2)}
+
+/* ── Type ── */
+h1,h2,h3,h4{font-family:var(--font-serif);font-weight:400;line-height:1.12}
+.display{font-family:var(--font-display);font-weight:300;line-height:1.05}
+em.serif{font-style:italic;font-family:var(--font-serif)}
+.eyebrow{font-family:var(--font-sans);font-size:10px;font-weight:500;letter-spacing:.16em;text-transform:uppercase;color:var(--muted)}
+.rule-above{padding-top:20px;border-top:1px solid var(--rule)}
+.rule-below{padding-bottom:20px;border-bottom:1px solid var(--rule)}
+
+/* ── Layout ── */
+.container{max-width:var(--max);margin:0 auto;padding:0 32px}
+.section{padding:96px 0}
+.section-sm{padding:64px 0}
+
+/* ── Nav ── */
+.nav{position:fixed;top:0;left:0;right:0;z-index:100;height:var(--nav-h);display:flex;align-items:center;background:rgba(247,244,239,.96);backdrop-filter:blur(8px);border-bottom:1px solid var(--rule);transition:background .3s}
+.nav-inner{width:100%;max-width:var(--max);margin:0 auto;padding:0 32px;display:flex;align-items:center;justify-content:space-between}
+.nav-logo{display:flex;align-items:center;gap:10px;font-family:var(--font-serif);font-size:20px;color:var(--ink)}
+.nav-toggle{width:34px;height:19px;background:var(--orange);border-radius:10px;position:relative;flex-shrink:0;transition:background .3s}
+.nav-toggle::after{content:'';position:absolute;left:3px;top:3px;width:13px;height:13px;background:#fff;border-radius:50%;transition:transform .3s}
+.nav-logo:hover .nav-toggle{background:var(--orange-2)}
+.nav-logo:hover .nav-toggle::after{transform:translateX(15px)}
+.nav-dot{color:var(--orange)}
+.nav-links{display:flex;align-items:center;gap:36px}
+.nav-links a{font-size:12px;font-weight:400;letter-spacing:.04em;color:var(--ink-3);transition:color .2s}
+.nav-links a:hover{color:var(--ink)}
+.nav-cta{font-size:12px;font-weight:500;background:var(--ink);color:var(--paper);padding:9px 20px;border-radius:2px;letter-spacing:.04em;transition:background .2s}
+.nav-cta:hover{background:var(--ink-2)}
+.nav-hamburger{display:none;flex-direction:column;gap:5px}
+.nav-hamburger span{width:22px;height:1px;background:var(--ink);display:block;transition:.3s}
+.nav-mobile{display:none;position:fixed;top:var(--nav-h);left:0;right:0;bottom:0;background:var(--paper);z-index:99;flex-direction:column;padding:40px 32px;gap:28px;border-top:1px solid var(--rule)}
+.nav-mobile.open{display:flex}
+.nav-mobile a{font-size:28px;font-family:var(--font-serif);color:var(--ink)}
+
+/* ── Buttons ── */
+.btn-primary{display:inline-flex;align-items:center;gap:8px;background:var(--ink);color:var(--paper);font-size:12px;font-weight:500;letter-spacing:.06em;padding:14px 28px;border-radius:2px;transition:background .2s,transform .15s}
+.btn-primary:hover{background:var(--ink-2);transform:translateY(-1px)}
+.btn-ghost{display:inline-flex;align-items:center;gap:8px;border:1px solid var(--rule-2);color:var(--ink);font-size:12px;font-weight:400;letter-spacing:.04em;padding:13px 27px;border-radius:2px;transition:border-color .2s}
+.btn-ghost:hover{border-color:var(--ink)}
+.btn-text{color:var(--orange);font-size:13px;font-weight:400;letter-spacing:.02em;display:inline-flex;align-items:center;gap:6px;transition:gap .2s}
+.btn-text:hover{gap:10px}
+.btn-ink-ghost{display:inline-flex;align-items:center;gap:8px;border:1px solid var(--ink);color:var(--ink);font-size:12px;font-weight:400;padding:13px 27px;border-radius:2px;transition:background .2s,color .2s}
+.btn-ink-ghost:hover{background:var(--ink);color:var(--paper)}
+
+/* ── Status badges ── */
+.badge{display:inline-flex;align-items:center;gap:5px;font-size:10px;font-weight:500;letter-spacing:.08em;text-transform:uppercase;padding:4px 10px}
+.badge::before{content:'';width:5px;height:5px;border-radius:50%}
+.badge-available{background:var(--paper-2);color:var(--ink-3)}
+.badge-available::before{background:#4a7c59}
+.badge-filling{background:var(--paper-2);color:var(--gold)}
+.badge-filling::before{background:var(--gold)}
+.badge-full{background:var(--paper-2);color:var(--orange)}
+.badge-full::before{background:var(--orange)}
+.badge-soon{background:var(--paper-2);color:var(--muted)}
+.badge-soon::before{background:var(--muted)}
+
+/* ── Property cards ── */
+.property-card{background:var(--paper-2);border-bottom:1px solid var(--rule);transition:background .2s;display:flex;flex-direction:column}
+.property-card:hover{background:var(--paper-3)}
+.property-card-img{position:relative;overflow:hidden;aspect-ratio:4/3}
+.property-card-img img{width:100%;height:100%;object-fit:cover;transition:transform .6s cubic-bezier(.25,.46,.45,.94)}
+.property-card:hover .property-card-img img{transform:scale(1.04)}
+.property-card-img .badge{position:absolute;top:12px;left:12px;background:rgba(247,244,239,.9)}
+.property-card-body{padding:24px;flex:1;display:flex;flex-direction:column;gap:10px}
+.property-card-loc{font-size:11px;color:var(--muted);display:flex;align-items:center;gap:4px}
+.property-card-name{font-family:var(--font-serif);font-size:26px}
+.property-card-rent{font-size:18px;color:var(--ink)}
+.property-card-rent span{font-size:12px;color:var(--muted)}
+.property-card-tags{display:flex;flex-wrap:wrap;gap:5px;margin-top:4px}
+.property-card-tag{font-size:10px;letter-spacing:.04em;color:var(--muted);border:1px solid var(--rule);padding:3px 8px}
+.property-card-footer{padding:16px 24px;border-top:1px solid var(--rule)}
+
+/* ── Forms ── */
+.form-group{display:flex;flex-direction:column;gap:7px}
+.form-group label{font-size:10px;font-weight:500;letter-spacing:.1em;text-transform:uppercase;color:var(--muted)}
+.form-row{display:grid;grid-template-columns:1fr 1fr;gap:14px}
+.form-submit{width:100%;background:var(--ink);color:var(--paper);font-size:12px;font-weight:500;letter-spacing:.08em;text-transform:uppercase;padding:15px;transition:background .2s}
+.form-submit:hover{background:var(--ink-2)}
+
+/* ── Ticker ── */
+.ticker{overflow:hidden;border-top:1px solid var(--rule);border-bottom:1px solid var(--rule);padding:12px 0;background:var(--ink);color:var(--paper)}
+.ticker-inner{display:flex;gap:56px;animation:ticker 40s linear infinite;white-space:nowrap}
+.ticker-inner:hover{animation-play-state:paused}
+@keyframes ticker{from{transform:translateX(0)}to{transform:translateX(-50%)}}
+.ticker-item{font-size:11px;font-weight:400;letter-spacing:.12em;text-transform:uppercase;opacity:.7}
+.ticker-item .sep{margin:0 10px;opacity:.3}
+
+/* ── Footer ── */
+.footer{background:var(--ink);color:var(--paper);padding:72px 0 40px;border-top:1px solid var(--rule)}
+.footer-grid{display:grid;grid-template-columns:2fr 1fr 1fr 1fr;gap:48px;padding-bottom:48px;border-bottom:1px solid rgba(247,244,239,.1);margin-bottom:32px}
+.footer-brand-name{font-family:var(--font-serif);font-size:32px;margin-bottom:14px}
+.footer-brand-name .dot{color:var(--orange)}
+.footer-tagline{font-size:13px;color:rgba(247,244,239,.5);margin-bottom:20px;line-height:1.7}
+.footer-col h4{font-size:10px;font-weight:500;letter-spacing:.12em;text-transform:uppercase;color:rgba(247,244,239,.4);margin-bottom:16px}
+.footer-col ul{list-style:none;display:flex;flex-direction:column;gap:10px}
+.footer-col ul a{font-size:13px;color:rgba(247,244,239,.7);transition:color .2s}
+.footer-col ul a:hover{color:var(--paper)}
+.footer-bottom{display:flex;justify-content:space-between;align-items:center;font-size:11px;color:rgba(247,244,239,.35);letter-spacing:.06em}
+
+/* ── WhatsApp ── */
+.wa-float{position:fixed;bottom:28px;right:28px;z-index:99;width:50px;height:50px;background:#25D366;border-radius:50%;display:flex;align-items:center;justify-content:center;box-shadow:0 4px 20px rgba(0,0,0,.15);transition:transform .2s}
+.wa-float:hover{transform:scale(1.08)}
+.wa-float svg{width:24px;height:24px;fill:white}
+
+/* ── Scroll animation ── */
+.fade-up{opacity:0;transform:translateY(32px);transition:opacity .8s cubic-bezier(.25,.46,.45,.94),transform .8s cubic-bezier(.25,.46,.45,.94)}
+.fade-up.visible{opacity:1;transform:translateY(0)}
+.fade-up.delay-1{transition-delay:.1s}
+.fade-up.delay-2{transition-delay:.2s}
+.fade-up.delay-3{transition-delay:.3s}
+
+/* ── Hairline rule ── */
+hr.hairline{border:none;border-top:1px solid var(--rule);margin:0}
+
+/* ── Counter ── */
+.counter-num{font-family:var(--font-serif)}
+
+/* ── Responsive ── */
+@media(max-width:768px){
+  :root{--nav-h:56px}
+  .container{padding:0 20px}
+  .section{padding:64px 0}
+  .nav-links,.nav-cta{display:none}
+  .nav-hamburger{display:flex}
+  .form-row{grid-template-columns:1fr}
+  .footer-grid{grid-template-columns:1fr 1fr;gap:32px}
 }
-
-// ── Panels ────────────────────────────────────────────────
-function openPanel(id) { document.getElementById(id).classList.add('open'); }
-function closePanel(id) { document.getElementById(id).classList.remove('open'); }
-document.querySelectorAll('.panel-overlay').forEach(p => {
-  p.addEventListener('click', e => { if (e.target === p) closePanel(p.id); });
-});
-
-// ── Dashboard ─────────────────────────────────────────────
-async function initDashboard() {
-  const props = await getProperties();
-  const avail = props.filter(p => p.status === 'available').length;
-  document.getElementById('ds-props').textContent = props.length;
-  document.getElementById('ds-avail').textContent = avail;
-
-  // Live counts from Supabase
-  const [enqRes, gridRes] = await Promise.all([
-    db.from('enquiries').select('id, name, property_slug, property_interest, created_at, contacted', { count: 'exact' }).order('created_at', { ascending: false }).limit(5),
-    db.from('grid_members').select('id', { count: 'exact' })
-  ]);
-
-  const enqs  = enqRes.data  || [];
-  const total = enqRes.count || 0;
-  const gmCount = gridRes.count || 0;
-
-  document.getElementById('ds-enq').textContent  = total;
-  document.getElementById('ds-grid').innerHTML   = `<em>${gmCount}</em>`;
-
-  const tbody = document.getElementById('dashEnquiries');
-  if (!enqs.length) {
-    tbody.innerHTML = '<tr><td colspan="5" style="text-align:center;padding:24px;color:var(--muted)">No enquiries yet.</td></tr>';
-  } else {
-    tbody.innerHTML = enqs.map(e => `
-      <tr>
-        <td style="color:var(--cream)">${e.name||'—'}</td>
-        <td>${e.property_slug||e.property_interest||'—'}</td>
-        <td>${e.created_at ? new Date(e.created_at).toLocaleDateString('en-IN') : '—'}</td>
-        <td><span class="badge-sm ${e.contacted?'contacted':'new'}">${e.contacted?'Contacted':'New'}</span></td>
-        <td><button class="btn-sm btn-ghost-sm" onclick="goto('enquiries')">View</button></td>
-      </tr>
-    `).join('');
-  }
+@media(max-width:480px){
+  .footer-grid{grid-template-columns:1fr}
+  .footer-bottom{flex-direction:column;gap:10px;text-align:center}
 }
-
-// ── Properties Admin ──────────────────────────────────────
-let propsData = [];
-async function loadPropertiesAdmin() {
-  propsData = await getProperties();
-  renderPropsTable(propsData);
-}
-
-function renderPropsTable(props) {
-  const statusMap = { 'available':'available', 'filling-fast':'filling', 'full':'full', 'coming-soon':'soon' };
-  const labelMap  = { 'available':'Available', 'filling-fast':'Filling Fast', 'full':'Full', 'coming-soon':'Coming Soon' };
-  document.getElementById('propsBody').innerHTML = props.map(p => `
-    <tr>
-      <td style="color:var(--cream);font-weight:400">${p.name}</td>
-      <td>${p.location}, ${p.area}</td>
-      <td>₹${Number(p.rent).toLocaleString('en-IN')}</td>
-      <td>${p.units}</td>
-      <td><span class="badge-sm ${statusMap[p.status]||'soon'}">${labelMap[p.status]||p.status}</span></td>
-      <td>
-        <div style="display:flex;gap:6px">
-          <button class="btn-sm btn-ghost-sm" onclick="editProperty(${p.id})">Edit</button>
-          <select class="field-input" style="padding:4px 8px;font-size:11px;width:auto" onchange="quickStatus(${p.id}, this.value)">
-            <option value="" disabled selected>Change status</option>
-            <option value="available">Available</option>
-            <option value="filling-fast">Filling Fast</option>
-            <option value="full">Full</option>
-            <option value="coming-soon">Coming Soon</option>
-          </select>
-        </div>
-      </td>
-    </tr>
-  `).join('');
-}
-
-function filterTable(query, tableId) {
-  const rows = document.querySelectorAll(`#${tableId} tbody tr`);
-  const q = query.toLowerCase();
-  rows.forEach(r => r.style.display = r.textContent.toLowerCase().includes(q) ? '' : 'none');
-}
-
-function openPropertyPanel(prop = null) {
-  document.getElementById('propId').value = prop ? prop.id : '';
-  document.getElementById('propPanelTitle').textContent = prop ? 'Edit Property' : 'Add Property';
-  document.getElementById('deletePropBtn').style.display = prop ? 'inline-flex' : 'none';
-  document.getElementById('pName').value     = prop?.name || '';
-  document.getElementById('pSlug').value     = prop?.slug || '';
-  document.getElementById('pLocation').value = prop?.location || '';
-  document.getElementById('pArea').value     = prop?.area || 'Bengaluru';
-  document.getElementById('pBhk').value      = prop?.bhk || '';
-  document.getElementById('pUnits').value    = prop?.units || '';
-  document.getElementById('pRent').value     = prop?.rent || '';
-  document.getElementById('pStatus').value   = prop?.status || 'available';
-  document.getElementById('pDesc').value     = prop?.description || '';
-  document.getElementById('pMap').value      = prop?.map_embed || '';
-  document.getElementById('pOrder').value    = prop?.sort_order || 1;
-
-  // Amenities
-  currentAmenities = [...(prop?.amenities || [])];
-  renderAmenityTags();
-
-  // Images
-  document.getElementById('imgManager').innerHTML = '';
-  document.getElementById('imgThumbStrip').innerHTML = '';
-  const imgs = prop?.images || [];
-  imgs.forEach(img => addImgCard(img));
-  renderImgThumbs(imgs);
-
-  openPanel('propPanel');
-}
-
-function editProperty(id) {
-  const p = propsData.find(x => x.id === id);
-  if (p) openPropertyPanel(p);
-}
-
-// Auto-slug from name
-document.getElementById('pName').addEventListener('input', () => {
-  if (!document.getElementById('propId').value) {
-    document.getElementById('pSlug').value = document.getElementById('pName').value.toLowerCase().replace(/\s+/g, '-').replace(/[^a-z0-9-]/g, '');
-  }
-});
-
-let currentAmenities = [];
-function renderAmenityTags() {
-  document.getElementById('amenityTags').innerHTML = currentAmenities.map((a, i) => `
-    <span class="amenity-tag">${a}<button onclick="removeAmenity(${i})">×</button></span>
-  `).join('');
-}
-function addAmenity() {
-  const val = document.getElementById('amenityInput').value.trim();
-  if (val && !currentAmenities.includes(val)) { currentAmenities.push(val); renderAmenityTags(); }
-  document.getElementById('amenityInput').value = '';
-}
-function removeAmenity(i) { currentAmenities.splice(i, 1); renderAmenityTags(); }
-
-const IMG_TAGS_LIST = [
-  {v:'living-room',l:'Living Room'},{v:'bedroom',l:'Bedroom'},{v:'kitchen',l:'Kitchen'},
-  {v:'bathroom',l:'Bathroom'},{v:'balcony',l:'Balcony'},{v:'common-area',l:'Common Area'},
-  {v:'building',l:'Building'},{v:'other',l:'Other'}
-];
-
-function addImgCard(imgObj = null) {
-  const id = 'img_' + Date.now() + '_' + Math.random().toString(36).slice(2,6);
-  const url = imgObj?.url || '';
-  const tag = imgObj?.tag || 'living-room';
-  const isHero = imgObj?.is_hero || imgObj?.isHero || false;
-  const card = document.createElement('div');
-  card.className = 'img-card'; card.id = id;
-  card.innerHTML = `
-    <div class="img-card-row">
-      <div class="${url ? '' : 'img-preview-empty'}" id="prev_${id}" style="${url ? '' : 'display:flex;align-items:center;justify-content:center;font-size:14px;color:var(--muted)'}">
-        ${url ? `<img class="img-preview" src="${url}" onerror="this.parentElement.classList.add('img-preview-empty');this.remove()">` : '🖼'}
-      </div>
-      <div class="img-card-meta">
-        <input class="field-input img-url-input" placeholder="https://images.unsplash.com/…" value="${url}" oninput="updatePreview('${id}', this.value)" style="font-size:12px;padding:7px 10px">
-        <div class="img-card-controls">
-          <select class="img-tag-sel img-tag-input" onchange="refreshThumbs()">
-            ${IMG_TAGS_LIST.map(t=>`<option value="${t.v}" ${tag===t.v?'selected':''}>${t.l}</option>`).join('')}
-          </select>
-          <button class="img-hero-btn ${isHero?'active':''}" onclick="setHero('${id}')" title="Set as hero">
-            ${isHero ? '★ Hero' : '☆ Set hero'}
-          </button>
-        </div>
-      </div>
-      <button class="img-del" onclick="removeImgCard('${id}');refreshThumbs()">✕</button>
-    </div>`;
-  document.getElementById('imgManager').appendChild(card);
-}
-
-function updatePreview(id, url) {
-  const pEl = document.getElementById('prev_' + id);
-  if (!pEl) return;
-  pEl.className = '';
-  pEl.innerHTML = url ? `<img class="img-preview" src="${url}" onerror="this.parentElement.innerHTML='🖼';this.parentElement.style.cssText='display:flex;align-items:center;justify-content:center;font-size:14px;color:var(--muted);width:64px;height:46px;border-radius:3px;background:var(--bg-3);border:1px solid var(--border);flex-shrink:0'">` : '🖼';
-  refreshThumbs();
-}
-
-function setHero(id) {
-  document.querySelectorAll('.img-hero-btn').forEach(b => { b.classList.remove('active'); b.textContent = '☆ Set hero'; });
-  const btn = document.querySelector(`#${id} .img-hero-btn`);
-  if (btn) { btn.classList.add('active'); btn.textContent = '★ Hero'; }
-  refreshThumbs();
-}
-
-function removeImgCard(id) { document.getElementById(id)?.remove(); }
-
-function refreshThumbs() {
-  const imgs = getImagesFromForm();
-  renderImgThumbs(imgs);
-}
-
-function renderImgThumbs(imgs) {
-  const strip = document.getElementById('imgThumbStrip');
-  if (!strip) return;
-  strip.innerHTML = imgs.filter(i=>i.url).map(i => `
-    <div class="img-thumb">
-      <img src="${i.url}" onerror="this.style.display='none'">
-      <span class="img-thumb-tag">${IMG_TAGS_LIST.find(t=>t.v===i.tag)?.l||i.tag||'—'}</span>
-      ${i.is_hero ? '<span class="img-thumb-hero-badge">Hero</span>' : ''}
-    </div>`).join('');
-}
-
-function getImagesFromForm() {
-  const cards = document.querySelectorAll('#imgManager .img-card');
-  const heroCard = [...document.querySelectorAll('.img-hero-btn.active')][0]?.closest('.img-card');
-  return [...cards].map(card => ({
-    url:     card.querySelector('.img-url-input')?.value.trim() || '',
-    tag:     card.querySelector('.img-tag-input')?.value || 'living-room',
-    is_hero: card === heroCard
-  })).filter(i => i.url);
-}
-
-function autoFillMap() {
-  const loc  = document.getElementById('pLocation').value.trim();
-  const area = document.getElementById('pArea').value.trim();
-  if (!loc) { showToast('Enter a location first', 'error'); return; }
-  const q = encodeURIComponent(loc + (area ? ', ' + area : '') + ', India');
-  const url = 'https://maps.google.com/maps?q=' + q + '&output=embed&z=15';
-  document.getElementById('pMap').value = url;
-  const preview = document.getElementById('mapPreview');
-  const frame   = document.getElementById('mapPreviewFrame');
-  if (preview && frame) { frame.src = url; preview.style.display = 'block'; }
-  showToast('Map auto-filled from location');
-}
-
-document.getElementById('pMap').addEventListener('input', function() {
-  const preview = document.getElementById('mapPreview');
-  const frame   = document.getElementById('mapPreviewFrame');
-  if (!preview || !frame) return;
-  if (this.value.trim()) { frame.src = this.value.trim(); preview.style.display = 'block'; }
-  else { preview.style.display = 'none'; }
-});
-
-async function saveProperty() {
-  const id = document.getElementById('propId').value;
-  const images = getImagesFromForm();
-  const prop = {
-    name:        document.getElementById('pName').value.trim(),
-    slug:        document.getElementById('pSlug').value.trim(),
-    location:    document.getElementById('pLocation').value.trim(),
-    area:        document.getElementById('pArea').value.trim(),
-    bhk:         document.getElementById('pBhk').value.trim(),
-    units:       parseInt(document.getElementById('pUnits').value) || 0,
-    rent:        parseInt(document.getElementById('pRent').value) || 0,
-    status:      document.getElementById('pStatus').value,
-    description: document.getElementById('pDesc').value.trim(),
-    map_embed:   document.getElementById('pMap').value.trim(),
-    sort_order:  parseInt(document.getElementById('pOrder').value) || 1,
-    amenities:   currentAmenities,
-    images:      images
-  };
-  // Supabase JS client sends arrays/objects as jsonb automatically
-  // No manual JSON.stringify needed
-
-  const btn = document.querySelector('#propPanel .panel-footer .btn-primary-sm');
-  btn.textContent = 'Saving…'; btn.disabled = true;
-
-  let error;
-  if (id) {
-    ({ error } = await db.from('properties').update(prop).eq('id', parseInt(id)));
-  } else {
-    ({ error } = await db.from('properties').insert(prop));
-  }
-
-  btn.textContent = 'Save Property'; btn.disabled = false;
-
-  if (error) { console.error('Save error full:', JSON.stringify(error)); showToast('Save failed: ' + (error.message || error.details || JSON.stringify(error)), 'error'); return; }
-
-  propsData = await getProperties();
-  renderPropsTable(propsData);
-  closePanel('propPanel');
-  showToast(id ? 'Property updated' : 'Property added');
-}
-
-async function deleteProperty() {
-  const id = parseInt(document.getElementById('propId').value);
-  if (!confirm('Delete this property? This cannot be undone.')) return;
-  const { error } = await db.from('properties').delete().eq('id', id);
-  if (error) { showToast('Delete failed', 'error'); return; }
-  propsData = await getProperties();
-  renderPropsTable(propsData);
-  closePanel('propPanel');
-  showToast('Property deleted', 'error');
-}
-
-async function quickStatus(id, status) {
-  await db.from('properties').update({ status }).eq('id', id);
-  const p = propsData.find(x => x.id === id);
-  if (p) p.status = status;
-  renderPropsTable(propsData);
-  showToast('Status updated');
-}
-
-// ── Enquiries ─────────────────────────────────────────────
-let enqData = [];
-let enqFilter = 'all';
-let currentEnqId = null;
-
-async function loadEnquiriesAdmin() {
-  enqData = await fetchEnquiries();
-  renderEnqTable();
-}
-
-function renderEnqTable() {
-  const filtered = enqData.filter(e => {
-    if (enqFilter === 'new') return !e.contacted;
-    if (enqFilter === 'contacted') return e.contacted;
-    return true;
-  });
-  const tbody = document.getElementById('enqBody');
-  if (!filtered.length) {
-    tbody.innerHTML = '<tr><td colspan="8" class="empty-state"><div class="icon">📬</div><p>No enquiries yet.</p></td></tr>';
-    return;
-  }
-  tbody.innerHTML = filtered.slice().reverse().map(e => `
-    <tr>
-      <td style="color:var(--cream)">${e.name||'—'}</td>
-      <td>${e.property_slug||e.property_interest||'—'}</td>
-      <td>${e.phone||'—'}</td>
-      <td>${e.email||'—'}</td>
-      <td>${e.move_in_date||'—'}</td>
-      <td>${e.created_at ? new Date(e.created_at).toLocaleDateString('en-IN') : '—'}</td>
-      <td><span class="badge-sm ${e.contacted?'contacted':'new'}">${e.contacted?'Contacted':'New'}</span></td>
-      <td>
-        <div style="display:flex;gap:6px">
-          <button class="btn-sm btn-ghost-sm" onclick="openEnqPanel('${e.id}')">View</button>
-          ${!e.contacted ? `<button class="btn-sm btn-primary-sm" onclick="quickMarkContacted('${e.id}')">✓</button>` : ''}
-        </div>
-      </td>
-    </tr>
-  `).join('');
-}
-
-function filterEnq(filter, el) {
-  enqFilter = filter;
-  document.querySelectorAll('.enq-filter').forEach(b => b.classList.remove('active'));
-  el.classList.add('active');
-  renderEnqTable();
-}
-
-function searchEnq(q) {
-  const rows = document.querySelectorAll('#enqTable tbody tr');
-  rows.forEach(r => r.style.display = r.textContent.toLowerCase().includes(q.toLowerCase()) ? '' : 'none');
-}
-
-function openEnqPanel(id) {
-  currentEnqId = id;
-  const e = enqData.find(x => x.id === id);
-  if (!e) return;
-  document.getElementById('enqPanelBody').innerHTML = `
-    <dl>
-      <dt>Name</dt><dd>${e.name||'—'}</dd>
-      <dt>Phone</dt><dd>${e.phone ? `<a href="tel:${e.phone}" style="color:var(--orange)">${e.phone}</a>` : '—'}</dd>
-      <dt>Email</dt><dd>${e.email ? `<a href="mailto:${e.email}" style="color:var(--orange)">${e.email}</a>` : '—'}</dd>
-      <dt>Property</dt><dd>${e.property_slug||e.property_interest||'—'}</dd>
-      <dt>Move-In</dt><dd>${e.move_in_date||'—'}</dd>
-      <dt>Budget</dt><dd>${e.budget||'—'}</dd>
-      <dt>Intent</dt><dd>${e.intent||'tenant'}</dd>
-      <dt>Date</dt><dd>${e.created_at ? new Date(e.created_at).toLocaleString('en-IN') : '—'}</dd>
-      <dt>Status</dt><dd><span class="badge-sm ${e.contacted?'contacted':'new'}">${e.contacted?'Contacted':'New'}</span></dd>
-      <dt style="grid-column:span 2">Message</dt>
-      <dd style="grid-column:span 2;color:var(--cream-2);font-style:italic">${e.message||'—'}</dd>
-    </dl>
-  `;
-  document.getElementById('enqMarkBtn').textContent = e.contacted ? 'Mark as New' : 'Mark as Contacted';
-  openPanel('enqPanel');
-}
-
-async function markContacted() {
-  const e = enqData.find(x => x.id === currentEnqId);
-  if (!e) return;
-  const newVal = !e.contacted;
-  await db.from('enquiries').update({ contacted: newVal }).eq('id', currentEnqId);
-  e.contacted = newVal;
-  renderEnqTable();
-  closePanel('enqPanel');
-  showToast('Status updated');
-}
-
-async function quickMarkContacted(id) {
-  await db.from('enquiries').update({ contacted: true }).eq('id', id);
-  const e = enqData.find(x => x.id === id);
-  if (e) e.contacted = true;
-  renderEnqTable();
-  showToast('Marked as contacted');
-}
-
-function exportCSV() {
-  if (!enqData.length) { showToast('No enquiries to export', 'error'); return; }
-  const headers = ['Name','Phone','Email','Property','Move-In','Budget','Message','Date','Status'];
-  const rows = enqData.map(e => [e.name,e.phone,e.email,e.property_slug||e.property_interest,e.move_in_date,e.budget,e.message,e.created_at,e.contacted?'Contacted':'New'].map(v => `"${(v||'').replace(/"/g,'""')}"`).join(','));
-  const csv = [headers.join(','), ...rows].join('\n');
-  const a = document.createElement('a');
-  a.href = 'data:text/csv;charset=utf-8,' + encodeURIComponent(csv);
-  a.download = `switch-enquiries-${new Date().toISOString().slice(0,10)}.csv`;
-  a.click();
-  showToast('CSV downloaded');
-}
-
-// ── Grid Members ──────────────────────────────────────────
-let gridData = [];
-let editingGmId = null;
-
-async function loadGridAdmin() {
-  gridData = await getGridMembers();
-  renderGridAdmin();
-
-  // Grid requests from Supabase
-  const reqs = await fetchGridRequests();
-  const tbody = document.getElementById('gridRequests');
-  if (!reqs.length) {
-    tbody.innerHTML = '<tr><td colspan="6" style="text-align:center;padding:24px;color:var(--muted)">No requests yet.</td></tr>';
-  } else {
-    tbody.innerHTML = reqs.map(r => `
-      <tr>
-        <td style="color:var(--cream)">${r.first_name||''} ${r.last_name||''}</td>
-        <td>${r.what_they_do||'—'}</td>
-        <td>${r.preferred_property||'No preference'}</td>
-        <td>${r.moving_when||'—'}</td>
-        <td>${r.created_at ? new Date(r.created_at).toLocaleDateString('en-IN') : '—'}</td>
-        <td><button class="btn-sm btn-ghost-sm" onclick="alert('Email: ${r.email}\\nMessage: ${(r.message||'—').replace(/'/g,'')}')">View</button></td>
-      </tr>
-    `).join('');
-  }
-}
-
-function renderGridAdmin() {
-  document.getElementById('ds-grid').innerHTML = `<em>${gridData.length}</em>`;
-  document.getElementById('gridMembersAdmin').innerHTML = gridData.map(m => `
-    <div class="member-admin-card">
-      <div class="member-admin-img"><img src="${m.img}" alt="${m.role}" loading="lazy"></div>
-      <div class="member-admin-body">
-        <div class="member-admin-role">${m.role}</div>
-        <div class="member-admin-quote">"${m.quote}"</div>
-        <div class="member-admin-actions">
-          <button class="btn-sm btn-ghost-sm" onclick="editGridMember(${m.id})" style="font-size:11px">Edit</button>
-        </div>
-      </div>
-    </div>
-  `).join('');
-}
-
-function openGridPanel() {
-  editingGmId = null;
-  document.getElementById('gridPanelTitle').textContent = 'Add Member Type';
-  document.getElementById('deleteGmBtn').style.display = 'none';
-  document.getElementById('gmId').value = '';
-  ['gmRole','gmTime','gmQuote','gmImg'].forEach(id => document.getElementById(id).value = '');
-  openPanel('gridPanel');
-}
-
-function editGridMember(id) {
-  const m = gridData.find(x => x.id === id);
-  if (!m) return;
-  editingGmId = id;
-  document.getElementById('gridPanelTitle').textContent = 'Edit Member Type';
-  document.getElementById('deleteGmBtn').style.display = 'inline-flex';
-  document.getElementById('gmId').value = id;
-  document.getElementById('gmRole').value  = m.role;
-  document.getElementById('gmTime').value  = m.time;
-  document.getElementById('gmQuote').value = m.quote;
-  document.getElementById('gmImg').value   = m.img;
-  openPanel('gridPanel');
-}
-
-async function saveGridMember() {
-  const id = document.getElementById('gmId').value;
-  const member = {
-    role:  document.getElementById('gmRole').value.trim(),
-    time:  document.getElementById('gmTime').value.trim(),
-    quote: document.getElementById('gmQuote').value.trim(),
-    img:   document.getElementById('gmImg').value.trim(),
-  };
-
-  let error;
-  if (id) {
-    ({ error } = await db.from('grid_members').update(member).eq('id', parseInt(id)));
-  } else {
-    ({ error } = await db.from('grid_members').insert(member));
-  }
-
-  if (error) { console.error('Save error full:', JSON.stringify(error)); showToast('Save failed: ' + (error.message || error.details || JSON.stringify(error)), 'error'); return; }
-  gridData = await getGridMembers();
-  renderGridAdmin();
-  closePanel('gridPanel');
-  showToast(id ? 'Member updated' : 'Member added');
-}
-
-async function deleteGridMember() {
-  const id = parseInt(document.getElementById('gmId').value);
-  if (!confirm('Delete this member type?')) return;
-  const { error } = await db.from('grid_members').delete().eq('id', id);
-  if (error) { showToast('Delete failed', 'error'); return; }
-  gridData = await getGridMembers();
-  renderGridAdmin();
-  closePanel('gridPanel');
-  showToast('Member deleted', 'error');
-}
-
-// ── Content save ──────────────────────────────────────────
-function saveContent() {
-  const data = {
-    tagline: document.getElementById('c-tagline').value,
-    sub:     document.getElementById('c-sub').value,
-    phone:   document.getElementById('c-phone').value,
-    email:   document.getElementById('c-email').value,
-    ig:      document.getElementById('c-ig').value,
-    li:      document.getElementById('c-li').value,
-    wa:      document.getElementById('c-wa').checked,
-  };
-  localStorage.setItem('switch_content', JSON.stringify(data));
-  showToast('Content saved');
-}
-
-// ── Settings ──────────────────────────────────────────────
-function saveSupabase() {
-  const url = document.getElementById('s-url').value.trim();
-  const key = document.getElementById('s-key').value.trim();
-  if (!url || !key) { showToast('Please enter both URL and key', 'error'); return; }
-  localStorage.setItem('supabase_url', url);
-  localStorage.setItem('supabase_key', key);
-  document.getElementById('s-status').innerHTML = '<span style="color:var(--green)">✓ Saved. Reload the page to apply.</span>';
-  showToast('Supabase config saved. Reload to apply.');
-}
-
-function changePassword() {
-  const pw1 = document.getElementById('s-pw1').value;
-  const pw2 = document.getElementById('s-pw2').value;
-  if (!pw1) { showToast('Enter a new password', 'error'); return; }
-  if (pw1 !== pw2) { showToast('Passwords do not match', 'error'); return; }
-  localStorage.setItem('admin_password', pw1);
-  document.getElementById('s-pw1').value = '';
-  document.getElementById('s-pw2').value = '';
-  showToast('Password updated');
-}
-
-// ── All writes go to Supabase ─────────────────────────────
-window.submitEnquiry = async function(payload) {
-  const { error } = await db.from('enquiries').insert(payload);
-  return { ok: !error, error };
-};
-window.submitGridRequest = async function(payload) {
-  const { error } = await db.from('grid_requests').insert(payload);
-  return { ok: !error, error };
-};
-// Properties always from Supabase (falls back to seed if table empty)
-window.getProperties = async function() {
-  const { data, error } = await db.from('properties').select('*').order('sort_order');
-  if (error || !data || !data.length) return SEED_PROPERTIES;
-  return data;
-};
-// Enquiries from Supabase for admin views
-async function fetchEnquiries() {
-  const { data, error } = await db.from('enquiries').select('*').order('created_at', { ascending: false });
-  return (error || !data) ? [] : data;
-}
-// Grid requests from Supabase
-async function fetchGridRequests() {
-  const { data, error } = await db.from('grid_requests').select('*').order('created_at', { ascending: false });
-  return (error || !data) ? [] : data;
-}
-</script>
-</body>
-</html>
