@@ -35,7 +35,7 @@ function parseImages(raw){
 }
 async function getProperties(){
   const{data,error}=await db.from('properties').select('*').order('sort_order');
-  if(error){console.warn('Supabase getProperties:',error.message);return SEED_PROPERTIES;}
+  if(error){console.error('Supabase getProperties error:',error.code, error.message);return SEED_PROPERTIES;}
   if(!data||!data.length)return SEED_PROPERTIES;
   return data.map(p=>({...p,images:parseImages(p.images)}));
 }
@@ -74,6 +74,14 @@ function getHeroImage(images){
   if(!images||!images.length)return'https://images.unsplash.com/photo-1560448204-603b3fc33ddc?w=1200&q=80';
   const hero=images.find(i=>i.is_hero||i.isHero);
   return hero?hero.url:images[0].url;
+}
+function autoMapEmbed(location,area){
+  const q=encodeURIComponent((location||'')+(area?', '+area:'')+', India');
+  return'https://maps.google.com/maps?q='+q+'&output=embed&z=15';
+}
+function getMapEmbed(p){
+  if(p.map_embed&&p.map_embed.trim()) return p.map_embed.trim();
+  return autoMapEmbed(p.location,p.area);
 }
 function getImagesByTag(images,tag){
   if(!images)return[];
