@@ -1,0 +1,209 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>About — the switch.</title>
+  <link rel="stylesheet" href="/assets/css/main.css">
+  <style>
+    .about-hero {
+      padding-top: calc(var(--nav-h) + 80px);
+      padding-bottom: 80px;
+      border-bottom: 1px solid var(--border);
+    }
+    .about-hero h1 { font-size: clamp(40px, 7vw, 88px); max-width: 760px; }
+    .about-hero p { font-size: 18px; color: var(--cream-2); max-width: 560px; margin-top: 20px; line-height: 1.8; }
+
+    /* ── Story ── */
+    .story-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 80px; align-items: center; }
+    .story-img { border-radius: var(--r-lg); overflow: hidden; }
+    .story-img img { width: 100%; aspect-ratio: 4/3; object-fit: cover; }
+    .story-text h2 { font-size: clamp(28px, 3.5vw, 44px); margin-bottom: 20px; }
+    .story-text p { font-size: 15px; color: var(--cream-2); line-height: 1.85; margin-bottom: 16px; }
+
+    /* ── Model ── */
+    .model-steps { display: grid; grid-template-columns: repeat(4, 1fr); gap: 1px; background: var(--border); border: 1px solid var(--border); border-radius: var(--r-lg); overflow: hidden; margin-top: 48px; }
+    .model-step { background: var(--bg-2); padding: 32px 24px; }
+    .model-step-num { font-family: var(--font-serif); font-size: 36px; color: var(--orange); line-height: 1; margin-bottom: 14px; }
+    .model-step-title { font-family: var(--font-serif); font-size: 18px; margin-bottom: 8px; }
+    .model-step-desc { font-size: 13px; color: var(--muted); line-height: 1.65; }
+
+    /* ── Team ── */
+    .team-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 24px; }
+    .team-card { background: var(--bg-2); border: 1px solid var(--border); border-radius: var(--r-lg); padding: 32px; }
+    .team-avatar { width: 56px; height: 56px; border-radius: 50%; background: var(--bg-3); border: 1px solid var(--border-2); display: flex; align-items: center; justify-content: center; font-family: var(--font-serif); font-size: 22px; color: var(--gold); margin-bottom: 16px; }
+    .team-name { font-family: var(--font-serif); font-size: 22px; margin-bottom: 4px; }
+    .team-role { font-size: 12px; color: var(--orange); font-weight: 500; letter-spacing: .06em; text-transform: uppercase; margin-bottom: 12px; }
+    .team-bio { font-size: 13px; color: var(--muted); line-height: 1.7; }
+
+    /* ── Urban Mace ── */
+    .poc-strip {
+      background: var(--bg-2); border: 1px solid var(--border); border-radius: var(--r-lg);
+      padding: 48px; display: grid; grid-template-columns: 1fr 1fr; gap: 48px; align-items: center;
+    }
+    .poc-strip h2 { font-size: clamp(26px, 3vw, 38px); margin-bottom: 16px; }
+    .poc-strip p { font-size: 14px; color: var(--cream-2); line-height: 1.8; margin-bottom: 12px; }
+    .poc-stats { display: flex; gap: 32px; margin-top: 24px; }
+    .poc-stat-num { font-family: var(--font-serif); font-size: 32px; color: var(--gold); }
+    .poc-stat-label { font-size: 12px; color: var(--muted); }
+    .poc-img { border-radius: var(--r-md); overflow: hidden; }
+    .poc-img img { width: 100%; aspect-ratio: 4/3; object-fit: cover; }
+
+    /* ── Vision ── */
+    .vision-banner {
+      text-align: center; padding: 80px 40px;
+      background: var(--bg-2); border: 1px solid var(--border); border-radius: var(--r-lg);
+    }
+    .vision-banner h2 { font-size: clamp(32px, 5vw, 60px); margin-bottom: 16px; }
+    .vision-banner p { color: var(--muted); font-size: 15px; max-width: 560px; margin: 0 auto 32px; }
+    .vision-cities { display: flex; flex-wrap: wrap; gap: 8px; justify-content: center; margin-top: 28px; }
+    .vision-city {
+      font-size: 12px; color: var(--muted); border: 1px solid var(--border);
+      padding: 5px 14px; border-radius: 20px;
+    }
+    .vision-city.active { color: var(--orange); border-color: rgba(196,75,26,.3); background: rgba(196,75,26,.08); }
+
+    @media (max-width: 900px) {
+      .story-grid { grid-template-columns: 1fr; gap: 40px; }
+      .model-steps { grid-template-columns: 1fr 1fr; }
+      .team-grid { grid-template-columns: 1fr 1fr; }
+      .poc-strip { grid-template-columns: 1fr; gap: 24px; }
+    }
+    @media (max-width: 540px) {
+      .team-grid { grid-template-columns: 1fr; }
+      .model-steps { grid-template-columns: 1fr; }
+    }
+  </style>
+</head>
+<body>
+  <div id="nav-mount"></div>
+
+  <!-- Hero -->
+  <div class="about-hero">
+    <div class="container">
+      <div class="eyebrow" style="margin-bottom:14px">about us</div>
+      <h1>We got tired of<br><em class="serif-italic">the broker call.</em></h1>
+      <p>So we did something about it.</p>
+    </div>
+  </div>
+
+  <!-- Story -->
+  <section class="section">
+    <div class="container">
+      <div class="story-grid">
+        <div class="story-img fade-up">
+          <img src="https://images.unsplash.com/photo-1596176530529-78163a4f7af2?w=1000&q=80" alt="Bengaluru">
+        </div>
+        <div class="story-text fade-up">
+          <div class="eyebrow" style="margin-bottom:12px">not a developer. not a broker.</div>
+          <h2>An <em class="serif-italic">operator.</em></h2>
+          <p>We spent years watching the same thing happen in every Indian city with a decent job market. Someone moves for work. Calls a broker. The broker calls back three days later. The flat is unfurnished, overpriced, and the WiFi takes six weeks.</p>
+          <p>We thought: this is a solvable problem. So we started Urban Mace. Took two buildings in Bengaluru. Furnished them. Put good people on-site. Found tenants without a single broker. Watched it work.</p>
+          <p>Then we built the switch. — an operating company with a proven model, a real team, and a very clear idea of what we're building and why.</p>
+        </div>
+      </div>
+
+      <!-- Model steps -->
+      <div style="margin-top:80px" class="fade-up">
+        <div class="eyebrow" style="margin-bottom:12px;text-align:center">the model</div>
+        <h2 style="font-size:clamp(28px,3.5vw,44px);text-align:center;margin-bottom:40px">The whole thing in<br><em class="serif-italic">plain English.</em></h2>
+        <div class="model-steps">
+          <div class="model-step"><div class="model-step-num">01</div><div class="model-step-title">We find a building.</div><div class="model-step-desc">Good bones, bad management. That's the gap we fill.</div></div>
+          <div class="model-step"><div class="model-step-num">02</div><div class="model-step-title">Long-term lease.</div><div class="model-step-desc">8–9 years. Fixed rent. Owner gets guaranteed income, zero management.</div></div>
+          <div class="model-step"><div class="model-step-num">03</div><div class="model-step-title">We make it a home.</div><div class="model-step-desc">Bed. Wardrobe. Kitchen. WiFi. Caretaker. Before anyone moves in.</div></div>
+          <div class="model-step"><div class="model-step-num">04</div><div class="model-step-title">You walk in.</div><div class="model-step-desc">11-month L&L. One month deposit. No broker. Just a flat that works.</div></div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Team -->
+  <section class="section" style="background:var(--bg-2);border-top:1px solid var(--border);border-bottom:1px solid var(--border)">
+    <div class="container">
+      <div style="text-align:center;margin-bottom:48px" class="fade-up">
+        <div class="eyebrow" style="margin-bottom:10px">the team</div>
+        <h2 style="font-size:clamp(28px,3.5vw,44px)">People behind<br><em class="serif-italic">the switch.</em></h2>
+      </div>
+      <div class="team-grid">
+        <div class="team-card fade-up">
+          <div class="team-avatar">M</div>
+          <div class="team-name">Madhusudhan</div>
+          <div class="team-role">CEO & Co-Founder</div>
+          <p class="team-bio">Leads strategy, property acquisition, and overall operations. Has been in the managed real estate space long enough to know every broker's trick in the book — which is exactly why we don't use any.</p>
+        </div>
+        <div class="team-card fade-up">
+          <div class="team-avatar">U</div>
+          <div class="team-name">Umesh Pareek</div>
+          <div class="team-role">COO & Co-Founder</div>
+          <p class="team-bio">Runs operations, systems, and the commercial engine behind the switch. Also heads The Consulting Group — which means he's seen enough broken businesses to build this one properly.</p>
+        </div>
+        <div class="team-card fade-up">
+          <div class="team-avatar">A</div>
+          <div class="team-name">Ankush Acharya</div>
+          <div class="team-role">CFO & Co-Founder</div>
+          <p class="team-bio">Manages capital structure, investor relations, and the numbers that make the model work. The reason every payout happens on time, every month.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Urban Mace PoC -->
+  <section class="section">
+    <div class="container">
+      <div class="poc-strip fade-up">
+        <div>
+          <div class="eyebrow" style="margin-bottom:12px">proof of concept</div>
+          <h2>Urban Mace — where the switch. started.</h2>
+          <p>Before the brand, before the name, there was Urban Mace LLP. Two buildings. Bengaluru. We furnished them, found tenants without a broker, and ran them exactly the way we planned to run the switch.</p>
+          <p style="color:var(--muted)">It worked. So we scaled it.</p>
+          <div class="poc-stats">
+            <div><div class="poc-stat-num">30+</div><div class="poc-stat-label">Flats operated</div></div>
+            <div><div class="poc-stat-num">₹0</div><div class="poc-stat-label">Broker fees, ever</div></div>
+            <div><div class="poc-stat-num">2</div><div class="poc-stat-label">Buildings, Bengaluru</div></div>
+          </div>
+        </div>
+        <div class="poc-img">
+          <img src="https://images.unsplash.com/photo-1497366216548-37526070297c?w=800&q=80" alt="Operations">
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Vision -->
+  <section class="section">
+    <div class="container">
+      <div class="vision-banner fade-up">
+        <div class="eyebrow" style="margin-bottom:14px">where we're going</div>
+        <h2>50 buildings.<br><em class="serif-italic">2 years.</em></h2>
+        <p>Bengaluru is where we prove the model. Then every city in India that has a job market worth moving to.</p>
+        <div class="vision-cities">
+          <span class="vision-city active">Bengaluru</span>
+          <span class="vision-city">Hyderabad</span>
+          <span class="vision-city">Chennai</span>
+          <span class="vision-city">Pune</span>
+          <span class="vision-city">Indore</span>
+          <span class="vision-city">Coimbatore</span>
+          <span class="vision-city">Kochi</span>
+          <span class="vision-city">Bhubaneswar</span>
+          <span class="vision-city">Lucknow</span>
+          <span class="vision-city">Nagpur</span>
+        </div>
+        <div style="margin-top:36px;display:flex;justify-content:center;gap:12px;flex-wrap:wrap">
+          <a href="/properties.html" class="btn-primary">See our properties →</a>
+          <a href="/contact.html" class="btn-ghost">Partner with us</a>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <div id="footer-mount"></div>
+
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
+  <script src="/assets/js/supabase.js"></script>
+  <script>
+    document.getElementById('nav-mount').innerHTML = navComponent('About');
+    document.getElementById('footer-mount').innerHTML = footerComponent();
+    initFadeUp(); initNav();
+  </script>
+</body>
+</html>

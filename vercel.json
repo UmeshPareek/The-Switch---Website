@@ -1,0 +1,8 @@
+{
+  "rewrites": [
+    { "source": "/property/switch-volt",  "destination": "/property/[slug].html" },
+    { "source": "/property/switch-arc",   "destination": "/property/[slug].html" },
+    { "source": "/property/switch-flux",  "destination": "/property/[slug].html" },
+    { "source": "/property/:slug",        "destination": "/property/[slug].html" }
+  ]
+}

@@ -1,0 +1,312 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Property — the switch.</title>
+  <link rel="stylesheet" href="/assets/css/main.css">
+  <style>
+    .prop-hero {
+      padding-top: var(--nav-h);
+      position: relative; height: 520px; overflow: hidden;
+    }
+    .prop-hero-img { width: 100%; height: 100%; object-fit: cover; }
+    .prop-hero::after {
+      content: ''; position: absolute; inset: 0;
+      background: linear-gradient(to bottom, transparent 30%, rgba(17,16,9,.9) 100%);
+    }
+    .prop-hero-info {
+      position: absolute; bottom: 40px; left: 0; right: 0; z-index: 1;
+    }
+    .prop-hero-info .container { display: flex; align-items: flex-end; justify-content: space-between; gap: 24px; }
+    .prop-name { font-family: var(--font-serif); font-size: clamp(40px, 6vw, 64px); margin-bottom: 8px; }
+    .prop-loc { color: var(--cream-2); font-size: 15px; display: flex; align-items: center; gap: 6px; }
+    .prop-rent-box { text-align: right; flex-shrink: 0; }
+    .prop-rent { font-size: 36px; font-weight: 500; }
+    .prop-rent-meta { font-size: 13px; color: var(--muted); margin-top: 4px; }
+
+    /* ── Gallery ── */
+    .gallery-grid {
+      display: grid; grid-template-columns: 2fr 1fr 1fr;
+      grid-template-rows: 200px 200px;
+      gap: 8px; margin-bottom: 64px;
+    }
+    .gallery-img { overflow: hidden; border-radius: var(--r-sm); background: var(--bg-3); }
+    .gallery-img img { width: 100%; height: 100%; object-fit: cover; cursor: pointer; transition: transform .3s; }
+    .gallery-img img:hover { transform: scale(1.04); }
+    .gallery-img:first-child { grid-row: span 2; }
+
+    /* ── Content grid ── */
+    .prop-content { display: grid; grid-template-columns: 1fr 380px; gap: 48px; align-items: start; }
+
+    /* ── Detail sections ── */
+    .detail-section { margin-bottom: 48px; }
+    .detail-section h3 { font-family: var(--font-serif); font-size: 24px; margin-bottom: 20px; padding-bottom: 12px; border-bottom: 1px solid var(--border); }
+    .amenities-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+    .amenity-item {
+      display: flex; align-items: center; gap: 10px;
+      font-size: 14px; color: var(--cream-2); padding: 10px 0;
+    }
+    .amenity-check { color: var(--orange); font-size: 16px; }
+
+    /* ── Map ── */
+    .prop-map { border-radius: var(--r-lg); overflow: hidden; border: 1px solid var(--border); margin-top: 12px; }
+    .prop-map iframe { width: 100%; height: 300px; border: none; display: block; }
+
+    /* ── Enquiry form ── */
+    .enquiry-card {
+      background: var(--bg-2); border: 1px solid var(--border); border-radius: var(--r-lg);
+      padding: 32px; position: sticky; top: calc(var(--nav-h) + 24px);
+    }
+    .enquiry-card h3 { font-family: var(--font-serif); font-size: 22px; margin-bottom: 6px; }
+    .enquiry-card .sub { font-size: 13px; color: var(--muted); margin-bottom: 24px; }
+    .enquiry-form { display: flex; flex-direction: column; gap: 14px; }
+    .form-success {
+      display: none; text-align: center; padding: 24px;
+      color: #4ade80; font-size: 15px;
+    }
+    .form-success-icon { font-size: 36px; margin-bottom: 12px; }
+
+    /* ── Lightbox ── */
+    .lightbox {
+      display: none; position: fixed; inset: 0; z-index: 200;
+      background: rgba(0,0,0,.92); align-items: center; justify-content: center;
+    }
+    .lightbox.open { display: flex; }
+    .lightbox img { max-width: 90vw; max-height: 90vh; border-radius: var(--r-md); object-fit: contain; }
+    .lightbox-close {
+      position: absolute; top: 20px; right: 20px;
+      color: var(--cream); font-size: 28px; cursor: pointer;
+    }
+    .lightbox-prev, .lightbox-next {
+      position: absolute; top: 50%; transform: translateY(-50%);
+      color: var(--cream); font-size: 36px; cursor: pointer; padding: 12px;
+      background: rgba(0,0,0,.4); border-radius: var(--r-sm);
+    }
+    .lightbox-prev { left: 16px; }
+    .lightbox-next { right: 16px; }
+
+    @media (max-width: 900px) {
+      .prop-content { grid-template-columns: 1fr; }
+      .enquiry-card { position: static; }
+      .gallery-grid { grid-template-columns: 1fr 1fr; grid-template-rows: auto; }
+      .gallery-img:first-child { grid-column: span 2; grid-row: span 1; height: 240px; }
+      .prop-hero-info .container { flex-direction: column; align-items: flex-start; }
+      .prop-rent-box { text-align: left; }
+    }
+  </style>
+</head>
+<body>
+  <div id="nav-mount"></div>
+
+  <!-- Hero -->
+  <div class="prop-hero">
+    <img class="prop-hero-img" id="heroImg" src="" alt="">
+    <div class="prop-hero-info">
+      <div class="container">
+        <div>
+          <div id="heroBadge"></div>
+          <div class="prop-name" id="propName">Loading…</div>
+          <div class="prop-loc" id="propLoc"></div>
+        </div>
+        <div class="prop-rent-box">
+          <div class="prop-rent" id="propRent"></div>
+          <div class="prop-rent-meta" id="propMeta"></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Gallery -->
+  <div class="container" style="padding-top:32px">
+    <div class="gallery-grid" id="galleryGrid"></div>
+  </div>
+
+  <!-- Content -->
+  <div class="container" style="padding-bottom:80px">
+    <div class="prop-content">
+      <div>
+        <!-- Description -->
+        <div class="detail-section fade-up">
+          <h3>About this property</h3>
+          <p id="propDesc" style="color:var(--cream-2);font-size:15px;line-height:1.8"></p>
+        </div>
+
+        <!-- Amenities -->
+        <div class="detail-section fade-up">
+          <h3>What's included</h3>
+          <div class="amenities-grid" id="amenitiesGrid"></div>
+        </div>
+
+        <!-- Map -->
+        <div class="detail-section fade-up">
+          <h3>Location</h3>
+          <p style="font-size:13px;color:var(--muted);margin-bottom:12px">Find us on the map</p>
+          <div class="prop-map"><iframe id="propMap" loading="lazy" allowfullscreen referrerpolicy="no-referrer-when-downgrade" title="Property location"></iframe></div>
+        </div>
+      </div>
+
+      <!-- Enquiry form -->
+      <div>
+        <div class="enquiry-card fade-up">
+          <h3 id="formTitle">Enquire now</h3>
+          <p class="sub">We respond the same day. No broker involved.</p>
+          <div class="enquiry-form" id="enquiryForm">
+            <div class="form-group">
+              <label>Full Name</label>
+              <input type="text" id="eName" placeholder="Your name" required>
+            </div>
+            <div class="form-row">
+              <div class="form-group">
+                <label>Phone</label>
+                <input type="tel" id="ePhone" placeholder="+91 XXXXX XXXXX">
+              </div>
+              <div class="form-group">
+                <label>Email</label>
+                <input type="email" id="eEmail" placeholder="you@email.com">
+              </div>
+            </div>
+            <div class="form-row">
+              <div class="form-group">
+                <label>Move-in Date</label>
+                <input type="date" id="eMoveIn">
+              </div>
+              <div class="form-group">
+                <label>Budget / mo</label>
+                <select id="eBudget">
+                  <option value="">Select range</option>
+                  <option>Under ₹20,000</option>
+                  <option>₹20,000 – ₹25,000</option>
+                  <option>₹25,000 – ₹30,000</option>
+                  <option>₹30,000 – ₹35,000</option>
+                  <option>₹35,000+</option>
+                </select>
+              </div>
+            </div>
+            <div class="form-group">
+              <label>Message (optional)</label>
+              <textarea id="eMessage" rows="3" placeholder="Anything you'd like us to know…"></textarea>
+            </div>
+            <button class="form-submit" id="enquirySubmit" onclick="submitForm()">Send enquiry →</button>
+          </div>
+          <div class="form-success" id="formSuccess">
+            <div class="form-success-icon">✓</div>
+            <strong>We've got your message.</strong><br>
+            <span style="color:var(--muted);font-size:13px">Expect a reply from us within the day. No broker will call you.</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Lightbox -->
+  <div class="lightbox" id="lightbox">
+    <span class="lightbox-close" onclick="closeLightbox()">×</span>
+    <span class="lightbox-prev" onclick="lightboxNav(-1)">‹</span>
+    <img id="lightboxImg" src="" alt="">
+    <span class="lightbox-next" onclick="lightboxNav(1)">›</span>
+  </div>
+
+  <div id="footer-mount"></div>
+
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
+  <script src="/assets/js/supabase.js"></script>
+  <script>
+    document.getElementById('nav-mount').innerHTML = navComponent('Properties');
+    document.getElementById('footer-mount').innerHTML = footerComponent();
+
+    // Get slug from URL: /property/switch-volt.html → switch-volt
+    const slug = location.pathname.split('/').pop().replace('.html','');
+
+    let propImages = [];
+    let lightboxIdx = 0;
+
+    async function loadProperty() {
+      const p = await getProperty(slug);
+      if (!p) { document.getElementById('propName').textContent = 'Property not found'; return; }
+
+      document.title = `${p.name} — the switch.`;
+      propImages = p.images || [];
+
+      // Hero
+      document.getElementById('heroImg').src = propImages[0] || 'https://images.unsplash.com/photo-1560448204-603b3fc33ddc?w=1600&q=80';
+      document.getElementById('heroImg').alt = p.name;
+      document.getElementById('heroBadge').innerHTML = statusBadge(p.status);
+      document.getElementById('propName').textContent = p.name;
+      document.getElementById('propLoc').innerHTML = `<svg width="10" height="12" viewBox="0 0 10 12" fill="none"><path d="M5 0C2.24 0 0 2.24 0 5c0 3.75 5 7 5 7s5-3.25 5-7c0-2.76-2.24-5-5-5zm0 6.5A1.5 1.5 0 115 3.5a1.5 1.5 0 010 3z" fill="currentColor"/></svg>${p.location}, ${p.area}`;
+      document.getElementById('propRent').textContent = formatRent(p.rent);
+      document.getElementById('propMeta').textContent = `${p.bhk} · ${p.units} flats`;
+
+      // Gallery
+      const gallery = document.getElementById('galleryGrid');
+      const imgs = propImages.length >= 4 ? propImages.slice(0,4) : [...propImages, ...Array(4-propImages.length).fill(propImages[0]||'https://images.unsplash.com/photo-1560448204-603b3fc33ddc?w=800&q=80')];
+      gallery.innerHTML = imgs.map((src,i) => `
+        <div class="gallery-img"><img src="${src}" alt="${p.name} ${i+1}" loading="${i>0?'lazy':'eager'}" onclick="openLightbox(${i})"></div>
+      `).join('');
+
+      // Description
+      document.getElementById('propDesc').textContent = p.description;
+
+      // Amenities
+      document.getElementById('amenitiesGrid').innerHTML = (p.amenities||[]).map(a => `
+        <div class="amenity-item"><span class="amenity-check">✓</span>${a}</div>
+      `).join('');
+
+      // Map
+      if (p.map_embed) document.getElementById('propMap').src = p.map_embed;
+
+      // Form title
+      if (p.status === 'coming-soon') {
+        document.getElementById('formTitle').textContent = 'Join the waitlist';
+        document.getElementById('enquirySubmit').textContent = 'Join waitlist →';
+      }
+
+      initFadeUp();
+    }
+
+    async function submitForm() {
+      const name    = document.getElementById('eName').value.trim();
+      const phone   = document.getElementById('ePhone').value.trim();
+      const email   = document.getElementById('eEmail').value.trim();
+      const moveIn  = document.getElementById('eMoveIn').value;
+      const budget  = document.getElementById('eBudget').value;
+      const message = document.getElementById('eMessage').value.trim();
+
+      if (!name || (!phone && !email)) {
+        alert('Please fill in your name and at least phone or email.');
+        return;
+      }
+
+      const btn = document.getElementById('enquirySubmit');
+      btn.textContent = 'Sending…'; btn.disabled = true;
+
+      const result = await submitEnquiry({ name, phone, email, move_in_date: moveIn, budget, message, property_slug: slug, created_at: new Date().toISOString() });
+
+      if (result.ok) {
+        document.getElementById('enquiryForm').style.display = 'none';
+        document.getElementById('formSuccess').style.display = 'block';
+      } else {
+        btn.textContent = 'Send enquiry →'; btn.disabled = false;
+        alert('Something went wrong. Please try again or WhatsApp us.');
+      }
+    }
+
+    // Lightbox
+    function openLightbox(idx) {
+      lightboxIdx = idx;
+      document.getElementById('lightboxImg').src = propImages[idx];
+      document.getElementById('lightbox').classList.add('open');
+    }
+    function closeLightbox() { document.getElementById('lightbox').classList.remove('open'); }
+    function lightboxNav(dir) {
+      lightboxIdx = (lightboxIdx + dir + propImages.length) % propImages.length;
+      document.getElementById('lightboxImg').src = propImages[lightboxIdx];
+    }
+    document.getElementById('lightbox').addEventListener('click', e => { if (e.target === e.currentTarget) closeLightbox(); });
+    document.addEventListener('keydown', e => { if (e.key === 'Escape') closeLightbox(); if (e.key === 'ArrowRight') lightboxNav(1); if (e.key === 'ArrowLeft') lightboxNav(-1); });
+
+    loadProperty();
+    initNav();
+  </script>
+</body>
+</html>

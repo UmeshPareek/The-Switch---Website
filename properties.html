@@ -1,0 +1,258 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Properties — the switch.</title>
+  <meta name="description" content="Three buildings in Bengaluru. Fully furnished. Zero broker. Find your switch.">
+  <link rel="stylesheet" href="/assets/css/main.css">
+  <style>
+    .page-hero {
+      padding-top: calc(var(--nav-h) + 72px);
+      padding-bottom: 64px;
+      border-bottom: 1px solid var(--border);
+    }
+    .page-hero h1 { font-size: clamp(40px, 6vw, 72px); margin-bottom: 16px; }
+    .page-hero p { font-size: 16px; color: var(--cream-2); max-width: 520px; }
+
+    /* ── Filters ── */
+    .filters {
+      display: flex; gap: 8px; align-items: center;
+      padding: 24px 0; flex-wrap: wrap;
+    }
+    .filter-btn {
+      font-size: 12px; font-weight: 500; letter-spacing: .06em;
+      text-transform: uppercase; padding: 7px 16px; border-radius: 20px;
+      border: 1px solid var(--border); color: var(--muted);
+      transition: border-color .2s, color .2s, background .2s;
+    }
+    .filter-btn:hover, .filter-btn.active {
+      border-color: var(--orange); color: var(--cream); background: rgba(196,75,26,.1);
+    }
+
+    /* ── Properties list ── */
+    .prop-list-item {
+      display: grid; grid-template-columns: 380px 1fr;
+      background: var(--bg-2); border: 1px solid var(--border);
+      border-radius: var(--r-lg); overflow: hidden;
+      transition: border-color .25s;
+      margin-bottom: 24px;
+    }
+    .prop-list-item:hover { border-color: var(--border-2); }
+    .prop-list-img {
+      position: relative; height: 300px;
+    }
+    .prop-list-img img { width: 100%; height: 100%; object-fit: cover; transition: transform .4s; }
+    .prop-list-item:hover .prop-list-img img { transform: scale(1.03); }
+    .prop-list-img .badge { position: absolute; top: 16px; left: 16px; }
+    .prop-list-body { padding: 36px 40px; display: flex; flex-direction: column; justify-content: space-between; }
+    .prop-list-top {}
+    .prop-list-loc { font-size: 12px; color: var(--muted); margin-bottom: 10px; display: flex; align-items: center; gap: 5px; }
+    .prop-list-name { font-family: var(--font-serif); font-size: 36px; margin-bottom: 12px; }
+    .prop-list-desc { font-size: 14px; color: var(--cream-2); line-height: 1.75; margin-bottom: 20px; }
+    .prop-list-amenities { display: flex; flex-wrap: wrap; gap: 6px; margin-bottom: 24px; }
+    .prop-list-bottom { display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 16px; }
+    .prop-list-pricing { }
+    .prop-list-rent { font-size: 28px; font-weight: 500; }
+    .prop-list-meta { font-size: 12px; color: var(--muted); margin-top: 2px; }
+    .prop-list-actions { display: flex; gap: 12px; }
+
+    /* ── Map section ── */
+    .map-strip {
+      background: var(--bg-2); border-top: 1px solid var(--border); border-bottom: 1px solid var(--border);
+      padding: 64px 0;
+    }
+    .map-strip h2 { font-size: clamp(28px, 3.5vw, 44px); margin-bottom: 8px; }
+    .map-strip p { color: var(--muted); font-size: 14px; margin-bottom: 32px; }
+    .map-pins { display: flex; gap: 16px; flex-wrap: wrap; margin-bottom: 32px; }
+    .map-pin-card {
+      background: var(--bg); border: 1px solid var(--border); border-radius: var(--r-md);
+      padding: 14px 20px; display: flex; align-items: center; gap: 12px; cursor: pointer;
+      transition: border-color .2s;
+    }
+    .map-pin-card:hover, .map-pin-card.active { border-color: var(--orange); }
+    .map-pin-icon {
+      width: 32px; height: 32px; background: rgba(196,75,26,.15);
+      border-radius: 50%; display: flex; align-items: center; justify-content: center; flex-shrink: 0;
+    }
+    .map-pin-icon svg { width: 14px; height: 14px; fill: var(--orange); }
+    .map-pin-info h4 { font-size: 14px; font-weight: 500; }
+    .map-pin-info p { font-size: 12px; color: var(--muted); }
+    .map-embed { border-radius: var(--r-lg); overflow: hidden; border: 1px solid var(--border); }
+    .map-embed iframe { width: 100%; height: 380px; border: none; display: block; }
+
+    /* ── Why switch ── */
+    .why-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 24px; }
+    .why-item { padding: 32px; background: var(--bg-2); border: 1px solid var(--border); border-radius: var(--r-lg); }
+    .why-icon { font-size: 28px; margin-bottom: 16px; }
+    .why-title { font-family: var(--font-serif); font-size: 20px; margin-bottom: 8px; }
+    .why-desc { font-size: 13px; color: var(--muted); line-height: 1.7; }
+
+    @media (max-width: 900px) {
+      .prop-list-item { grid-template-columns: 1fr; }
+      .prop-list-img { height: 240px; }
+      .prop-list-body { padding: 24px; }
+      .why-grid { grid-template-columns: 1fr 1fr; }
+    }
+    @media (max-width: 600px) {
+      .why-grid { grid-template-columns: 1fr; }
+      .prop-list-bottom { flex-direction: column; align-items: flex-start; }
+    }
+  </style>
+</head>
+<body>
+  <div id="nav-mount"></div>
+
+  <!-- ── Page Hero ── -->
+  <div class="page-hero">
+    <div class="container">
+      <div class="eyebrow" style="margin-bottom:12px">where we are</div>
+      <h1>Three buildings.<br><em class="serif-italic">One city.</em></h1>
+      <p>Curated nodes across Bengaluru. Fully managed. Zero broker. Walk in.</p>
+    </div>
+  </div>
+
+  <!-- ── Filters ── -->
+  <div class="container">
+    <div class="filters">
+      <span class="label" style="margin-right:4px">Filter:</span>
+      <button class="filter-btn active" data-filter="all">All</button>
+      <button class="filter-btn" data-filter="available">Available Now</button>
+      <button class="filter-btn" data-filter="filling-fast">Filling Fast</button>
+      <button class="filter-btn" data-filter="coming-soon">Coming Soon</button>
+    </div>
+  </div>
+
+  <!-- ── Properties List ── -->
+  <section style="padding-bottom:80px">
+    <div class="container">
+      <div id="propsList"></div>
+      <div id="propsEmpty" style="display:none;text-align:center;padding:64px 0;color:var(--muted)">
+        No properties match this filter.
+      </div>
+    </div>
+  </section>
+
+  <!-- ── Map ── -->
+  <section class="map-strip">
+    <div class="container">
+      <div class="eyebrow" style="margin-bottom:10px">locations</div>
+      <h2>Find us <em class="serif-italic">on the map.</em></h2>
+      <p>Three nodes. All in Bengaluru. All worth knowing about.</p>
+      <div class="map-pins" id="mapPins"></div>
+      <div class="map-embed"><iframe id="mapFrame" title="Property location" loading="lazy" allowfullscreen referrerpolicy="no-referrer-when-downgrade"></iframe></div>
+    </div>
+  </section>
+
+  <!-- ── Why switch ── -->
+  <section class="section">
+    <div class="container">
+      <div style="text-align:center;margin-bottom:48px" class="fade-up">
+        <div class="eyebrow" style="margin-bottom:10px">why switch.</div>
+        <h2 style="font-size:clamp(28px,3.5vw,44px)">What you get when<br><em class="serif-italic">you switch.</em></h2>
+      </div>
+      <div class="why-grid">
+        <div class="why-item fade-up"><div class="why-icon">🚫</div><div class="why-title">Zero broker.</div><div class="why-desc">No broker fees. No middlemen. You deal with us directly, from the first message to the keys.</div></div>
+        <div class="why-item fade-up"><div class="why-icon">🧳</div><div class="why-title">One suitcase.</div><div class="why-desc">Bed, wardrobe, kitchen, WiFi — all set up before you arrive. That's the entire checklist.</div></div>
+        <div class="why-item fade-up"><div class="why-icon">💰</div><div class="why-title">One month deposit.</div><div class="why-desc">Your savings are yours. We don't need two months to prove you're a real person.</div></div>
+        <div class="why-item fade-up"><div class="why-icon">📞</div><div class="why-title">Caretaker on-site.</div><div class="why-desc">Not on the third call. Not after a WhatsApp at 11pm. They just — pick up.</div></div>
+        <div class="why-item fade-up"><div class="why-icon">🤝</div><div class="why-title">11-month L&L.</div><div class="why-desc">Long enough to feel like home. Short enough if life changes its mind.</div></div>
+        <div class="why-item fade-up"><div class="why-icon">👥</div><div class="why-title">the grid.</div><div class="why-desc">A community of people who are building things. Gym buddies, chai partners, co-founders.</div></div>
+      </div>
+    </div>
+  </section>
+
+  <div id="footer-mount"></div>
+
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
+  <script src="/assets/js/supabase.js"></script>
+  <script>
+    document.getElementById('nav-mount').innerHTML = navComponent('Properties');
+    document.getElementById('footer-mount').innerHTML = footerComponent();
+
+    let allProps = [];
+    let currentFilter = 'all';
+
+    function renderList(props) {
+      const container = document.getElementById('propsList');
+      const empty     = document.getElementById('propsEmpty');
+      const filtered  = currentFilter === 'all' ? props : props.filter(p => p.status === currentFilter);
+      if (!filtered.length) { container.innerHTML = ''; empty.style.display = 'block'; return; }
+      empty.style.display = 'none';
+      container.innerHTML = filtered.map(p => `
+        <div class="prop-list-item fade-up" data-status="${p.status}">
+          <div class="prop-list-img">
+            <img src="${p.images?.[0] || 'https://images.unsplash.com/photo-1560448204-603b3fc33ddc?w=800&q=80'}" alt="${p.name}" loading="lazy">
+            ${statusBadge(p.status)}
+          </div>
+          <div class="prop-list-body">
+            <div class="prop-list-top">
+              <div class="prop-list-loc">
+                <svg width="10" height="12" viewBox="0 0 10 12" fill="none"><path d="M5 0C2.24 0 0 2.24 0 5c0 3.75 5 7 5 7s5-3.25 5-7c0-2.76-2.24-5-5-5zm0 6.5A1.5 1.5 0 115 3.5a1.5 1.5 0 010 3z" fill="currentColor"/></svg>
+                ${p.location}, ${p.area}
+              </div>
+              <div class="prop-list-name">${p.name}</div>
+              <p class="prop-list-desc">${p.description}</p>
+              <div class="prop-list-amenities">
+                ${(p.amenities||[]).map(a => `<span class="property-card-tag">${a}</span>`).join('')}
+              </div>
+            </div>
+            <div class="prop-list-bottom">
+              <div class="prop-list-pricing">
+                <div class="prop-list-rent">${formatRent(p.rent)}</div>
+                <div class="prop-list-meta">${p.bhk} · ${p.units} flats · ${p.location}</div>
+              </div>
+              <div class="prop-list-actions">
+                ${p.status === 'coming-soon'
+                  ? `<a href="/property/${p.slug}.html" class="btn-ghost">Join waitlist →</a>`
+                  : `<a href="/property/${p.slug}.html" class="btn-primary">Enquire now →</a>`
+                }
+                <a href="/property/${p.slug}.html" class="btn-ghost">View details</a>
+              </div>
+            </div>
+          </div>
+        </div>
+      `).join('');
+      initFadeUp();
+    }
+
+    function renderMapPins(props) {
+      const container = document.getElementById('mapPins');
+      container.innerHTML = props.map((p, i) => `
+        <div class="map-pin-card ${i===0?'active':''}" onclick="setMap('${p.map_embed}', this)">
+          <div class="map-pin-icon">
+            <svg viewBox="0 0 10 12"><path d="M5 0C2.24 0 0 2.24 0 5c0 3.75 5 7 5 7s5-3.25 5-7c0-2.76-2.24-5-5-5zm0 6.5A1.5 1.5 0 115 3.5a1.5 1.5 0 010 3z"/></svg>
+          </div>
+          <div class="map-pin-info"><h4>${p.name}</h4><p>${p.location}</p></div>
+        </div>
+      `).join('');
+      if (props[0]?.map_embed) document.getElementById('mapFrame').src = props[0].map_embed;
+    }
+
+    function setMap(url, el) {
+      document.getElementById('mapFrame').src = url;
+      document.querySelectorAll('.map-pin-card').forEach(c => c.classList.remove('active'));
+      el.classList.add('active');
+    }
+
+    // Filters
+    document.querySelectorAll('.filter-btn').forEach(btn => {
+      btn.addEventListener('click', () => {
+        document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
+        btn.classList.add('active');
+        currentFilter = btn.dataset.filter;
+        renderList(allProps);
+      });
+    });
+
+    async function init() {
+      allProps = await getProperties();
+      renderList(allProps);
+      renderMapPins(allProps);
+      initFadeUp();
+      initNav();
+    }
+    init();
+  </script>
+</body>
+</html>

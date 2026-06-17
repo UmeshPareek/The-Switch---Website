@@ -1,0 +1,308 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>the grid. — the switch.</title>
+  <meta name="description" content="Not a WhatsApp group. An actual network of people worth knowing.">
+  <link rel="stylesheet" href="/assets/css/main.css">
+  <style>
+    /* ── Hero ── */
+    .grid-hero {
+      padding-top: calc(var(--nav-h) + 80px);
+      padding-bottom: 80px;
+      position: relative; overflow: hidden;
+    }
+    .grid-hero-bg {
+      position: absolute; inset: 0; z-index: 0;
+    }
+    .grid-hero-bg img { width: 100%; height: 100%; object-fit: cover; opacity: .2; }
+    .grid-hero-bg::after {
+      content: ''; position: absolute; inset: 0;
+      background: linear-gradient(to bottom, rgba(17,16,9,.5), var(--bg));
+    }
+    .grid-hero-content { position: relative; z-index: 1; max-width: 640px; }
+    .grid-hero h1 { font-size: clamp(48px, 7vw, 88px); margin-bottom: 20px; line-height: 1.05; }
+    .grid-hero h1 em { font-style: normal; color: var(--orange); }
+    .grid-hero-desc { font-size: 17px; color: var(--cream-2); line-height: 1.75; margin-bottom: 12px; }
+    .grid-hero-sub { font-size: 14px; color: var(--muted); font-style: italic; margin-bottom: 36px; }
+    .grid-stats { display: flex; gap: 40px; margin-top: 40px; }
+    .grid-stat-num { font-family: var(--font-serif); font-size: 36px; color: var(--cream); }
+    .grid-stat-num em { color: var(--gold); font-style: italic; }
+    .grid-stat-label { font-size: 12px; color: var(--muted); margin-top: 2px; }
+
+    /* ── Members mosaic ── */
+    .members-section { padding: 80px 0; }
+    .members-intro { text-align: center; margin-bottom: 56px; }
+    .members-intro h2 { font-size: clamp(30px, 4vw, 48px); margin-bottom: 12px; }
+    .members-intro p { color: var(--muted); font-size: 15px; }
+
+    .members-grid {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 16px;
+    }
+    .member-card {
+      background: var(--bg-2);
+      border: 1px solid var(--border);
+      border-radius: var(--r-lg);
+      overflow: hidden;
+      transition: border-color .25s, transform .25s;
+    }
+    .member-card:hover { border-color: var(--border-2); transform: translateY(-3px); }
+    .member-card-img {
+      height: 200px; overflow: hidden; position: relative;
+    }
+    .member-card-img img { width: 100%; height: 100%; object-fit: cover; }
+    .member-card-time {
+      position: absolute; top: 12px; left: 12px;
+      background: rgba(17,16,9,.8); border: 1px solid var(--border);
+      font-size: 10px; font-weight: 500; letter-spacing: .08em; text-transform: uppercase;
+      padding: 4px 8px; border-radius: 20px; color: var(--orange);
+    }
+    .member-card-body { padding: 18px 20px; }
+    .member-card-role { font-family: var(--font-serif); font-size: 18px; margin-bottom: 6px; }
+    .member-card-quote { font-size: 12px; color: var(--muted); font-style: italic; line-height: 1.5; }
+
+    /* ── Featured quote ── */
+    .featured-quote {
+      background: var(--bg-2); border: 1px solid var(--border);
+      border-radius: var(--r-lg); padding: 48px;
+      text-align: center; margin: 48px 0;
+      position: relative;
+    }
+    .featured-quote::before {
+      content: '"'; font-family: var(--font-serif); font-size: 120px; color: var(--border);
+      position: absolute; top: -20px; left: 32px; line-height: 1;
+    }
+    .featured-quote blockquote { font-family: var(--font-serif); font-size: clamp(20px, 3vw, 32px); font-style: italic; color: var(--cream); margin-bottom: 16px; position: relative; z-index: 1; }
+    .featured-quote cite { font-size: 13px; color: var(--muted); }
+
+    /* ── How it works ── */
+    .how-grid-works {
+      background: var(--bg-2); border-top: 1px solid var(--border); border-bottom: 1px solid var(--border);
+      padding: 80px 0;
+    }
+    .how-grid-works h2 { font-size: clamp(28px, 3.5vw, 44px); text-align: center; margin-bottom: 48px; }
+    .hgw-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 24px; }
+    .hgw-item { padding: 32px; background: var(--bg); border: 1px solid var(--border); border-radius: var(--r-lg); }
+    .hgw-icon { font-size: 24px; margin-bottom: 14px; }
+    .hgw-title { font-family: var(--font-serif); font-size: 20px; margin-bottom: 8px; }
+    .hgw-desc { font-size: 13px; color: var(--muted); line-height: 1.7; }
+
+    /* ── Join form ── */
+    .join-section { padding: 80px 0; }
+    .join-card {
+      max-width: 680px; margin: 0 auto;
+      background: var(--bg-2); border: 1px solid var(--border); border-radius: var(--r-lg); padding: 48px;
+    }
+    .join-card h2 { font-family: var(--font-serif); font-size: clamp(28px, 3.5vw, 40px); margin-bottom: 8px; }
+    .join-card p { color: var(--muted); font-size: 14px; margin-bottom: 32px; }
+    .join-form { display: flex; flex-direction: column; gap: 16px; }
+    .join-success { display: none; text-align: center; padding: 24px; color: #4ade80; }
+
+    @media (max-width: 900px) {
+      .members-grid { grid-template-columns: 1fr 1fr; }
+      .hgw-grid { grid-template-columns: 1fr; }
+      .grid-stats { gap: 24px; flex-wrap: wrap; }
+    }
+    @media (max-width: 540px) {
+      .members-grid { grid-template-columns: 1fr; }
+      .join-card { padding: 28px 20px; }
+    }
+  </style>
+</head>
+<body>
+  <div id="nav-mount"></div>
+
+  <!-- Hero -->
+  <section class="grid-hero">
+    <div class="grid-hero-bg">
+      <img src="https://images.unsplash.com/photo-1517457373958-b7bdd4587205?w=2000&q=80" alt="People together">
+    </div>
+    <div class="container">
+      <div class="grid-hero-content">
+        <div class="eyebrow" style="margin-bottom:16px">the grid. by the switch.</div>
+        <h1>the <em>grid.</em></h1>
+        <p class="grid-hero-desc">Not a WhatsApp group.<br>An actual network of people who live near each other and are worth knowing.</p>
+        <p class="grid-hero-sub">Gym partners. Chai regulars. Startup people. Weekend hikers. The kind of neighbours you actually want.</p>
+        <div style="display:flex;gap:12px;flex-wrap:wrap">
+          <a href="#join" class="btn-primary">Request to join →</a>
+          <a href="/properties.html" class="btn-ghost">See properties first</a>
+        </div>
+        <div class="grid-stats fade-up">
+          <div><div class="grid-stat-num"><em>18+</em></div><div class="grid-stat-label">Types of people</div></div>
+          <div><div class="grid-stat-num">3</div><div class="grid-stat-label">Properties</div></div>
+          <div><div class="grid-stat-num"><em>∞</em></div><div class="grid-stat-label">Connections</div></div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Featured quote -->
+  <div class="container">
+    <div class="featured-quote fade-up">
+      <blockquote>"The building is already alive when you move in."</blockquote>
+      <cite>— Every switch. resident, eventually</cite>
+    </div>
+  </div>
+
+  <!-- Members mosaic -->
+  <section class="members-section">
+    <div class="container">
+      <div class="members-intro fade-up">
+        <div class="eyebrow" style="margin-bottom:10px">your people</div>
+        <h2>Who you'll<br><em class="serif-italic">find here.</em></h2>
+        <p>A curated mix. Not an algorithm. Every person in the grid was reviewed personally.</p>
+      </div>
+      <div class="members-grid" id="membersGrid">
+        <!-- Injected by JS -->
+      </div>
+    </div>
+  </section>
+
+  <!-- How it works -->
+  <section class="how-grid-works">
+    <div class="container">
+      <h2 class="fade-up">How the <em class="serif-italic">grid.</em> works.</h2>
+      <div class="hgw-grid">
+        <div class="hgw-item fade-up">
+          <div class="hgw-icon">✉️</div>
+          <div class="hgw-title">You request to join.</div>
+          <div class="hgw-desc">Tell us who you are, what you do, and where you're moving. We review every request personally. No algorithm, no auto-approve.</div>
+        </div>
+        <div class="hgw-item fade-up">
+          <div class="hgw-icon">🔍</div>
+          <div class="hgw-title">We review in 3–5 days.</div>
+          <div class="hgw-desc">If you're the right fit, we reach out. We're building a community, not a directory. Quality over quantity, every time.</div>
+        </div>
+        <div class="hgw-item fade-up">
+          <div class="hgw-icon">🏠</div>
+          <div class="hgw-title">Move in. Get connected.</div>
+          <div class="hgw-desc">Once you're in, you're in. Access to the grid network, building events, and the kind of neighbours who actually show up for things.</div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Join form -->
+  <section class="join-section" id="join">
+    <div class="container">
+      <div class="join-card fade-up">
+        <h2>Request to join<br><em class="serif-italic">the grid.</em></h2>
+        <p>We review every request personally. No algorithm. If you're the right fit, we'll reach out in 3–5 days.</p>
+
+        <div class="join-form" id="joinForm">
+          <div class="form-row">
+            <div class="form-group">
+              <label>First Name</label>
+              <input type="text" id="jFirst" placeholder="First name" required>
+            </div>
+            <div class="form-group">
+              <label>Last Name</label>
+              <input type="text" id="jLast" placeholder="Last name">
+            </div>
+          </div>
+          <div class="form-group">
+            <label>Email</label>
+            <input type="email" id="jEmail" placeholder="you@email.com" required>
+          </div>
+          <div class="form-group">
+            <label>What do you do?</label>
+            <input type="text" id="jDo" placeholder="Founder, engineer, designer, analyst…">
+          </div>
+          <div class="form-row">
+            <div class="form-group">
+              <label>Preferred Property</label>
+              <select id="jProp">
+                <option value="">No preference</option>
+                <option value="switch-volt">Switch Volt — Sarjapur</option>
+                <option value="switch-arc">Switch Arc — Yemlur</option>
+                <option value="switch-flux">Switch Flux — Yemlur (soon)</option>
+              </select>
+            </div>
+            <div class="form-group">
+              <label>Moving When?</label>
+              <select id="jWhen">
+                <option value="asap">ASAP</option>
+                <option value="1month">Within 1 month</option>
+                <option value="3months">1–3 months</option>
+                <option value="exploring">Just exploring</option>
+              </select>
+            </div>
+          </div>
+          <div class="form-group">
+            <label>Anything else?</label>
+            <textarea id="jMessage" rows="3" placeholder="Tell us something interesting about yourself…"></textarea>
+          </div>
+          <button class="form-submit" id="joinSubmit" onclick="submitJoin()">Send my request →</button>
+        </div>
+        <div class="join-success" id="joinSuccess">
+          <div style="font-size:36px;margin-bottom:12px">✓</div>
+          <strong>You're on the list.</strong><br>
+          <span style="color:var(--muted);font-size:13px">We'll reach out in 3–5 days if you're the right fit.</span>
+          <div style="margin-top:20px"><a href="/properties.html" class="btn-text">See our properties →</a></div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <div id="footer-mount"></div>
+
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
+  <script src="/assets/js/supabase.js"></script>
+  <script>
+    document.getElementById('nav-mount').innerHTML = navComponent('the grid.');
+    document.getElementById('footer-mount').innerHTML = footerComponent();
+
+    async function loadMembers() {
+      const members = await getGridMembers();
+      document.getElementById('membersGrid').innerHTML = members.map(m => `
+        <div class="member-card fade-up">
+          <div class="member-card-img">
+            <img src="${m.img}" alt="${m.role}" loading="lazy">
+            <span class="member-card-time">${m.time}</span>
+          </div>
+          <div class="member-card-body">
+            <div class="member-card-role">${m.role}</div>
+            <div class="member-card-quote">"${m.quote}"</div>
+          </div>
+        </div>
+      `).join('');
+      initFadeUp();
+    }
+
+    async function submitJoin() {
+      const first   = document.getElementById('jFirst').value.trim();
+      const email   = document.getElementById('jEmail').value.trim();
+      if (!first || !email) { alert('Please fill in your name and email.'); return; }
+
+      const btn = document.getElementById('joinSubmit');
+      btn.textContent = 'Sending…'; btn.disabled = true;
+
+      const result = await submitGridRequest({
+        first_name: first,
+        last_name:  document.getElementById('jLast').value.trim(),
+        email,
+        what_they_do: document.getElementById('jDo').value.trim(),
+        preferred_property: document.getElementById('jProp').value,
+        moving_when: document.getElementById('jWhen').value,
+        message: document.getElementById('jMessage').value.trim(),
+        created_at: new Date().toISOString()
+      });
+
+      if (result.ok) {
+        document.getElementById('joinForm').style.display = 'none';
+        document.getElementById('joinSuccess').style.display = 'block';
+      } else {
+        btn.textContent = 'Send my request →'; btn.disabled = false;
+        alert('Something went wrong. Please try again or WhatsApp us.');
+      }
+    }
+
+    loadMembers();
+    initFadeUp();
+    initNav();
+  </script>
+</body>
+</html>
