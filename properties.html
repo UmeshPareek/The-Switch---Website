@@ -4,255 +4,252 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Properties — the switch.</title>
-  <meta name="description" content="Three buildings in Bengaluru. Fully furnished. Zero broker. Find your switch.">
+  <meta name="description" content="Three buildings in Bengaluru. Fully furnished. Zero broker.">
   <link rel="stylesheet" href="/assets/css/main.css">
   <style>
-    .page-hero {
-      padding-top: calc(var(--nav-h) + 72px);
-      padding-bottom: 64px;
-      border-bottom: 1px solid var(--border);
-    }
-    .page-hero h1 { font-size: clamp(40px, 6vw, 72px); margin-bottom: 16px; }
-    .page-hero p { font-size: 16px; color: var(--cream-2); max-width: 520px; }
+    .page-hero{padding-top:calc(var(--nav-h) + 64px);padding-bottom:48px;border-bottom:1px solid var(--rule)}
+    .page-hero h1{font-size:clamp(40px,6vw,72px);margin-bottom:12px}
+    .page-hero p{font-size:15px;color:var(--muted);max-width:480px}
 
-    /* ── Filters ── */
-    .filters {
-      display: flex; gap: 8px; align-items: center;
-      padding: 24px 0; flex-wrap: wrap;
-    }
-    .filter-btn {
-      font-size: 12px; font-weight: 500; letter-spacing: .06em;
-      text-transform: uppercase; padding: 7px 16px; border-radius: 20px;
-      border: 1px solid var(--border); color: var(--muted);
-      transition: border-color .2s, color .2s, background .2s;
-    }
-    .filter-btn:hover, .filter-btn.active {
-      border-color: var(--orange); color: var(--cream); background: rgba(196,75,26,.1);
-    }
+    /* ── Search + filter bar ── */
+    .search-bar{background:var(--paper-2);border-bottom:1px solid var(--rule);padding:20px 0;position:sticky;top:var(--nav-h);z-index:10}
+    .search-inner{display:flex;gap:12px;align-items:center;flex-wrap:wrap}
+    .search-box{position:relative;flex:1;min-width:220px}
+    .search-box input{padding-left:40px;background:var(--paper);border:1px solid var(--rule-2);font-size:13px}
+    .search-box input:focus{border-color:var(--orange)}
+    .search-icon{position:absolute;left:13px;top:50%;transform:translateY(-50%);color:var(--muted);font-size:14px;pointer-events:none}
+    .filter-pills{display:flex;gap:6px;flex-wrap:wrap}
+    .filter-pill{font-size:11px;font-weight:500;letter-spacing:.07em;text-transform:uppercase;padding:7px 16px;border:1px solid var(--rule-2);color:var(--muted);background:var(--paper);cursor:pointer;transition:.15s}
+    .filter-pill:hover{border-color:var(--ink);color:var(--ink)}
+    .filter-pill.active{background:var(--ink);color:var(--paper);border-color:var(--ink)}
+    .result-count{font-size:12px;color:var(--muted);margin-left:auto;white-space:nowrap}
 
-    /* ── Properties list ── */
-    .prop-list-item {
-      display: grid; grid-template-columns: 380px 1fr;
-      background: var(--bg-2); border: 1px solid var(--border);
-      border-radius: var(--r-lg); overflow: hidden;
-      transition: border-color .25s;
-      margin-bottom: 24px;
-    }
-    .prop-list-item:hover { border-color: var(--border-2); }
-    .prop-list-img {
-      position: relative; height: 300px;
-    }
-    .prop-list-img img { width: 100%; height: 100%; object-fit: cover; transition: transform .4s; }
-    .prop-list-item:hover .prop-list-img img { transform: scale(1.03); }
-    .prop-list-img .badge { position: absolute; top: 16px; left: 16px; }
-    .prop-list-body { padding: 36px 40px; display: flex; flex-direction: column; justify-content: space-between; }
-    .prop-list-top {}
-    .prop-list-loc { font-size: 12px; color: var(--muted); margin-bottom: 10px; display: flex; align-items: center; gap: 5px; }
-    .prop-list-name { font-family: var(--font-serif); font-size: 36px; margin-bottom: 12px; }
-    .prop-list-desc { font-size: 14px; color: var(--cream-2); line-height: 1.75; margin-bottom: 20px; }
-    .prop-list-amenities { display: flex; flex-wrap: wrap; gap: 6px; margin-bottom: 24px; }
-    .prop-list-bottom { display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 16px; }
-    .prop-list-pricing { }
-    .prop-list-rent { font-size: 28px; font-weight: 500; }
-    .prop-list-meta { font-size: 12px; color: var(--muted); margin-top: 2px; }
-    .prop-list-actions { display: flex; gap: 12px; }
+    /* ── Property list ── */
+    .prop-list{padding:48px 0}
+    .prop-item{display:grid;grid-template-columns:400px 1fr;border:1px solid var(--rule);margin-bottom:2px;background:var(--paper);transition:background .15s}
+    .prop-item:hover{background:var(--paper-2)}
+    .prop-item-img{position:relative;overflow:hidden}
+    .prop-item-img img{width:100%;height:100%;object-fit:cover;min-height:280px;transition:transform .5s}
+    .prop-item:hover .prop-item-img img{transform:scale(1.04)}
+    .prop-item-img .badge{position:absolute;top:14px;left:14px}
+    .prop-item-body{padding:40px 48px;display:flex;flex-direction:column;justify-content:space-between}
+    .prop-item-loc{font-size:11px;letter-spacing:.08em;text-transform:uppercase;color:var(--muted);margin-bottom:8px;display:flex;align-items:center;gap:6px}
+    .prop-item-name{font-family:var(--font-display);font-weight:300;font-size:clamp(36px,4vw,52px);line-height:.95;margin-bottom:16px}
+    .prop-item-desc{font-size:14px;color:var(--ink-3);line-height:1.8;margin-bottom:20px;max-width:480px}
+    .prop-item-tags{display:flex;flex-wrap:wrap;gap:5px;margin-bottom:24px}
+    .prop-item-tag{font-size:10px;letter-spacing:.05em;color:var(--muted);border:1px solid var(--rule);padding:3px 9px}
+    .prop-item-bottom{display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:16px;padding-top:20px;border-top:1px solid var(--rule)}
+    .prop-item-rent{font-family:var(--font-serif);font-size:32px}
+    .prop-item-meta{font-size:12px;color:var(--muted);margin-top:2px}
+    .prop-item-actions{display:flex;gap:10px}
+    .no-results{text-align:center;padding:80px 24px;color:var(--muted)}
+    .no-results p{font-size:14px;margin-top:8px}
 
     /* ── Map section ── */
-    .map-strip {
-      background: var(--bg-2); border-top: 1px solid var(--border); border-bottom: 1px solid var(--border);
-      padding: 64px 0;
-    }
-    .map-strip h2 { font-size: clamp(28px, 3.5vw, 44px); margin-bottom: 8px; }
-    .map-strip p { color: var(--muted); font-size: 14px; margin-bottom: 32px; }
-    .map-pins { display: flex; gap: 16px; flex-wrap: wrap; margin-bottom: 32px; }
-    .map-pin-card {
-      background: var(--bg); border: 1px solid var(--border); border-radius: var(--r-md);
-      padding: 14px 20px; display: flex; align-items: center; gap: 12px; cursor: pointer;
-      transition: border-color .2s;
-    }
-    .map-pin-card:hover, .map-pin-card.active { border-color: var(--orange); }
-    .map-pin-icon {
-      width: 32px; height: 32px; background: rgba(196,75,26,.15);
-      border-radius: 50%; display: flex; align-items: center; justify-content: center; flex-shrink: 0;
-    }
-    .map-pin-icon svg { width: 14px; height: 14px; fill: var(--orange); }
-    .map-pin-info h4 { font-size: 14px; font-weight: 500; }
-    .map-pin-info p { font-size: 12px; color: var(--muted); }
-    .map-embed { border-radius: var(--r-lg); overflow: hidden; border: 1px solid var(--border); }
-    .map-embed iframe { width: 100%; height: 380px; border: none; display: block; }
+    .map-section{background:var(--ink);padding:0;overflow:hidden}
+    .map-header{padding:48px 0 32px;background:var(--ink)}
+    .map-header .eyebrow{color:rgba(247,244,239,.35)}
+    .map-header h2{font-size:clamp(28px,3.5vw,44px);color:var(--paper)}
+    .map-layout{display:grid;grid-template-columns:320px 1fr}
+    .map-sidebar{background:var(--ink-2);border-right:1px solid rgba(247,244,239,.08);overflow-y:auto;max-height:480px}
+    .map-prop-item{padding:20px 24px;border-bottom:1px solid rgba(247,244,239,.06);cursor:pointer;transition:background .15s}
+    .map-prop-item:hover,.map-prop-item.active{background:rgba(247,244,239,.06)}
+    .map-prop-item.active{border-left:2px solid var(--orange)}
+    .map-prop-name{font-family:var(--font-serif);font-size:18px;color:var(--paper);margin-bottom:4px}
+    .map-prop-loc{font-size:11px;color:rgba(247,244,239,.4);letter-spacing:.06em;text-transform:uppercase}
+    .map-prop-status{margin-top:8px}
+    .map-frame-wrap{position:relative}
+    .map-frame-wrap iframe{width:100%;height:480px;border:none;display:block;filter:grayscale(15%) contrast(105%)}
+    .map-loading{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;background:var(--ink-3);color:rgba(247,244,239,.4);font-size:13px;letter-spacing:.04em;pointer-events:none;transition:opacity .3s}
+    .map-loading.hidden{opacity:0}
 
-    /* ── Why switch ── */
-    .why-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 24px; }
-    .why-item { padding: 32px; background: var(--bg-2); border: 1px solid var(--border); border-radius: var(--r-lg); }
-    .why-icon { font-size: 28px; margin-bottom: 16px; }
-    .why-title { font-family: var(--font-serif); font-size: 20px; margin-bottom: 8px; }
-    .why-desc { font-size: 13px; color: var(--muted); line-height: 1.7; }
-
-    @media (max-width: 900px) {
-      .prop-list-item { grid-template-columns: 1fr; }
-      .prop-list-img { height: 240px; }
-      .prop-list-body { padding: 24px; }
-      .why-grid { grid-template-columns: 1fr 1fr; }
+    @media(max-width:900px){
+      .prop-item{grid-template-columns:1fr}
+      .prop-item-img img{min-height:220px}
+      .prop-item-body{padding:24px}
+      .map-layout{grid-template-columns:1fr}
+      .map-sidebar{max-height:200px}
+      .map-frame-wrap iframe{height:320px}
     }
-    @media (max-width: 600px) {
-      .why-grid { grid-template-columns: 1fr; }
-      .prop-list-bottom { flex-direction: column; align-items: flex-start; }
+    @media(max-width:600px){
+      .prop-item-bottom{flex-direction:column;align-items:flex-start}
+      .search-inner{flex-direction:column;align-items:stretch}
+      .result-count{margin-left:0}
     }
   </style>
 </head>
 <body>
-  <div id="nav-mount"></div>
+<div id="nav-mount"></div>
 
-  <!-- ── Page Hero ── -->
-  <div class="page-hero">
-    <div class="container">
-      <div class="eyebrow" style="margin-bottom:12px">where we are</div>
-      <h1>Three buildings.<br><em class="serif-italic">One city.</em></h1>
-      <p>Curated nodes across Bengaluru. Fully managed. Zero broker. Walk in.</p>
-    </div>
-  </div>
-
-  <!-- ── Filters ── -->
+<!-- Page hero -->
+<div class="page-hero">
   <div class="container">
-    <div class="filters">
-      <span class="label" style="margin-right:4px">Filter:</span>
-      <button class="filter-btn active" data-filter="all">All</button>
-      <button class="filter-btn" data-filter="available">Available Now</button>
-      <button class="filter-btn" data-filter="filling-fast">Filling Fast</button>
-      <button class="filter-btn" data-filter="coming-soon">Coming Soon</button>
+    <div class="eyebrow" style="margin-bottom:12px">Where we are</div>
+    <h1>Three buildings.<br><em class="serif">One city.</em></h1>
+    <p>Curated nodes across Bengaluru. Fully managed. Zero broker. Walk in.</p>
+  </div>
+</div>
+
+<!-- Search + filters -->
+<div class="search-bar">
+  <div class="container">
+    <div class="search-inner">
+      <div class="search-box">
+        <span class="search-icon">⌕</span>
+        <input type="text" id="searchInput" placeholder="Search by name, location, amenity…" oninput="applyFilters()">
+      </div>
+      <div class="filter-pills">
+        <button class="filter-pill active" data-filter="all" onclick="setFilter('all',this)">All</button>
+        <button class="filter-pill" data-filter="available" onclick="setFilter('available',this)">Available</button>
+        <button class="filter-pill" data-filter="filling-fast" onclick="setFilter('filling-fast',this)">Filling Fast</button>
+        <button class="filter-pill" data-filter="coming-soon" onclick="setFilter('coming-soon',this)">Coming Soon</button>
+      </div>
+      <span class="result-count" id="resultCount"></span>
     </div>
   </div>
+</div>
 
-  <!-- ── Properties List ── -->
-  <section style="padding-bottom:80px">
-    <div class="container">
-      <div id="propsList"></div>
-      <div id="propsEmpty" style="display:none;text-align:center;padding:64px 0;color:var(--muted)">
-        No properties match this filter.
-      </div>
+<!-- Properties list -->
+<div class="prop-list">
+  <div class="container">
+    <div id="propsList"></div>
+    <div id="noResults" class="no-results" style="display:none">
+      <div style="font-size:32px">○</div>
+      <p>No properties match your search.</p>
     </div>
-  </section>
+  </div>
+</div>
 
-  <!-- ── Map ── -->
-  <section class="map-strip">
+<!-- Map -->
+<div class="map-section">
+  <div class="map-header">
     <div class="container">
-      <div class="eyebrow" style="margin-bottom:10px">locations</div>
-      <h2>Find us <em class="serif-italic">on the map.</em></h2>
-      <p>Three nodes. All in Bengaluru. All worth knowing about.</p>
-      <div class="map-pins" id="mapPins"></div>
-      <div class="map-embed"><iframe id="mapFrame" title="Property location" loading="lazy" allowfullscreen referrerpolicy="no-referrer-when-downgrade"></iframe></div>
+      <div class="eyebrow" style="margin-bottom:8px">Find us</div>
+      <h2>All three nodes,<br><em class="serif">on the map.</em></h2>
     </div>
-  </section>
-
-  <!-- ── Why switch ── -->
-  <section class="section">
-    <div class="container">
-      <div style="text-align:center;margin-bottom:48px" class="fade-up">
-        <div class="eyebrow" style="margin-bottom:10px">why switch.</div>
-        <h2 style="font-size:clamp(28px,3.5vw,44px)">What you get when<br><em class="serif-italic">you switch.</em></h2>
-      </div>
-      <div class="why-grid">
-        <div class="why-item fade-up"><div class="why-icon">🚫</div><div class="why-title">Zero broker.</div><div class="why-desc">No broker fees. No middlemen. You deal with us directly, from the first message to the keys.</div></div>
-        <div class="why-item fade-up"><div class="why-icon">🧳</div><div class="why-title">One suitcase.</div><div class="why-desc">Bed, wardrobe, kitchen, WiFi — all set up before you arrive. That's the entire checklist.</div></div>
-        <div class="why-item fade-up"><div class="why-icon">💰</div><div class="why-title">One month deposit.</div><div class="why-desc">Your savings are yours. We don't need two months to prove you're a real person.</div></div>
-        <div class="why-item fade-up"><div class="why-icon">📞</div><div class="why-title">Caretaker on-site.</div><div class="why-desc">Not on the third call. Not after a WhatsApp at 11pm. They just — pick up.</div></div>
-        <div class="why-item fade-up"><div class="why-icon">🤝</div><div class="why-title">11-month L&L.</div><div class="why-desc">Long enough to feel like home. Short enough if life changes its mind.</div></div>
-        <div class="why-item fade-up"><div class="why-icon">👥</div><div class="why-title">the grid.</div><div class="why-desc">A community of people who are building things. Gym buddies, chai partners, co-founders.</div></div>
-      </div>
+  </div>
+  <div class="map-layout">
+    <div class="map-sidebar" id="mapSidebar"></div>
+    <div class="map-frame-wrap">
+      <div class="map-loading" id="mapLoading">Loading map…</div>
+      <iframe id="mainMap" title="Property locations" allowfullscreen referrerpolicy="no-referrer-when-downgrade" loading="lazy" onload="document.getElementById('mapLoading').classList.add('hidden')"></iframe>
     </div>
-  </section>
+  </div>
+</div>
 
-  <div id="footer-mount"></div>
+<div id="footer-mount"></div>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
+<script src="/assets/js/supabase.js"></script>
+<script>
+document.getElementById('nav-mount').innerHTML = navComponent('Properties');
+document.getElementById('footer-mount').innerHTML = footerComponent();
 
-  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
-  <script src="/assets/js/supabase.js"></script>
-  <script>
-    document.getElementById('nav-mount').innerHTML = navComponent('Properties');
-    document.getElementById('footer-mount').innerHTML = footerComponent();
+let allProps = [];
+let activeFilter = 'all';
 
-    let allProps = [];
-    let currentFilter = 'all';
+function buildMapUrl(props) {
+  // If only 1 prop with embed, use it directly
+  if (props.length === 1) return getMapEmbed(props[0]);
+  // For multiple: use Google Maps search showing all locations
+  const locations = props.map(p => encodeURIComponent((p.location||'') + ', ' + (p.area||'Bengaluru') + ', India'));
+  // Show first property's area with all markers via search
+  const q = encodeURIComponent('managed co-living Bengaluru');
+  // Best approach for multiple: use the first one's embed but with wider zoom
+  const first = props[0];
+  const q2 = encodeURIComponent((first.location||'Bengaluru') + ', ' + (first.area||'Bengaluru') + ', India');
+  return 'https://maps.google.com/maps?q=' + q2 + '&output=embed&z=12';
+}
 
-    function renderList(props) {
-      const container = document.getElementById('propsList');
-      const empty     = document.getElementById('propsEmpty');
-      const filtered  = currentFilter === 'all' ? props : props.filter(p => p.status === currentFilter);
-      if (!filtered.length) { container.innerHTML = ''; empty.style.display = 'block'; return; }
-      empty.style.display = 'none';
-      container.innerHTML = filtered.map(p => `
-        <div class="prop-list-item fade-up" data-status="${p.status}">
-          <div class="prop-list-img">
-            <img src="${p.images?.[0] || 'https://images.unsplash.com/photo-1560448204-603b3fc33ddc?w=800&q=80'}" alt="${p.name}" loading="lazy">
-            ${statusBadge(p.status)}
+function renderProps(props) {
+  const el = document.getElementById('propsList');
+  const none = document.getElementById('noResults');
+  document.getElementById('resultCount').textContent = props.length + ' propert' + (props.length===1?'y':'ies');
+  if (!props.length) { el.innerHTML = ''; none.style.display = 'block'; return; }
+  none.style.display = 'none';
+  el.innerHTML = props.map(p => {
+    const hero = getHeroImage(p.images);
+    return `<div class="prop-item fade-up" data-status="${p.status}">
+      <div class="prop-item-img">
+        <img src="${hero}" alt="${p.name}" loading="lazy">
+        ${statusBadge(p.status)}
+      </div>
+      <div class="prop-item-body">
+        <div>
+          <div class="prop-item-loc">
+            <svg width="9" height="11" viewBox="0 0 10 12" fill="none"><path d="M5 0C2.24 0 0 2.24 0 5c0 3.75 5 7 5 7s5-3.25 5-7c0-2.76-2.24-5-5-5zm0 6.5A1.5 1.5 0 115 3.5a1.5 1.5 0 010 3z" fill="currentColor"/></svg>
+            ${p.location}, ${p.area}
           </div>
-          <div class="prop-list-body">
-            <div class="prop-list-top">
-              <div class="prop-list-loc">
-                <svg width="10" height="12" viewBox="0 0 10 12" fill="none"><path d="M5 0C2.24 0 0 2.24 0 5c0 3.75 5 7 5 7s5-3.25 5-7c0-2.76-2.24-5-5-5zm0 6.5A1.5 1.5 0 115 3.5a1.5 1.5 0 010 3z" fill="currentColor"/></svg>
-                ${p.location}, ${p.area}
-              </div>
-              <div class="prop-list-name">${p.name}</div>
-              <p class="prop-list-desc">${p.description}</p>
-              <div class="prop-list-amenities">
-                ${(p.amenities||[]).map(a => `<span class="property-card-tag">${a}</span>`).join('')}
-              </div>
-            </div>
-            <div class="prop-list-bottom">
-              <div class="prop-list-pricing">
-                <div class="prop-list-rent">${formatRent(p.rent)}</div>
-                <div class="prop-list-meta">${p.bhk} · ${p.units} flats · ${p.location}</div>
-              </div>
-              <div class="prop-list-actions">
-                ${p.status === 'coming-soon'
-                  ? `<a href="/property/${p.slug}.html" class="btn-ghost">Join waitlist →</a>`
-                  : `<a href="/property/${p.slug}.html" class="btn-primary">Enquire now →</a>`
-                }
-                <a href="/property/${p.slug}.html" class="btn-ghost">View details</a>
-              </div>
-            </div>
+          <div class="prop-item-name">${p.name}</div>
+          <p class="prop-item-desc">${p.description}</p>
+          <div class="prop-item-tags">${(p.amenities||[]).map(a=>`<span class="prop-item-tag">${a}</span>`).join('')}</div>
+        </div>
+        <div class="prop-item-bottom">
+          <div>
+            <div class="prop-item-rent">${formatRent(p.rent)}</div>
+            <div class="prop-item-meta">${p.bhk} · ${p.units} flats</div>
+          </div>
+          <div class="prop-item-actions">
+            <a href="/property/${p.slug}.html" class="btn-ghost">View details</a>
+            <a href="/property/${p.slug}.html" class="btn-primary">${p.status==='coming-soon'?'Join waitlist →':'Enquire now →'}</a>
           </div>
         </div>
-      `).join('');
-      initFadeUp();
-    }
+      </div>
+    </div>`;
+  }).join('');
+  initFadeUp();
+}
 
-    function renderMapPins(props) {
-      const container = document.getElementById('mapPins');
-      container.innerHTML = props.map((p, i) => `
-        <div class="map-pin-card ${i===0?'active':''}" onclick="setMap('${p.map_embed}', this)">
-          <div class="map-pin-icon">
-            <svg viewBox="0 0 10 12"><path d="M5 0C2.24 0 0 2.24 0 5c0 3.75 5 7 5 7s5-3.25 5-7c0-2.76-2.24-5-5-5zm0 6.5A1.5 1.5 0 115 3.5a1.5 1.5 0 010 3z"/></svg>
-          </div>
-          <div class="map-pin-info"><h4>${p.name}</h4><p>${p.location}</p></div>
-        </div>
-      `).join('');
-      if (props[0]?.map_embed) document.getElementById('mapFrame').src = props[0].map_embed;
-    }
+function renderMapSidebar(props) {
+  document.getElementById('mapSidebar').innerHTML = props.map((p,i) => `
+    <div class="map-prop-item ${i===0?'active':''}" id="mpItem_${p.id}" onclick="selectMapProp(${p.id}, '${getMapEmbed(p).replace(/'/g,"\\'")}')">
+      <div class="map-prop-name">${p.name}</div>
+      <div class="map-prop-loc">${p.location}, ${p.area}</div>
+      <div class="map-prop-status">${statusBadge(p.status)}</div>
+    </div>`).join('');
 
-    function setMap(url, el) {
-      document.getElementById('mapFrame').src = url;
-      document.querySelectorAll('.map-pin-card').forEach(c => c.classList.remove('active'));
-      el.classList.add('active');
-    }
+  // Load first property map
+  if (props.length) {
+    document.getElementById('mainMap').src = getMapEmbed(props[0]);
+  }
+}
 
-    // Filters
-    document.querySelectorAll('.filter-btn').forEach(btn => {
-      btn.addEventListener('click', () => {
-        document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
-        btn.classList.add('active');
-        currentFilter = btn.dataset.filter;
-        renderList(allProps);
-      });
-    });
+function selectMapProp(id, embedUrl) {
+  document.querySelectorAll('.map-prop-item').forEach(el => el.classList.remove('active'));
+  const item = document.getElementById('mpItem_' + id);
+  if (item) item.classList.add('active');
+  document.getElementById('mapLoading').classList.remove('hidden');
+  document.getElementById('mainMap').src = embedUrl;
+}
 
-    async function init() {
-      allProps = await getProperties();
-      renderList(allProps);
-      renderMapPins(allProps);
-      initFadeUp();
-      initNav();
-    }
-    init();
-  </script>
+function setFilter(filter, el) {
+  activeFilter = filter;
+  document.querySelectorAll('.filter-pill').forEach(p => p.classList.remove('active'));
+  el.classList.add('active');
+  applyFilters();
+}
+
+function applyFilters() {
+  const q = document.getElementById('searchInput').value.toLowerCase().trim();
+  let filtered = allProps;
+  if (activeFilter !== 'all') filtered = filtered.filter(p => p.status === activeFilter);
+  if (q) filtered = filtered.filter(p =>
+    (p.name||'').toLowerCase().includes(q) ||
+    (p.location||'').toLowerCase().includes(q) ||
+    (p.area||'').toLowerCase().includes(q) ||
+    (p.description||'').toLowerCase().includes(q) ||
+    (p.amenities||[]).some(a => a.toLowerCase().includes(q))
+  );
+  renderProps(filtered);
+}
+
+async function init() {
+  allProps = await getProperties();
+  renderProps(allProps);
+  renderMapSidebar(allProps);
+  initFadeUp();
+  initNav();
+}
+init();
+</script>
 </body>
 </html>
