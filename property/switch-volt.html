@@ -196,7 +196,7 @@ async function load() {
   document.getElementById('amenitiesGrid').innerHTML = (p.amenities||[]).map(a =>
     `<div class="amenity-item"><span class="amenity-check">✓</span>${a}</div>`).join('');
 
-  if (p.map_embed) document.getElementById('propMap').src = p.map_embed;
+  document.getElementById('propMap').src = getMapEmbed(p);
   if (p.status === 'coming-soon') {
     document.getElementById('formTitle').textContent = 'Join the waitlist';
     document.getElementById('enquirySubmit').textContent = 'Join waitlist →';
