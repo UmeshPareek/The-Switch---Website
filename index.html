@@ -7,176 +7,358 @@
   <meta name="description" content="Managed co-living in Bengaluru. Fully furnished. Zero broker. Walk in with a suitcase.">
   <link rel="stylesheet" href="/assets/css/main.css">
   <style>
-    /* ── Video Hero ── */
-    .hero{position:relative;height:100vh;min-height:600px;display:flex;align-items:flex-end;overflow:hidden;background:var(--ink)}
-    .hero-video{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;opacity:.5}
-    .hero-overlay{position:absolute;inset:0;background:linear-gradient(to bottom,rgba(14,13,10,0) 0%,rgba(14,13,10,.15) 30%,rgba(14,13,10,.88) 100%)}
-    .hero-content{position:relative;z-index:1;padding:0 32px 80px;max-width:var(--max);margin:0 auto;width:100%}
-    .hero-eyebrow{font-size:10px;letter-spacing:.2em;text-transform:uppercase;color:rgba(247,244,239,.45);margin-bottom:20px}
-    .hero-h1{font-family:var(--font-display);font-weight:300;font-size:clamp(80px,12vw,160px);line-height:.9;color:var(--paper);margin-bottom:36px;letter-spacing:-.02em}
-    .hero-h1 em{font-style:italic;color:rgba(247,244,239,.6)}
-    .hero-tagline{font-size:16px;color:rgba(247,244,239,.65);font-weight:300;margin-bottom:44px;max-width:400px;line-height:1.8}
-    .hero-actions{display:flex;align-items:center;gap:14px;flex-wrap:wrap}
-    .hero-btn-light{display:inline-flex;align-items:center;gap:8px;background:var(--paper);color:var(--ink);font-size:12px;font-weight:500;letter-spacing:.06em;padding:15px 30px;transition:background .2s}
-    .hero-btn-light:hover{background:var(--paper-2)}
-    .hero-btn-outline{display:inline-flex;align-items:center;gap:8px;border:1px solid rgba(247,244,239,.35);color:var(--paper);font-size:12px;letter-spacing:.04em;padding:14px 28px;transition:border-color .2s,background .2s}
-    .hero-btn-outline:hover{border-color:rgba(247,244,239,.8)}
-    .hero-scroll{position:absolute;bottom:36px;right:48px;z-index:1;display:flex;flex-direction:column;align-items:center;gap:8px}
-    .hero-scroll-label{font-size:9px;letter-spacing:.18em;text-transform:uppercase;color:rgba(247,244,239,.35);writing-mode:vertical-rl}
-    .hero-scroll-line{width:1px;height:56px;background:linear-gradient(rgba(247,244,239,.3),transparent);animation:scrollline 2.2s ease-in-out infinite}
-    @keyframes scrollline{0%{opacity:0;transform:scaleY(0);transform-origin:top}50%{opacity:1;transform:scaleY(1)}100%{opacity:0;transform:scaleY(1);transform-origin:bottom}}
-
-    /* ── Ticker ── */
-    .ticker{overflow:hidden;border-top:1px solid rgba(247,244,239,.06);border-bottom:1px solid rgba(247,244,239,.06);padding:11px 0;background:var(--ink)}
-
-    /* ── Manifesto split ── */
-    .manifesto{display:grid;grid-template-columns:1fr 1fr;min-height:640px}
-    .manifesto-img{position:relative;overflow:hidden}
-    .manifesto-img img{width:100%;height:100%;object-fit:cover;display:block;transition:transform 8s ease}
-    .manifesto-img:hover img{transform:scale(1.03)}
-    .manifesto-copy{background:var(--paper);padding:80px 72px;display:flex;flex-direction:column;justify-content:center;border-left:1px solid var(--rule)}
-    .manifesto-copy .eyebrow{margin-bottom:28px}
-    .manifesto-headline{font-family:var(--font-display);font-weight:300;font-size:clamp(36px,4vw,58px);line-height:1.05;margin-bottom:32px}
-    .manifesto-headline em{font-style:italic}
-    .manifesto-body{font-size:15px;color:var(--ink-3);line-height:1.85;margin-bottom:28px;max-width:420px}
-    .manifesto-pull{font-family:var(--font-serif);font-size:clamp(18px,2vw,24px);font-style:italic;color:var(--muted);border-left:2px solid var(--orange);padding-left:20px;margin-bottom:36px;line-height:1.5}
-
-    /* ── Properties ── */
-    .props-header{display:grid;grid-template-columns:1fr auto;align-items:baseline;margin-bottom:40px}
-    .props-header h2{font-size:clamp(32px,4vw,52px)}
-    .props-grid{display:grid;grid-template-columns:repeat(3,1fr);border-left:1px solid var(--rule)}
-    .props-grid .property-card{border-left:none;border-right:1px solid var(--rule);border-bottom:none;border-top:none}
-
-    /* ── Stats ── */
-    .stats-editorial{background:var(--ink);color:var(--paper);padding:80px 0;border-top:1px solid var(--rule)}
-    .stats-header{margin-bottom:56px;display:flex;align-items:flex-end;justify-content:space-between;gap:32px}
-    .stats-header-label{font-family:var(--font-display);font-weight:300;font-size:clamp(28px,4vw,52px);font-style:italic;color:rgba(247,244,239,.55);line-height:1.1}
-    .stats-inner{display:grid;grid-template-columns:repeat(4,1fr);border-left:1px solid rgba(247,244,239,.07)}
-    .stat-col{padding:0 40px 0 32px;border-right:1px solid rgba(247,244,239,.07)}
-    .stat-big{font-family:var(--font-serif);font-size:clamp(52px,7vw,88px);line-height:1;margin-bottom:8px;color:var(--paper)}
-    .stat-big em{font-style:italic;color:rgba(247,244,239,.3)}
-    .stat-label{font-size:10px;letter-spacing:.14em;text-transform:uppercase;color:rgba(247,244,239,.3);margin-bottom:10px}
-    .stat-desc{font-size:12px;color:rgba(247,244,239,.38);line-height:1.65;max-width:160px}
-
-    /* ── What's included ── */
-    .included{padding:88px 0;background:var(--paper-2);border-top:1px solid var(--rule);border-bottom:1px solid var(--rule)}
-    .included-header{display:grid;grid-template-columns:1fr 1fr;gap:40px;align-items:end;margin-bottom:56px}
-    .included-header h2{font-size:clamp(28px,3.5vw,48px);line-height:1.1}
-    .included-header p{font-size:14px;color:var(--muted);line-height:1.75;max-width:360px}
-    .included-grid{display:grid;grid-template-columns:repeat(4,1fr);border-left:1px solid var(--rule)}
-    .included-item{padding:32px 28px;border-right:1px solid var(--rule);border-bottom:1px solid var(--rule)}
-    .included-icon{margin-bottom:18px;color:var(--orange)}
-    .included-item h4{font-family:var(--font-serif);font-size:18px;margin-bottom:6px;font-weight:400}
-    .included-item p{font-size:12px;color:var(--muted);line-height:1.6}
-    .included-grid .included-item:nth-child(n+5){border-bottom:none}
-
-    /* ── Who lives here ── */
-    .personas{padding:88px 0;border-top:1px solid var(--rule)}
-    .personas-header{margin-bottom:56px}
-    .personas-header h2{font-size:clamp(28px,3.5vw,48px);line-height:1.1;margin-bottom:10px}
-    .personas-header p{font-size:14px;color:var(--muted);max-width:400px;line-height:1.7}
-    .personas-grid{display:grid;grid-template-columns:repeat(3,1fr);border-left:1px solid var(--rule)}
-    .persona{padding:48px 40px;border-right:1px solid var(--rule);position:relative;overflow:hidden}
-    .persona::after{content:'';position:absolute;bottom:0;left:0;right:0;height:2px;background:var(--orange);transform:scaleX(0);transform-origin:left;transition:transform .45s cubic-bezier(.25,.46,.45,.94)}
-    .persona:hover::after{transform:scaleX(1)}
-    .persona-num{font-family:var(--font-display);font-size:80px;font-weight:300;color:var(--rule-2);line-height:1;margin-bottom:20px}
-    .persona-type{font-family:var(--font-serif);font-size:28px;margin-bottom:12px}
-    .persona-role{font-size:10px;letter-spacing:.12em;text-transform:uppercase;color:var(--orange);margin-bottom:16px}
-    .persona-desc{font-size:13px;color:var(--muted);line-height:1.8}
-    .persona-tags{display:flex;flex-wrap:wrap;gap:5px;margin-top:24px}
-    .persona-tag{font-size:10px;letter-spacing:.04em;color:var(--muted);border:1px solid var(--rule);padding:3px 9px}
-
-    /* ── Before / After ── */
-    .versus{background:var(--ink);padding:88px 0}
-    .versus-header{margin-bottom:56px}
-    .versus-header .eyebrow{color:rgba(247,244,239,.3);margin-bottom:14px}
-    .versus-header h2{font-size:clamp(28px,3.5vw,48px);color:var(--paper);line-height:1.1}
-    .versus-grid{display:grid;grid-template-columns:1fr 1fr;border-left:1px solid rgba(247,244,239,.06)}
-    .versus-col{border-right:1px solid rgba(247,244,239,.06);padding:0 40px}
-    .versus-col-label{font-size:10px;letter-spacing:.14em;text-transform:uppercase;color:rgba(247,244,239,.25);border-bottom:1px solid rgba(247,244,239,.06);padding-bottom:20px;margin-bottom:32px}
-    .versus-col-label span{display:inline-block;width:6px;height:6px;border-radius:50%;margin-right:10px;vertical-align:middle}
-    .versus-col.old .versus-col-label span{background:rgba(247,244,239,.2)}
-    .versus-col.new .versus-col-label span{background:var(--orange)}
-    .versus-row{display:flex;align-items:flex-start;gap:14px;padding:18px 0;border-bottom:1px solid rgba(247,244,239,.05)}
-    .versus-row:last-child{border-bottom:none}
-    .versus-check{flex-shrink:0;width:20px;height:20px;display:flex;align-items:center;justify-content:center;margin-top:1px}
-    .versus-check svg{width:14px;height:14px}
-    .versus-col.old .versus-check svg{color:rgba(247,244,239,.2)}
-    .versus-col.new .versus-check svg{color:var(--orange)}
-    .versus-text{font-size:14px;line-height:1.55}
-    .versus-col.old .versus-text{color:rgba(247,244,239,.35);text-decoration:line-through;text-decoration-color:rgba(247,244,239,.15)}
-    .versus-col.new .versus-text{color:rgba(247,244,239,.85)}
-    .versus-text strong{font-weight:500}
-    .versus-col.new .versus-text strong{color:var(--paper)}
-
-    /* ── Grid teaser ── */
-    .grid-teaser{padding:88px 0;border-top:1px solid var(--rule)}
-    .grid-layout{display:grid;grid-template-columns:1fr 1fr;gap:88px;align-items:center}
-    .grid-mosaic{display:grid;grid-template-columns:1fr 1fr;grid-template-rows:300px 200px;gap:6px}
-    .grid-mosaic-img{overflow:hidden}
-    .grid-mosaic-img img{width:100%;height:100%;object-fit:cover;transition:transform .6s cubic-bezier(.25,.46,.45,.94)}
-    .grid-mosaic-img:hover img{transform:scale(1.05)}
-    .grid-mosaic-img:first-child{grid-column:span 2}
-    .grid-text h2{font-size:clamp(32px,4vw,52px);margin-bottom:20px;line-height:1.1}
-    .grid-text p{font-size:14px;color:var(--ink-3);line-height:1.85;margin-bottom:12px}
-    .grid-pull{font-family:var(--font-serif);font-size:clamp(18px,2vw,22px);font-style:italic;color:var(--muted);border-top:1px solid var(--rule);padding-top:20px;margin:24px 0 32px;line-height:1.5}
-
-    /* ── Cinematic CTA ── */
-    .cta-cinematic{position:relative;min-height:560px;display:flex;align-items:center;justify-content:center;text-align:center;overflow:hidden}
-    .cta-bg{position:absolute;inset:0}
-    .cta-bg img{width:100%;height:100%;object-fit:cover;display:block}
-    .cta-bg::after{content:'';position:absolute;inset:0;background:rgba(14,13,10,.72)}
-    .cta-inner{position:relative;z-index:1;max-width:760px;padding:96px 32px}
-    .cta-inner .eyebrow{color:rgba(247,244,239,.35);margin-bottom:24px}
-    .cta-h{font-family:var(--font-display);font-weight:300;font-size:clamp(52px,9vw,120px);line-height:.92;color:var(--paper);margin-bottom:28px;letter-spacing:-.02em}
-    .cta-h em{font-style:italic;color:rgba(247,244,239,.4)}
-    .cta-sub{font-size:15px;color:rgba(247,244,239,.5);margin-bottom:44px;line-height:1.7}
-    .cta-actions{display:flex;align-items:center;justify-content:center;gap:14px;flex-wrap:wrap}
-
-    @media(max-width:900px){
-      .manifesto{grid-template-columns:1fr}
-      .manifesto-img{height:480px}
-      .manifesto-copy{padding:56px 32px}
-      .props-grid{grid-template-columns:1fr;border-left:none}
-      .props-grid .property-card{border-right:none;border-bottom:1px solid var(--rule)}
-      .stats-inner{grid-template-columns:1fr 1fr}
-      .stats-header{flex-direction:column;align-items:flex-start;gap:12px}
-      .included-header{grid-template-columns:1fr}
-      .included-grid{grid-template-columns:1fr 1fr}
-      .personas-grid{grid-template-columns:1fr}
-      .versus-grid{grid-template-columns:1fr;gap:32px}
-      .versus-col{border-right:none;padding:0}
-      .versus-grid{border-left:none}
-      .grid-layout{grid-template-columns:1fr;gap:40px}
+    /* ── Video Hero ─────────────────────────────────────── */
+    .hero {
+      position: relative;
+      height: 100vh;
+      min-height: 600px;
+      display: flex;
+      align-items: flex-end;
+      overflow: hidden;
+      background: var(--ink);
     }
-    @media(max-width:600px){
-      .hero-h1{font-size:clamp(64px,16vw,96px)}
-      .hero-content{padding:0 20px 64px}
-      .hero-scroll{display:none}
-      .stats-inner{grid-template-columns:1fr}
-      .included-grid{grid-template-columns:1fr}
-      .included-grid .included-item:nth-child(n+5){border-bottom:1px solid var(--rule)}
-      .included-grid .included-item:last-child{border-bottom:none}
-      .persona{padding:36px 24px}
+    .hero-video {
+      position: absolute;
+      inset: 0; width: 100%; height: 100%;
+      object-fit: cover;
+      opacity: .48;
+      will-change: transform;
+    }
+    .hero-overlay {
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(to bottom,
+        rgba(14,13,10,0) 0%,
+        rgba(14,13,10,.12) 35%,
+        rgba(14,13,10,.9) 100%);
+      z-index: 2;
+    }
+    .hero-content {
+      position: relative;
+      z-index: 4;
+      padding: 0 40px 88px;
+      max-width: var(--max);
+      margin: 0 auto;
+      width: 100%;
+    }
+    .hero-eyebrow-wrap {
+      display: flex;
+      align-items: center;
+      gap: 16px;
+      margin-bottom: 20px;
+    }
+    .hero-eye-line {
+      width: 32px;
+      height: 1px;
+      background: rgba(247,244,239,.35);
+    }
+    .hero-eyebrow {
+      font-size: 10px;
+      letter-spacing: .2em;
+      text-transform: uppercase;
+      color: rgba(247,244,239,.45);
+    }
+    .hero-h1 {
+      font-family: var(--font-display);
+      font-weight: 300;
+      font-size: clamp(88px, 14vw, 172px);
+      line-height: .88;
+      color: var(--paper);
+      margin-bottom: 36px;
+      letter-spacing: -.025em;
+    }
+    .hero-h1 em { font-style: italic; color: rgba(247,244,239,.55); }
+    .hero-tagline {
+      font-size: 16px;
+      color: rgba(247,244,239,.6);
+      font-weight: 300;
+      margin-bottom: 44px;
+      max-width: 380px;
+      line-height: 1.85;
+    }
+    .hero-actions { display: flex; align-items: center; gap: 14px; flex-wrap: wrap; }
+    .hero-btn-light {
+      display: inline-flex; align-items: center; gap: 8px;
+      background: var(--paper); color: var(--ink);
+      font-size: 12px; font-weight: 500; letter-spacing: .06em;
+      padding: 15px 32px; transition: background .2s;
+    }
+    .hero-btn-light:hover { background: var(--paper-2); }
+    .hero-btn-outline {
+      display: inline-flex; align-items: center; gap: 8px;
+      border: 1px solid rgba(247,244,239,.3); color: var(--paper);
+      font-size: 12px; letter-spacing: .04em;
+      padding: 14px 30px; transition: border-color .2s;
+    }
+    .hero-btn-outline:hover { border-color: rgba(247,244,239,.8); }
+    .hero-scroll {
+      position: absolute;
+      bottom: 40px; right: 56px;
+      z-index: 4;
+      display: flex; flex-direction: column; align-items: center; gap: 8px;
+    }
+    .hero-scroll-line {
+      width: 1px; height: 60px;
+      background: linear-gradient(rgba(247,244,239,.35), transparent);
+      animation: scrollline 2.4s ease-in-out infinite;
+    }
+    @keyframes scrollline {
+      0%   { opacity:0; transform: scaleY(0); transform-origin: top }
+      50%  { opacity:1; transform: scaleY(1) }
+      100% { opacity:0; transform: scaleY(1); transform-origin: bottom }
+    }
+    .hero-scroll-label {
+      font-size: 9px; letter-spacing: .2em;
+      text-transform: uppercase;
+      color: rgba(247,244,239,.3);
+      writing-mode: vertical-rl;
+    }
+    /* corner stat ─ top right of hero */
+    .hero-corner {
+      position: absolute;
+      top: 88px; right: 56px;
+      z-index: 4;
+      text-align: right;
+    }
+    .hero-corner-num {
+      font-family: var(--font-serif);
+      font-size: 48px; line-height: 1;
+      color: rgba(247,244,239,.15);
+    }
+    .hero-corner-label {
+      font-size: 9px; letter-spacing: .14em;
+      text-transform: uppercase;
+      color: rgba(247,244,239,.2);
+      margin-top: 4px;
+    }
+
+    /* ── Ticker ─────────────────────────────────────────── */
+    .ticker {
+      overflow: hidden;
+      border-top: 1px solid rgba(247,244,239,.06);
+      border-bottom: 1px solid rgba(247,244,239,.06);
+      padding: 11px 0;
+      background: var(--ink);
+    }
+    .ticker-inner {
+      display: flex; gap: 56px;
+      animation: ticker 40s linear infinite;
+      white-space: nowrap;
+    }
+    .ticker-inner:hover { animation-play-state: paused; }
+    @keyframes ticker { from { transform: translateX(0) } to { transform: translateX(-50%) } }
+    .ticker-item { font-size: 11px; font-weight: 400; letter-spacing: .12em; text-transform: uppercase; opacity: .5; color: var(--paper); }
+    .ticker-item .sep { margin: 0 10px; opacity: .25; }
+
+    /* ── Manifesto split ─────────────────────────────────── */
+    .manifesto { display: grid; grid-template-columns: 1fr 1fr; min-height: 680px; }
+    .manifesto-img { position: relative; overflow: hidden; }
+    .manifesto-img img {
+      width: 100%; height: 100%;
+      object-fit: cover; display: block;
+      transition: transform 8s ease;
+    }
+    .manifesto-img:hover img { transform: scale(1.04); }
+    .manifesto-copy {
+      background: var(--paper);
+      padding: 88px 72px;
+      display: flex; flex-direction: column; justify-content: center;
+      border-left: 1px solid var(--rule);
+    }
+    .manifesto-copy .eyebrow { margin-bottom: 28px; }
+    .manifesto-headline {
+      font-family: var(--font-display);
+      font-weight: 300;
+      font-size: clamp(36px, 4vw, 60px);
+      line-height: 1.05;
+      margin-bottom: 32px;
+    }
+    .manifesto-headline em { font-style: italic; }
+    .manifesto-body {
+      font-size: 15px; color: var(--ink-3);
+      line-height: 1.88; margin-bottom: 28px;
+      max-width: 400px;
+    }
+    .manifesto-pull {
+      font-family: var(--font-serif);
+      font-size: clamp(17px,2vw,22px);
+      font-style: italic; color: var(--muted);
+      border-left: 2px solid var(--orange);
+      padding-left: 20px; margin-bottom: 36px;
+      line-height: 1.55;
+    }
+
+    /* ── Properties ─────────────────────────────────────── */
+    .props-header { display: grid; grid-template-columns: 1fr auto; align-items: baseline; margin-bottom: 40px; }
+    .props-header h2 { font-size: clamp(32px,4vw,52px); }
+    .props-grid { display: grid; grid-template-columns: repeat(3,1fr); border-left: 1px solid var(--rule); }
+    .props-grid .property-card { border-left: none; border-right: 1px solid var(--rule); border-bottom: none; border-top: none; }
+
+    /* ── Stats ───────────────────────────────────────────── */
+    .stats-editorial { background: var(--ink); color: var(--paper); padding: 88px 0; border-top: 1px solid var(--rule); }
+    .stats-eyebrow { font-size: 10px; letter-spacing: .18em; text-transform: uppercase; color: rgba(247,244,239,.22); margin-bottom: 48px; }
+    .stats-inner { display: grid; grid-template-columns: repeat(4,1fr); border-left: 1px solid rgba(247,244,239,.07); }
+    .stat-col { padding: 0 40px 0 32px; border-right: 1px solid rgba(247,244,239,.07); }
+    .stat-big {
+      font-family: var(--font-serif);
+      font-size: clamp(56px,7.5vw,96px);
+      line-height: 1; margin-bottom: 8px; color: var(--paper);
+    }
+    .stat-big em { font-style: italic; color: rgba(247,244,239,.25); }
+    .stat-label { font-size: 10px; letter-spacing: .14em; text-transform: uppercase; color: rgba(247,244,239,.28); margin-bottom: 10px; }
+    .stat-desc  { font-size: 12px; color: rgba(247,244,239,.35); line-height: 1.65; max-width: 160px; }
+
+    /* ── Personas ────────────────────────────────────────── */
+    .personas { padding: 96px 0; border-top: 1px solid var(--rule); }
+    .personas-header { margin-bottom: 60px; }
+    .personas-header h2 { font-size: clamp(28px,3.5vw,48px); line-height: 1.1; margin-bottom: 10px; }
+    .personas-header p  { font-size: 14px; color: var(--muted); max-width: 400px; line-height: 1.75; margin-top: 8px; }
+    .personas-grid { display: grid; grid-template-columns: repeat(3,1fr); border-left: 1px solid var(--rule); }
+    .persona {
+      padding: 52px 44px;
+      border-right: 1px solid var(--rule);
+      position: relative; overflow: hidden;
+    }
+    .persona::after {
+      content: '';
+      position: absolute;
+      bottom: 0; left: 0; right: 0;
+      height: 2px;
+      background: var(--orange);
+      transform: scaleX(0);
+      transform-origin: left;
+      transition: transform .5s cubic-bezier(.25,.46,.45,.94);
+    }
+    .persona:hover::after { transform: scaleX(1); }
+    .persona-num  { font-family: var(--font-display); font-size: 88px; font-weight: 300; color: var(--rule-2); line-height: 1; margin-bottom: 20px; }
+    .persona-role { font-size: 10px; letter-spacing: .12em; text-transform: uppercase; color: var(--orange); margin-bottom: 8px; }
+    .persona-type { font-family: var(--font-serif); font-size: 30px; margin-bottom: 14px; }
+    .persona-desc { font-size: 13px; color: var(--muted); line-height: 1.8; }
+    .persona-tags { display: flex; flex-wrap: wrap; gap: 5px; margin-top: 24px; }
+    .persona-tag  { font-size: 10px; letter-spacing: .04em; color: var(--muted); border: 1px solid var(--rule); padding: 3px 9px; }
+
+    /* ── Before / After ──────────────────────────────────── */
+    .versus { background: var(--ink); padding: 96px 0; }
+    .versus-header { margin-bottom: 60px; }
+    .versus-header .eyebrow { color: rgba(247,244,239,.28); margin-bottom: 14px; }
+    .versus-header h2 { font-size: clamp(28px,3.5vw,48px); color: var(--paper); line-height: 1.1; }
+    .versus-grid { display: grid; grid-template-columns: 1fr 1fr; border-left: 1px solid rgba(247,244,239,.06); }
+    .versus-col { border-right: 1px solid rgba(247,244,239,.06); padding: 0 48px; }
+    .versus-col-label { font-size: 10px; letter-spacing: .14em; text-transform: uppercase; color: rgba(247,244,239,.22); border-bottom: 1px solid rgba(247,244,239,.06); padding-bottom: 20px; margin-bottom: 32px; display: flex; align-items: center; gap: 10px; }
+    .versus-col-label-dot { width: 6px; height: 6px; border-radius: 50%; flex-shrink: 0; }
+    .versus-col.old .versus-col-label-dot { background: rgba(247,244,239,.18); }
+    .versus-col.new .versus-col-label-dot { background: var(--orange); }
+    .versus-row { display: flex; align-items: flex-start; gap: 14px; padding: 18px 0; border-bottom: 1px solid rgba(247,244,239,.05); }
+    .versus-row:last-child { border-bottom: none; }
+    .versus-check { flex-shrink: 0; width: 18px; height: 18px; display: flex; align-items: center; justify-content: center; margin-top: 2px; }
+    .versus-check svg { width: 13px; height: 13px; }
+    .versus-col.old .versus-check svg { color: rgba(247,244,239,.18); }
+    .versus-col.new .versus-check svg { color: var(--orange); }
+    .versus-text { font-size: 13.5px; line-height: 1.55; }
+    .versus-col.old .versus-text { color: rgba(247,244,239,.3); text-decoration: line-through; text-decoration-color: rgba(247,244,239,.12); }
+    .versus-col.new .versus-text { color: rgba(247,244,239,.82); }
+    .versus-col.new .versus-text strong { color: var(--paper); font-weight: 500; }
+
+    /* ── Grid teaser ─────────────────────────────────────── */
+    .grid-teaser { padding: 96px 0; border-top: 1px solid var(--rule); }
+    .grid-layout  { display: grid; grid-template-columns: 1fr 1fr; gap: 96px; align-items: center; }
+    .grid-mosaic  { display: grid; grid-template-columns: 1fr 1fr; grid-template-rows: 300px 200px; gap: 6px; }
+    .grid-mosaic-img { overflow: hidden; }
+    .grid-mosaic-img img { width: 100%; height: 100%; object-fit: cover; transition: transform .65s cubic-bezier(.25,.46,.45,.94); }
+    .grid-mosaic-img:hover img { transform: scale(1.06); }
+    .grid-mosaic-img:first-child { grid-column: span 2; }
+    .grid-text h2 { font-size: clamp(28px,3.5vw,48px); margin-bottom: 20px; line-height: 1.1; }
+    .grid-text p  { font-size: 14px; color: var(--ink-3); line-height: 1.88; margin-bottom: 12px; }
+    .grid-pull {
+      font-family: var(--font-serif);
+      font-size: clamp(17px,2vw,22px);
+      font-style: italic; color: var(--muted);
+      border-top: 1px solid var(--rule);
+      padding-top: 20px; margin: 24px 0 32px; line-height: 1.55;
+    }
+
+    /* ── Cinematic CTA ───────────────────────────────────── */
+    .cta-cinematic {
+      position: relative; min-height: 580px;
+      display: flex; align-items: center; justify-content: center;
+      text-align: center; overflow: hidden;
+    }
+    .cta-bg { position: absolute; inset: 0; }
+    .cta-bg img { width: 100%; height: 100%; object-fit: cover; display: block; }
+    .cta-bg-overlay {
+      position: absolute; inset: 0;
+      background: rgba(14,13,10,.74);
+    }
+    .cta-inner { position: relative; z-index: 1; max-width: 720px; padding: 96px 32px; }
+    .cta-inner .eyebrow { color: rgba(247,244,239,.3); margin-bottom: 24px; }
+    .cta-h {
+      font-family: var(--font-display);
+      font-weight: 300;
+      font-size: clamp(56px,10vw,128px);
+      line-height: .9; color: var(--paper);
+      margin-bottom: 24px; letter-spacing: -.025em;
+    }
+    .cta-h em { font-style: italic; color: rgba(247,244,239,.35); }
+    .cta-sub { font-size: 15px; color: rgba(247,244,239,.45); margin-bottom: 44px; line-height: 1.78; }
+    .cta-actions { display: flex; align-items: center; justify-content: center; gap: 14px; flex-wrap: wrap; }
+
+    /* ── Responsive ──────────────────────────────────────── */
+    @media (max-width: 1024px) {
+      .hero-corner { display: none; }
+    }
+    @media (max-width: 900px) {
+      .manifesto { grid-template-columns: 1fr; }
+      .manifesto-img { height: 480px; }
+      .manifesto-copy { padding: 56px 32px; }
+      .props-grid { grid-template-columns: 1fr; border-left: none; }
+      .props-grid .property-card { border-right: none; border-bottom: 1px solid var(--rule); }
+      .stats-inner { grid-template-columns: 1fr 1fr; }
+      .personas-grid { grid-template-columns: 1fr; }
+      .versus-grid { grid-template-columns: 1fr; border-left: none; }
+      .versus-col { border-right: none; padding: 0; margin-bottom: 40px; }
+      .grid-layout { grid-template-columns: 1fr; gap: 44px; }
+    }
+    @media (max-width: 600px) {
+      .hero-content { padding: 0 20px 68px; }
+      .hero-h1 { font-size: clamp(72px,18vw,104px); }
+      .hero-scroll { display: none; }
+      .stats-inner { grid-template-columns: 1fr; }
+      .stat-col { border-right: none; border-bottom: 1px solid rgba(247,244,239,.07); padding: 32px 0; }
+      .persona { padding: 40px 24px; }
+      .manifesto-copy { padding: 44px 20px; }
     }
   </style>
 </head>
 <body>
 <div id="nav-mount"></div>
 
-<!-- ── Video Hero ── -->
-<section class="hero">
-  <video class="hero-video" data-parallax="0.25" autoplay muted loop playsinline poster="https://images.pexels.com/videos/11630727/pexels-photo-11630727.jpeg?auto=compress&cs=tinysrgb&h=627&fit=crop&w=1200">
+<!-- ══════════════════════════════════════════════════════════
+     HERO
+══════════════════════════════════════════════════════════ -->
+<section class="hero" id="hero">
+  <canvas id="grain"></canvas>
+  <video class="hero-video" data-parallax="0.22"
+    autoplay muted loop playsinline
+    poster="https://images.pexels.com/videos/11630727/pexels-photo-11630727.jpeg?auto=compress&cs=tinysrgb&h=627&fit=crop&w=1200">
     <source src="https://videos.pexels.com/video-files/11630727/11630727-hd_1920_1080_25fps.mp4" type="video/mp4">
     <source src="https://videos.pexels.com/video-files/3773486/3773486-hd_1920_1080_25fps.mp4" type="video/mp4">
   </video>
   <div class="hero-overlay"></div>
-  <div style="position:relative;z-index:1;width:100%;max-width:var(--max);margin:0 auto">
+
+  <div class="hero-corner">
+    <div class="hero-corner-num">₹0</div>
+    <div class="hero-corner-label">Broker Fee</div>
+  </div>
+
+  <div style="position:relative;z-index:4;width:100%;max-width:var(--max);margin:0 auto">
     <div class="hero-content">
-      <div class="hero-eyebrow">Bengaluru · Est. 2026 · Managed Co-Living</div>
-      <h1 class="hero-h1">the<br><em>switch.</em></h1>
-      <p class="hero-tagline">Walk in with a suitcase.<br>Everything else is already there.</p>
-      <div class="hero-actions">
+      <div class="hero-eyebrow-wrap" id="heroEyebrow">
+        <div class="hero-eye-line"></div>
+        <span class="hero-eyebrow">Bengaluru · Est. 2026 · Managed Co-Living</span>
+      </div>
+      <h1 class="hero-h1" id="heroTitle">the<br><em>switch.</em></h1>
+      <p class="hero-tagline" id="heroTagline">Walk in with a suitcase.<br>Everything else is already there.</p>
+      <div class="hero-actions" id="heroActions">
         <a href="/properties.html" class="hero-btn-light btn-magnetic">See our homes →</a>
         <a href="/the-grid.html" class="hero-btn-outline">Meet your neighbours</a>
       </div>
@@ -188,27 +370,43 @@
   </div>
 </section>
 
-<!-- ── Ticker ── -->
+<!-- ══════════════════════════════════════════════════════════
+     TICKER
+══════════════════════════════════════════════════════════ -->
 <div class="ticker">
   <div class="ticker-inner" id="tickerInner"></div>
 </div>
 
-<!-- ── Manifesto split ── -->
+<!-- ══════════════════════════════════════════════════════════
+     MANIFESTO SPLIT
+══════════════════════════════════════════════════════════ -->
 <section class="manifesto">
   <div class="manifesto-img">
     <img src="https://images.unsplash.com/photo-1586023492125-27b2c045efd7?w=1400&q=85&fit=crop" alt="Switch home interior" loading="lazy">
   </div>
   <div class="manifesto-copy">
     <div class="eyebrow rule-above" style="margin-bottom:28px">The idea</div>
-    <h2 class="manifesto-headline">Not a developer.<br>Not a broker.<br><em>An operator.</em></h2>
+    <h2 class="manifesto-headline no-anim">Not a developer.<br>Not a broker.<br><em>An operator.</em></h2>
     <p class="manifesto-body">We master-lease entire buildings, furnish every flat, and sub-let directly to you. No broker. No middleman. No mystery landlord who won't fix the geyser.</p>
     <blockquote class="manifesto-pull">"Met my co-founder in the corridor. Three weeks after I moved in."</blockquote>
     <a href="/about.html" class="btn-text btn-magnetic">Our story →</a>
   </div>
 </section>
 
-<!-- ── Properties ── -->
-<section class="section" style="padding-bottom:0">
+<!-- ══════════════════════════════════════════════════════════
+     WORD REVEAL — MANIFESTO STATEMENT
+══════════════════════════════════════════════════════════ -->
+<section id="wordReveal">
+  <div class="wr-inner">
+    <div class="wr-eyebrow">the switch. · bengaluru · 2026</div>
+    <p class="wr-text">We believe the best version of Bengaluru is one where brilliant people live next to each other — not across the city, not behind a broker, not after three months of hunting.</p>
+  </div>
+</section>
+
+<!-- ══════════════════════════════════════════════════════════
+     PROPERTIES  (unchanged)
+══════════════════════════════════════════════════════════ -->
+<section class="section" style="padding-bottom:0;background:var(--paper)">
   <div class="container">
     <div class="props-header">
       <div>
@@ -223,30 +421,29 @@
   </div>
 </section>
 
-<!-- ── Stats ── -->
+<!-- ══════════════════════════════════════════════════════════
+     STATS
+══════════════════════════════════════════════════════════ -->
 <section class="stats-editorial">
   <div class="container">
-    <div class="stats-header">
-      <div class="eyebrow" style="color:rgba(247,244,239,.25)">By the numbers</div>
-      <div class="stats-header-label">The case<br>for switching.</div>
-    </div>
+    <div class="stats-eyebrow">By the numbers</div>
     <div class="stats-inner" data-stagger>
-      <div class="stat-col" data-anim="up">
+      <div class="stat-col">
         <div class="stat-big">₹0</div>
         <div class="stat-label">Broker Fee</div>
         <div class="stat-desc">Not a small one. Not a "just this once." Zero. That's the number.</div>
       </div>
-      <div class="stat-col" data-anim="up">
+      <div class="stat-col">
         <div class="stat-big" id="statBuildings">3</div>
         <div class="stat-label">Homes</div>
         <div class="stat-desc">Sarjapur, Yemlur, and Yemlur again. All fully managed.</div>
       </div>
-      <div class="stat-col" data-anim="up">
+      <div class="stat-col">
         <div class="stat-big">1<em>mo</em></div>
         <div class="stat-label">Deposit</div>
         <div class="stat-desc">Your savings are yours. One month. That's it.</div>
       </div>
-      <div class="stat-col" data-anim="up">
+      <div class="stat-col">
         <div class="stat-big">11<em>mo</em></div>
         <div class="stat-label">Tenancy</div>
         <div class="stat-desc">Long enough to feel like home. Short enough if life changes its mind.</div>
@@ -255,87 +452,92 @@
   </div>
 </section>
 
-<!-- ── What's included ── -->
-<section class="included">
-  <div class="container">
-    <div class="included-header">
-      <div>
-        <div class="eyebrow" style="margin-bottom:14px">Move in ready</div>
-        <h2>Everything<br><em class="serif">already there.</em></h2>
-      </div>
-      <p>You bring a suitcase. We've done the rest. Every flat is fully set up — no trips to IKEA, no haggling with landlords, no waiting for the WiFi guy.</p>
+<!-- ══════════════════════════════════════════════════════════
+     HORIZONTAL SCROLL — WHAT'S INCLUDED
+══════════════════════════════════════════════════════════ -->
+<section id="hScroll" class="h-scroll-outer">
+  <div class="h-scroll-sticky">
+    <div class="h-scroll-left container" style="padding-right:48px">
+      <div class="eyebrow" style="margin-bottom:16px">Move in ready</div>
+      <h2 class="no-anim">Everything<br><em class="serif">already there.</em></h2>
+      <p>You bring a suitcase. We've done the rest — bed, desk, WiFi, caretaker, the lot.</p>
     </div>
-    <div class="included-grid" data-stagger>
-      <div class="included-item" data-anim="up">
-        <div class="included-icon">
-          <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.4"><path d="M5 12.55a11 11 0 0 1 14.08 0"/><path d="M1.42 9a16 16 0 0 1 21.16 0"/><path d="M8.53 16.11a6 6 0 0 1 6.95 0"/><circle cx="12" cy="20" r="1" fill="currentColor"/></svg>
+    <div class="h-scroll-right" id="hScrollRight">
+      <div class="h-scroll-track" id="hScrollTrack">
+
+        <div class="h-card">
+          <div class="h-scroll-num">01</div>
+          <div class="h-card-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.4"><path d="M5 12.55a11 11 0 0 1 14.08 0"/><path d="M1.42 9a16 16 0 0 1 21.16 0"/><path d="M8.53 16.11a6 6 0 0 1 6.95 0"/><circle cx="12" cy="20" r="1" fill="currentColor"/></svg></div>
+          <div class="h-card-title">High-speed WiFi</div>
+          <p class="h-card-desc">Password on the welcome card. Works from day one. No waiting for the ISP.</p>
         </div>
-        <h4>High-speed WiFi</h4>
-        <p>Password on the welcome card. Works from day one.</p>
-      </div>
-      <div class="included-item" data-anim="up">
-        <div class="included-icon">
-          <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.4"><path d="M2 4v16"/><path d="M2 8h18a2 2 0 0 1 2 2v10"/><path d="M2 17h20"/><path d="M6 8v9"/></svg>
+
+        <div class="h-card">
+          <div class="h-scroll-num">02</div>
+          <div class="h-card-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.4"><path d="M2 4v16"/><path d="M2 8h18a2 2 0 0 1 2 2v10"/><path d="M2 17h20"/><path d="M6 8v9"/></svg></div>
+          <div class="h-card-title">Fully Furnished</div>
+          <p class="h-card-desc">Bed, sofa, desk, wardrobe. Proper furniture. Not hostel bunks.</p>
         </div>
-        <h4>Fully Furnished</h4>
-        <p>Bed, sofa, desk, wardrobe. Proper furniture, not hostel bunks.</p>
-      </div>
-      <div class="included-item" data-anim="up">
-        <div class="included-icon">
-          <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.4"><path d="M3 2l1.668 1.336A2 2 0 0 0 6 3.866V20a2 2 0 0 0 2 2h8a2 2 0 0 0 2-2V3.866a2 2 0 0 0 .332-.53L20 2"/><path d="M10 6h4"/><path d="M10 10h4"/><path d="M10 14h4"/></svg>
+
+        <div class="h-card">
+          <div class="h-scroll-num">03</div>
+          <div class="h-card-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.4"><path d="M3 2l1.668 1.336A2 2 0 0 0 6 3.866V20a2 2 0 0 0 2 2h8a2 2 0 0 0 2-2V3.866a2 2 0 0 0 .332-.53L20 2"/><path d="M10 6h4M10 10h4M10 14h4"/></svg></div>
+          <div class="h-card-title">Gas & Kitchen</div>
+          <p class="h-card-desc">Stove, refrigerator, water purifier. Cook the first night if you want.</p>
         </div>
-        <h4>Gas & Kitchen</h4>
-        <p>Stove, refrigerator, water purifier. Cook the first night if you want.</p>
-      </div>
-      <div class="included-item" data-anim="up">
-        <div class="included-icon">
-          <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.4"><circle cx="12" cy="12" r="10"/><path d="M12 8v4l3 3"/></svg>
+
+        <div class="h-card">
+          <div class="h-scroll-num">04</div>
+          <div class="h-card-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.4"><circle cx="12" cy="12" r="10"/><path d="M12 8v4l3 3"/></svg></div>
+          <div class="h-card-title">Washing Machine</div>
+          <p class="h-card-desc">In-unit or shared. No laundromat runs, no negotiating with neighbours.</p>
         </div>
-        <h4>Washing Machine</h4>
-        <p>In-unit or shared in the building. No laundromat runs.</p>
-      </div>
-      <div class="included-item" data-anim="up">
-        <div class="included-icon">
-          <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.4"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+
+        <div class="h-card">
+          <div class="h-scroll-num">05</div>
+          <div class="h-card-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.4"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg></div>
+          <div class="h-card-title">Caretaker On-site</div>
+          <p class="h-card-desc">A real person who picks up the phone. Not a chatbot. Every time.</p>
         </div>
-        <h4>Caretaker On-site</h4>
-        <p>A real person who picks up the phone. Not a chatbot.</p>
-      </div>
-      <div class="included-item" data-anim="up">
-        <div class="included-icon">
-          <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.4"><path d="M13 2L3 14h9l-1 8 10-12h-9l1-8z"/></svg>
+
+        <div class="h-card">
+          <div class="h-scroll-num">06</div>
+          <div class="h-card-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.4"><path d="M13 2L3 14h9l-1 8 10-12h-9l1-8z"/></svg></div>
+          <div class="h-card-title">Utilities Included</div>
+          <p class="h-card-desc">No separate electricity battles. One clean rent number. That's it.</p>
         </div>
-        <h4>Utilities Included</h4>
-        <p>No separate electricity battles. One clean rent figure.</p>
-      </div>
-      <div class="included-item" data-anim="up">
-        <div class="included-icon">
-          <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.4"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
+
+        <div class="h-card">
+          <div class="h-scroll-num">07</div>
+          <div class="h-card-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.4"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg></div>
+          <div class="h-card-title">Zero Broker</div>
+          <p class="h-card-desc">You deal with us. Start to finish. No commission. No surprises.</p>
         </div>
-        <h4>Zero Broker</h4>
-        <p>You deal with us. Start to finish. No commission. No surprises.</p>
-      </div>
-      <div class="included-item" data-anim="up">
-        <div class="included-icon">
-          <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.4"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
+
+        <div class="h-card">
+          <div class="h-scroll-num">08</div>
+          <div class="h-card-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.4"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg></div>
+          <div class="h-card-title">The Community</div>
+          <p class="h-card-desc">Founders, consultants, creatives. Your building is already alive.</p>
         </div>
-        <h4>The Grid</h4>
-        <p>Our resident community. Founders, consultants, creatives. Your building.</p>
-      </div>
-    </div>
-  </div>
+
+      </div><!-- /h-scroll-track -->
+    </div><!-- /h-scroll-right -->
+  </div><!-- /h-scroll-sticky -->
 </section>
 
-<!-- ── Who lives here ── -->
+<!-- ══════════════════════════════════════════════════════════
+     WHO LIVES HERE — PERSONAS
+══════════════════════════════════════════════════════════ -->
 <section class="personas">
   <div class="container">
     <div class="personas-header">
       <div class="eyebrow" style="margin-bottom:14px">Who's already here</div>
       <h2>People worth<br><em class="serif">living next to.</em></h2>
-      <p style="margin-top:10px">Our buildings attract a specific kind of person. You probably know the type — because you're likely one of them.</p>
+      <p>Our buildings attract a specific kind of person. You probably know the type — because you're likely one of them.</p>
     </div>
     <div class="personas-grid" data-stagger>
-      <div class="persona" data-anim="up">
+      <div class="persona">
         <div class="persona-num">01</div>
         <div class="persona-role">The Builder</div>
         <div class="persona-type">The Founder</div>
@@ -346,18 +548,18 @@
           <span class="persona-tag">fast mover</span>
         </div>
       </div>
-      <div class="persona" data-anim="up">
+      <div class="persona">
         <div class="persona-num">02</div>
         <div class="persona-role">The Operator</div>
         <div class="persona-type">The Consultant</div>
-        <p class="persona-desc">In Bengaluru for a project, quarter, or indefinitely. Tired of hotels. Wants something that feels like a home without a 3-month wait for a broker.</p>
+        <p class="persona-desc">In Bengaluru for a project, quarter, or indefinitely. Tired of hotels. Wants something that feels like a home without a 3-month broker hunt.</p>
         <div class="persona-tags">
           <span class="persona-tag">on contract</span>
           <span class="persona-tag">frequent traveller</span>
           <span class="persona-tag">lean setup</span>
         </div>
       </div>
-      <div class="persona" data-anim="up">
+      <div class="persona">
         <div class="persona-num">03</div>
         <div class="persona-role">The Creative</div>
         <div class="persona-type">The Maker</div>
@@ -372,23 +574,25 @@
   </div>
 </section>
 
-<!-- ── Before / After ── -->
+<!-- ══════════════════════════════════════════════════════════
+     BEFORE / AFTER
+══════════════════════════════════════════════════════════ -->
 <section class="versus">
   <div class="container">
     <div class="versus-header">
       <div class="eyebrow">The old way vs. the switch.</div>
-      <h2 style="margin-top:12px">You already know<br><em class="serif">how bad it was.</em></h2>
+      <h2 style="margin-top:12px;color:var(--paper)">You already know<br><em class="serif" style="color:rgba(247,244,239,.35)">how bad it was.</em></h2>
     </div>
     <div class="versus-grid">
       <div class="versus-col old">
-        <div class="versus-col-label"><span></span>The old way</div>
+        <div class="versus-col-label"><span class="versus-col-label-dot"></span>The old way</div>
         <div class="versus-row">
           <div class="versus-check"><svg viewBox="0 0 14 14" fill="none" stroke="currentColor" stroke-width="1.5"><line x1="3" y1="3" x2="11" y2="11"/><line x1="11" y1="3" x2="3" y2="11"/></svg></div>
-          <div class="versus-text"><strong>₹50,000 broker fee</strong> for someone to open a door</div>
+          <div class="versus-text">₹50,000 broker fee for someone to open a door</div>
         </div>
         <div class="versus-row">
           <div class="versus-check"><svg viewBox="0 0 14 14" fill="none" stroke="currentColor" stroke-width="1.5"><line x1="3" y1="3" x2="11" y2="11"/><line x1="11" y1="3" x2="3" y2="11"/></svg></div>
-          <div class="versus-text"><strong>2–3 months deposit</strong> locked away before you even unpack</div>
+          <div class="versus-text">2–3 months deposit locked away before you unpack</div>
         </div>
         <div class="versus-row">
           <div class="versus-check"><svg viewBox="0 0 14 14" fill="none" stroke="currentColor" stroke-width="1.5"><line x1="3" y1="3" x2="11" y2="11"/><line x1="11" y1="3" x2="3" y2="11"/></svg></div>
@@ -396,7 +600,7 @@
         </div>
         <div class="versus-row">
           <div class="versus-check"><svg viewBox="0 0 14 14" fill="none" stroke="currentColor" stroke-width="1.5"><line x1="3" y1="3" x2="11" y2="11"/><line x1="11" y1="3" x2="3" y2="11"/></svg></div>
-          <div class="versus-text">Random landlord who <strong>doesn't pick up</strong> when the geyser breaks</div>
+          <div class="versus-text">Random landlord who doesn't pick up when the geyser breaks</div>
         </div>
         <div class="versus-row">
           <div class="versus-check"><svg viewBox="0 0 14 14" fill="none" stroke="currentColor" stroke-width="1.5"><line x1="3" y1="3" x2="11" y2="11"/><line x1="11" y1="3" x2="3" y2="11"/></svg></div>
@@ -408,7 +612,7 @@
         </div>
       </div>
       <div class="versus-col new">
-        <div class="versus-col-label"><span></span>the switch.</div>
+        <div class="versus-col-label"><span class="versus-col-label-dot"></span>the switch.</div>
         <div class="versus-row">
           <div class="versus-check"><svg viewBox="0 0 14 14" fill="none" stroke="currentColor" stroke-width="1.5"><polyline points="2,7 6,11 12,3"/></svg></div>
           <div class="versus-text"><strong>₹0 broker fee.</strong> Not now, not ever.</div>
@@ -427,7 +631,7 @@
         </div>
         <div class="versus-row">
           <div class="versus-check"><svg viewBox="0 0 14 14" fill="none" stroke="currentColor" stroke-width="1.5"><polyline points="2,7 6,11 12,3"/></svg></div>
-          <div class="versus-text">A building that's already <strong>alive when you arrive</strong>.</div>
+          <div class="versus-text">A building that's <strong>already alive when you arrive.</strong></div>
         </div>
         <div class="versus-row">
           <div class="versus-check"><svg viewBox="0 0 14 14" fill="none" stroke="currentColor" stroke-width="1.5"><polyline points="2,7 6,11 12,3"/></svg></div>
@@ -438,18 +642,26 @@
   </div>
 </section>
 
-<!-- ── Grid teaser ── -->
+<!-- ══════════════════════════════════════════════════════════
+     COMMUNITY — THE GRID
+══════════════════════════════════════════════════════════ -->
 <section class="grid-teaser">
   <div class="container">
     <div class="grid-layout">
       <div class="grid-mosaic" data-anim="up">
-        <div class="grid-mosaic-img"><img src="https://images.unsplash.com/photo-1529156069898-49953e39b3ac?w=900&q=80&fit=crop" alt="Residents together" loading="lazy"></div>
-        <div class="grid-mosaic-img"><img src="https://images.unsplash.com/photo-1522202176988-66273c2fd55f?w=600&q=80&fit=crop" alt="Working together" loading="lazy"></div>
-        <div class="grid-mosaic-img"><img src="https://images.unsplash.com/photo-1543269865-cbf427effbad?w=600&q=80&fit=crop" alt="Chai break" loading="lazy"></div>
+        <div class="grid-mosaic-img">
+          <img src="https://images.unsplash.com/photo-1529156069898-49953e39b3ac?w=900&q=80&fit=crop" alt="Residents together" loading="lazy">
+        </div>
+        <div class="grid-mosaic-img">
+          <img src="https://images.unsplash.com/photo-1522202176988-66273c2fd55f?w=600&q=80&fit=crop" alt="Working together" loading="lazy">
+        </div>
+        <div class="grid-mosaic-img">
+          <img src="https://images.unsplash.com/photo-1543269865-cbf427effbad?w=600&q=80&fit=crop" alt="Chai break" loading="lazy">
+        </div>
       </div>
       <div class="grid-text" data-anim="up">
         <div class="eyebrow rule-above" style="margin-bottom:16px">the grid. by the switch.</div>
-        <h2>Your building has a startup founder in it.</h2>
+        <h2 class="no-anim">Your building has a startup founder in it.</h2>
         <p style="margin-top:16px">the grid. is our resident community. Not a WhatsApp group. An actual network of people who live near each other and are worth knowing.</p>
         <div class="grid-pull">"Met my co-founder in the corridor. Three weeks after I moved in."</div>
         <div style="display:flex;gap:12px;flex-wrap:wrap">
@@ -461,15 +673,17 @@
   </div>
 </section>
 
-<!-- ── Cinematic CTA ── -->
+<!-- ══════════════════════════════════════════════════════════
+     CINEMATIC CTA
+══════════════════════════════════════════════════════════ -->
 <section class="cta-cinematic">
   <div class="cta-bg">
     <img src="https://images.unsplash.com/photo-1560448204-603b3fc33ddc?w=1800&q=85&fit=crop" alt="Switch home" loading="lazy">
-    <div style="position:absolute;inset:0;background:rgba(14,13,10,.72)"></div>
+    <div class="cta-bg-overlay"></div>
   </div>
   <div class="cta-inner">
     <div class="eyebrow" style="color:rgba(247,244,239,.3);margin-bottom:24px">Make the switch.</div>
-    <h2 class="cta-h">One<br><em>suitcase.</em></h2>
+    <h2 class="cta-h no-anim">One<br><em>suitcase.</em></h2>
     <p class="cta-sub">One city. One building full of people worth knowing.<br>Everything else is already there.</p>
     <div class="cta-actions">
       <a href="/properties.html" class="hero-btn-light btn-magnetic">See our homes →</a>
@@ -479,24 +693,31 @@
 </section>
 
 <div id="footer-mount"></div>
+
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
 <script src="/assets/js/supabase.js"></script>
+<script src="/assets/js/animations.js"></script>
 <script>
 document.getElementById('nav-mount').innerHTML = navComponent();
 document.getElementById('footer-mount').innerHTML = footerComponent();
 
-const items=['₹0 Broker Fee','Walk in with a suitcase','11-month tenancy','One month deposit','Caretaker on-site','Fully furnished','Zero broker','just show up.','No middleman','Same day response'];
-const doubled=[...items,...items];
-document.getElementById('tickerInner').innerHTML=doubled.map(t=>`<span class="ticker-item">${t}<span class="sep">·</span></span>`).join('');
+/* Ticker */
+const items = ['₹0 Broker Fee','Walk in with a suitcase','11-month tenancy','One month deposit','Caretaker on-site','Fully furnished','Zero broker','just show up.','No middleman','Same day response'];
+const doubled = [...items, ...items];
+document.getElementById('tickerInner').innerHTML = doubled.map(t =>
+  `<span class="ticker-item">${t}<span class="sep">·</span></span>`).join('');
 
-async function loadProps(){
-  const props=await getProperties();
-  const el=document.getElementById('propsGrid');
-  if(!el)return;
-  el.innerHTML=props.slice(0,3).map(p=>{
-    const hero=getHeroImage(p.images);
-    return`<div class="property-card fade-up">
-      <div class="property-card-img"><img src="${hero}" alt="${p.name}" loading="lazy">${statusBadge(p.status)}</div>
+/* Property cards */
+async function loadProps() {
+  const props = await getProperties();
+  const el = document.getElementById('propsGrid');
+  if (!el) return;
+  el.innerHTML = props.slice(0, 3).map(p => {
+    const hero = getHeroImage(p.images);
+    return `<div class="property-card fade-up">
+      <div class="property-card-img">
+        <img src="${hero}" alt="${p.name}" loading="lazy">${statusBadge(p.status)}
+      </div>
       <div class="property-card-body">
         <div class="property-card-loc">
           <svg width="9" height="11" viewBox="0 0 10 12" fill="none"><path d="M5 0C2.24 0 0 2.24 0 5c0 3.75 5 7 5 7s5-3.25 5-7c0-2.76-2.24-5-5-5zm0 6.5A1.5 1.5 0 115 3.5a1.5 1.5 0 010 3z" fill="currentColor"/></svg>
@@ -506,7 +727,9 @@ async function loadProps(){
         <div class="property-card-rent">${formatRentFrom(p)} <span>· ${getBhkLabel(p)} · ${getTotalUnits(p)} flats</span></div>
         <div class="property-card-tags">${(p.amenities||[]).slice(0,4).map(a=>`<span class="property-card-tag">${a}</span>`).join('')}</div>
       </div>
-      <div class="property-card-footer"><a href="/property/${p.slug}.html" class="btn-text">${p.status==='coming-soon'?'Join waitlist':'Enquire now'} →</a></div>
+      <div class="property-card-footer">
+        <a href="/property/${p.slug}.html" class="btn-text">${p.status==='coming-soon'?'Join waitlist':'Enquire now'} →</a>
+      </div>
     </div>`;
   }).join('');
   initFadeUp();
@@ -515,13 +738,13 @@ loadProps();
 initFadeUp();
 initNav();
 
-async function applySiteContent(){
-  const data=await getSiteContent();
-  if(!data)return;
-  const taglineEl=document.querySelector('.hero-tagline');
-  if(taglineEl&&data.tagline)taglineEl.innerHTML=data.tagline.replace(/\n/g,'<br>');
-  const waFloat=document.querySelector('.wa-float');
-  if(waFloat&&data.wa===false)waFloat.style.display='none';
+async function applySiteContent() {
+  const data = await getSiteContent();
+  if (!data) return;
+  const t = document.querySelector('.hero-tagline');
+  if (t && data.tagline) t.innerHTML = data.tagline.replace(/\n/g, '<br>');
+  const wa = document.querySelector('.wa-float');
+  if (wa && data.wa === false) wa.style.display = 'none';
 }
 applySiteContent();
 </script>
