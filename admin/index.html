@@ -1108,7 +1108,11 @@ async function autoFillMap() {
 }
 
 document.getElementById('pMap').addEventListener('input', function() {
-  if (this.value.trim()) showMapPreview(this.value.trim());
+  let val = this.value.trim();
+  // Auto-extract src URL if user pastes a full <iframe> embed code
+  const srcMatch = val.match(/src=["']([^"']+)["']/);
+  if (srcMatch) { val = srcMatch[1]; this.value = val; }
+  if (val) showMapPreview(val);
   else { const p = document.getElementById('mapPreview'); if (p) p.style.display = 'none'; }
 });
 
