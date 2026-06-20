@@ -85,8 +85,8 @@
 <div class="page-hero">
   <div class="container">
     <div class="eyebrow" style="margin-bottom:12px">Where we are</div>
-    <h1>Three buildings.<br><em class="serif">One city.</em></h1>
-    <p>Curated nodes across Bengaluru. Fully managed. Zero broker. Walk in.</p>
+    <h1 id="heroHeading">Three buildings.<br><em class="serif">One city.</em></h1>
+    <p id="heroSub">Curated nodes across Bengaluru. Fully managed. Zero broker. Walk in.</p>
   </div>
 </div>
 
@@ -242,8 +242,27 @@ function applyFilters() {
   renderProps(filtered);
 }
 
+const NUM_WORDS = ['','One','Two','Three','Four','Five','Six','Seven','Eight','Nine','Ten'];
+function toWord(n) { return NUM_WORDS[n] || n; }
+
+function updateHeroHeading(props) {
+  const count = props.length;
+  const cities = [...new Set(props.map(p => p.area || p.location).filter(Boolean))];
+  const cityCount = cities.length;
+  const buildingWord = toWord(count);
+  const cityWord = toWord(cityCount);
+  const buildingLabel = count === 1 ? 'building' : 'buildings';
+  const cityLabel = cityCount === 1 ? 'city' : 'cities';
+  const cityNames = cities.length <= 3 ? cities.join(' & ') : cities.slice(0,-1).join(', ') + ' & ' + cities[cities.length-1];
+  document.getElementById('heroHeading').innerHTML =
+    `${buildingWord} ${buildingLabel}.<br><em class="serif">${cityWord} ${cityLabel}.</em>`;
+  document.getElementById('heroSub').textContent =
+    `Curated nodes across ${cityNames}. Fully managed. Zero broker. Walk in.`;
+}
+
 async function init() {
   allProps = await getProperties();
+  updateHeroHeading(allProps);
   renderProps(allProps);
   renderMapSidebar(allProps);
   initFadeUp();
