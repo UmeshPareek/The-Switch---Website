@@ -1080,11 +1080,21 @@ function autoFillMap() {
   const loc  = document.getElementById('pLocation').value.trim();
   const area = document.getElementById('pArea').value.trim();
   if (!loc) { showToast('Enter a location first', 'error'); return; }
-  const q = encodeURIComponent(loc + (area ? ', ' + area : '') + ', India');
-  const url = 'https://maps.google.com/maps?q=' + q + '&output=embed&z=15';
+  const q = encodeURIComponent(loc + (area ? ', ' + area : '') + ', Bengaluru, India');
+  const key = getMapsKey();
+  let url;
+  if (key) {
+    // Embed API v1 — works reliably with a key
+    url = `https://www.google.com/maps/embed/v1/place?key=${key}&q=${q}&zoom=15`;
+  } else {
+    // Without a key, direct embed is blocked by Google.
+    // Show instructions instead.
+    showToast('No API key — get embed URL from Google Maps → Share → Embed a map', 'error');
+    return;
+  }
   document.getElementById('pMap').value = url;
   showMapPreview(url);
-  showToast('Map auto-filled — or paste an embed URL for precision');
+  showToast('Map set ✓');
 }
 
 document.getElementById('pMap').addEventListener('input', function() {
@@ -1092,9 +1102,9 @@ document.getElementById('pMap').addEventListener('input', function() {
   else { const p = document.getElementById('mapPreview'); if (p) p.style.display = 'none'; }
 });
 
-// Also auto-fill map when location field loses focus (if no map set yet)
+// Auto-fill map on location blur only if API key is set
 document.getElementById('pLocation').addEventListener('blur', function() {
-  if (!mapsLoaded && !document.getElementById('pMap').value.trim() && this.value.trim()) {
+  if (getMapsKey() && !document.getElementById('pMap').value.trim() && this.value.trim()) {
     autoFillMap();
   }
 });
