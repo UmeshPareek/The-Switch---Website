@@ -137,6 +137,17 @@ function initNav(){
     burger.addEventListener('click',()=>mobile.classList.toggle('open'));
     mobile.querySelectorAll('a').forEach(a=>a.addEventListener('click',()=>mobile.classList.remove('open')));
   }
+  // Auto-inject animation stylesheet + engine once per page
+  if(!document.getElementById('sw-anim-css')){
+    const lnk=document.createElement('link');
+    lnk.id='sw-anim-css';lnk.rel='stylesheet';lnk.href='/assets/css/animations.css';
+    document.head.appendChild(lnk);
+  }
+  if(!document.getElementById('sw-anim-js')){
+    const s=document.createElement('script');
+    s.id='sw-anim-js';s.src='/assets/js/animations.js';s.defer=true;
+    document.body.appendChild(s);
+  }
 }
 
 /* ── Components ── */
