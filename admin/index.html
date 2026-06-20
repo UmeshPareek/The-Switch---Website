@@ -1076,22 +1076,32 @@ function getImagesFromForm() {
   })).filter(i => i.url);
 }
 
-function autoFillMap() {
+// Geocode location → working embed URL (no API key needed, uses OpenStreetMap)
+async function geocodeToEmbed(location, area) {
+  const q = encodeURIComponent(`${location}${area ? ', ' + area : ''}, India`);
+  try {
+    const res = await fetch(`https://nominatim.openstreetmap.org/search?q=${q}&format=json&limit=1`, {
+      headers: { 'Accept-Language': 'en', 'User-Agent': 'theswitch-admin/1.0' }
+    });
+    const data = await res.json();
+    if (!data.length) return null;
+    const { lat, lon } = data[0];
+    const key = getMapsKey();
+    if (key) {
+      return `https://www.google.com/maps/embed/v1/place?key=${key}&q=${lat},${lon}&zoom=15`;
+    }
+    // OpenStreetMap embed — always works in iframes, completely free, no key needed
+    return `https://www.openstreetmap.org/export/embed.html?mlat=${lat}&mlon=${lon}&zoom=15&layers=M`;
+  } catch { return null; }
+}
+
+async function autoFillMap() {
   const loc  = document.getElementById('pLocation').value.trim();
   const area = document.getElementById('pArea').value.trim();
   if (!loc) { showToast('Enter a location first', 'error'); return; }
-  const q = encodeURIComponent(loc + (area ? ', ' + area : '') + ', Bengaluru, India');
-  const key = getMapsKey();
-  let url;
-  if (key) {
-    // Embed API v1 — works reliably with a key
-    url = `https://www.google.com/maps/embed/v1/place?key=${key}&q=${q}&zoom=15`;
-  } else {
-    // Without a key, direct embed is blocked by Google.
-    // Show instructions instead.
-    showToast('No API key — get embed URL from Google Maps → Share → Embed a map', 'error');
-    return;
-  }
+  showToast('Finding location…');
+  const url = await geocodeToEmbed(loc, area);
+  if (!url) { showToast('Location not found — try a more specific name', 'error'); return; }
   document.getElementById('pMap').value = url;
   showMapPreview(url);
   showToast('Map set ✓');
@@ -1102,10 +1112,11 @@ document.getElementById('pMap').addEventListener('input', function() {
   else { const p = document.getElementById('mapPreview'); if (p) p.style.display = 'none'; }
 });
 
-// Auto-fill map on location blur only if API key is set
-document.getElementById('pLocation').addEventListener('blur', function() {
-  if (getMapsKey() && !document.getElementById('pMap').value.trim() && this.value.trim()) {
-    autoFillMap();
+// Auto-geocode when location field loses focus (if map not already set)
+document.getElementById('pLocation').addEventListener('blur', async function() {
+  if (this.value.trim() && !document.getElementById('pMap').value.trim()) {
+    const url = await geocodeToEmbed(this.value.trim(), document.getElementById('pArea').value.trim());
+    if (url) { document.getElementById('pMap').value = url; showMapPreview(url); }
   }
 });
 
@@ -1127,11 +1138,21 @@ async function saveProperty() {
     amenities:   currentAmenities,
     images:      images
   };
-  // Supabase JS client sends arrays/objects as jsonb automatically
-  // No manual JSON.stringify needed
 
   const btn = document.querySelector('#propPanel .panel-footer .btn-primary-sm');
   btn.textContent = 'Saving…'; btn.disabled = true;
+
+  // Auto-generate map embed from location if not already set
+  if (!prop.map_embed && prop.location) {
+    btn.textContent = 'Getting map…';
+    const autoUrl = await geocodeToEmbed(prop.location, prop.area);
+    if (autoUrl) {
+      prop.map_embed = autoUrl;
+      document.getElementById('pMap').value = autoUrl;
+      showMapPreview(autoUrl);
+    }
+    btn.textContent = 'Saving…';
+  }
 
   let error;
   if (id) {

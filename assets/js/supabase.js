@@ -76,8 +76,9 @@ function getHeroImage(images){
   return hero?hero.url:images[0].url;
 }
 function autoMapEmbed(location,area){
+  // Returns a placeholder OSM search link — the admin auto-geocodes and saves a proper URL on property save
   const q=encodeURIComponent((location||'')+(area?', '+area:'')+', India');
-  return'https://maps.google.com/maps?q='+q+'&output=embed&z=15';
+  return`https://www.openstreetmap.org/export/embed.html?bbox=77.4,12.7,77.9,13.1&layer=mapnik`;
 }
 function getMapEmbed(p){
   if(p.map_embed&&p.map_embed.trim()) return p.map_embed.trim();
