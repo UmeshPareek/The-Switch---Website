@@ -86,7 +86,7 @@
   <div class="container">
     <div class="eyebrow" style="margin-bottom:12px">Where we are</div>
     <h1 id="heroHeading">Three buildings.<br><em class="serif">One city.</em></h1>
-    <p id="heroSub">Curated nodes across Bengaluru. Fully managed. Zero broker. Walk in.</p>
+    <p id="heroSub">Curated homes across Bengaluru. Fully managed. Zero broker. Walk in.</p>
   </div>
 </div>
 
@@ -125,7 +125,7 @@
   <div class="map-header">
     <div class="container">
       <div class="eyebrow" style="margin-bottom:8px">Find us</div>
-      <h2>All three nodes,<br><em class="serif">on the map.</em></h2>
+      <h2 id="mapHeading">All three homes,<br><em class="serif">on the map.</em></h2>
     </div>
   </div>
   <div class="map-layout">
@@ -249,15 +249,16 @@ function updateHeroHeading(props) {
   const count = props.length;
   const cities = [...new Set(props.map(p => p.area || p.location).filter(Boolean))];
   const cityCount = cities.length;
-  const buildingWord = toWord(count);
+  const countWord = toWord(count);
   const cityWord = toWord(cityCount);
-  const buildingLabel = count === 1 ? 'building' : 'buildings';
   const cityLabel = cityCount === 1 ? 'city' : 'cities';
   const cityNames = cities.length <= 3 ? cities.join(' & ') : cities.slice(0,-1).join(', ') + ' & ' + cities[cities.length-1];
   document.getElementById('heroHeading').innerHTML =
-    `${buildingWord} ${buildingLabel}.<br><em class="serif">${cityWord} ${cityLabel}.</em>`;
+    `${countWord} homes.<br><em class="serif">${cityWord} ${cityLabel}.</em>`;
   document.getElementById('heroSub').textContent =
-    `Curated nodes across ${cityNames}. Fully managed. Zero broker. Walk in.`;
+    `Curated homes across ${cityNames}. Fully managed. Zero broker. Walk in.`;
+  document.getElementById('mapHeading').innerHTML =
+    `All ${countWord.toLowerCase()} homes,<br><em class="serif">on the map.</em>`;
 }
 
 async function init() {
