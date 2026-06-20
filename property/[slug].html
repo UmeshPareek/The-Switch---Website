@@ -226,7 +226,7 @@
       if (!p) { document.getElementById('propName').textContent = 'Property not found'; return; }
 
       document.title = `${p.name} — the switch.`;
-      propImages = p.images || [];
+      propImages = (p.images || []).map(img => typeof img === 'string' ? img : (img.url || '')).filter(Boolean);
 
       // Hero
       document.getElementById('heroImg').src = propImages[0] || 'https://images.unsplash.com/photo-1560448204-603b3fc33ddc?w=1600&q=80';
