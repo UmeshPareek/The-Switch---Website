@@ -226,10 +226,20 @@
       if (!p) { document.getElementById('propName').textContent = 'Property not found'; return; }
 
       document.title = `${p.name} — the switch.`;
-      propImages = (p.images || []).map(img => typeof img === 'string' ? img : (img.url || '')).filter(Boolean);
+      const rawImages = p.images || [];
+      // Find hero image (is_hero flag), fall back to first
+      const heroRaw = rawImages.find(img => img.is_hero || img.isHero) || rawImages[0];
+      const heroUrl = typeof heroRaw === 'string' ? heroRaw : (heroRaw?.url || '');
+      // All images as URL strings, hero first
+      const allUrls = rawImages.map(img => typeof img === 'string' ? img : (img.url || '')).filter(Boolean);
+      if (heroUrl && allUrls[0] !== heroUrl) {
+        const hi = allUrls.indexOf(heroUrl);
+        if (hi > 0) { allUrls.splice(hi, 1); allUrls.unshift(heroUrl); }
+      }
+      propImages = allUrls;
 
       // Hero
-      document.getElementById('heroImg').src = propImages[0] || 'https://images.unsplash.com/photo-1560448204-603b3fc33ddc?w=1600&q=80';
+      document.getElementById('heroImg').src = heroUrl || 'https://images.unsplash.com/photo-1560448204-603b3fc33ddc?w=1600&q=80';
       document.getElementById('heroImg').alt = p.name;
       document.getElementById('heroBadge').innerHTML = statusBadge(p.status);
       document.getElementById('propName').textContent = p.name;
@@ -237,9 +247,13 @@
       document.getElementById('propRent').textContent = formatRent(p.rent);
       document.getElementById('propMeta').textContent = `${p.bhk} · ${p.units} flats`;
 
-      // Gallery
+      // Gallery — grid is 3-col × 2-row with first image spanning 2 rows = 5 slots total
       const gallery = document.getElementById('galleryGrid');
-      const imgs = propImages.length >= 4 ? propImages.slice(0,4) : [...propImages, ...Array(4-propImages.length).fill(propImages[0]||'https://images.unsplash.com/photo-1560448204-603b3fc33ddc?w=800&q=80')];
+      const GALLERY_COUNT = 5;
+      const fallback = 'https://images.unsplash.com/photo-1560448204-603b3fc33ddc?w=800&q=80';
+      const imgs = propImages.length >= GALLERY_COUNT
+        ? propImages.slice(0, GALLERY_COUNT)
+        : [...propImages, ...Array(GALLERY_COUNT - propImages.length).fill(propImages[0] || fallback)];
       gallery.innerHTML = imgs.map((src,i) => `
         <div class="gallery-img"><img src="${src}" alt="${p.name} ${i+1}" loading="${i>0?'lazy':'eager'}" onclick="openLightbox(${i})"></div>
       `).join('');
