@@ -99,6 +99,21 @@ function statusBadge(status){
 }
 function formatRent(n){return'₹'+Number(n).toLocaleString('en-IN')+'/mo'}
 
+/* ── Multi-tier flat type helpers ── */
+function getFlatTypes(p){
+  if(p.flat_types&&Array.isArray(p.flat_types)&&p.flat_types.length)return p.flat_types;
+  if(p.bhk||p.rent)return[{bhk:p.bhk||'—',rent:p.rent||0,units:p.units||0}];
+  return[];
+}
+function getMinRent(p){const t=getFlatTypes(p);return t.length?Math.min(...t.map(ft=>ft.rent||0)):0;}
+function formatRentFrom(p){
+  const t=getFlatTypes(p);
+  const min=getMinRent(p);
+  return(t.length>1?'From ':'')+formatRent(min);
+}
+function getBhkLabel(p){const t=getFlatTypes(p);return t.length?t.map(ft=>ft.bhk).join(' · '):(p.bhk||'');}
+function getTotalUnits(p){const t=getFlatTypes(p);return t.length?t.reduce((s,ft)=>s+(ft.units||0),0):(p.units||0);}
+
 /* ── Animations ── */
 function initFadeUp(){
   const obs=new IntersectionObserver(entries=>entries.forEach(e=>{if(e.isIntersecting){e.target.classList.add('visible');obs.unobserve(e.target)}}),{threshold:0.08});

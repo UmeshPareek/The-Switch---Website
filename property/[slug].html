@@ -73,6 +73,18 @@
     }
     .amenity-check { color: var(--orange); font-size: 16px; }
 
+    /* ── Flat type cards ── */
+    .ft-cards { display: flex; flex-wrap: wrap; gap: 12px; }
+    .ft-card {
+      border: 1px solid var(--border); padding: 20px 24px; cursor: pointer;
+      transition: border-color .2s, background .2s; min-width: 140px;
+    }
+    .ft-card:hover { border-color: var(--orange); }
+    .ft-card-active { border-color: var(--orange); background: rgba(var(--orange-rgb,200,80,40),.06); }
+    .ft-card-bhk { font-family: var(--font-serif); font-size: 20px; margin-bottom: 6px; }
+    .ft-card-rent { font-size: 18px; font-weight: 500; color: var(--orange); }
+    .ft-card-units { font-size: 11px; color: var(--muted); margin-top: 4px; letter-spacing: .04em; }
+
     /* ── Map ── */
     .prop-map { border-radius: var(--r-lg); overflow: hidden; border: 1px solid var(--border); margin-top: 12px; }
     .prop-map iframe { width: 100%; height: 300px; border: none; display: block; }
@@ -156,6 +168,12 @@
   <div class="container" style="padding-bottom:80px">
     <div class="prop-content">
       <div>
+        <!-- Flat type selector (hidden if only 1 type) -->
+        <div class="detail-section fade-up" id="flatTypeSection" style="display:none">
+          <h3>Choose your flat</h3>
+          <div class="ft-cards" id="flatTypeCards"></div>
+        </div>
+
         <!-- Description -->
         <div class="detail-section fade-up">
           <h3>About this property</h3>
@@ -292,8 +310,8 @@
       document.getElementById('heroBadge').innerHTML = statusBadge(p.status);
       document.getElementById('propName').textContent = p.name;
       document.getElementById('propLoc').innerHTML = `<svg width="10" height="12" viewBox="0 0 10 12" fill="none"><path d="M5 0C2.24 0 0 2.24 0 5c0 3.75 5 7 5 7s5-3.25 5-7c0-2.76-2.24-5-5-5zm0 6.5A1.5 1.5 0 115 3.5a1.5 1.5 0 010 3z" fill="currentColor"/></svg>${p.location}, ${p.area}`;
-      document.getElementById('propRent').textContent = formatRent(p.rent);
-      document.getElementById('propMeta').textContent = `${p.bhk} · ${p.units} flats`;
+      document.getElementById('propRent').textContent = formatRentFrom(p);
+      document.getElementById('propMeta').textContent = `${getBhkLabel(p)} · ${getTotalUnits(p)} flats`;
 
       // Gallery — tabbed by image tag
       const TAG_LABELS = { 'living-room':'Living Room', bedroom:'Bedroom', kitchen:'Kitchen', bathroom:'Bathroom', balcony:'Balcony', 'common-area':'Common Area', building:'Building', other:'Other' };
@@ -324,6 +342,29 @@
 
       // Description
       document.getElementById('propDesc').textContent = p.description;
+
+      // Flat type selector
+      const flatTypes = getFlatTypes(p);
+      const ftSection = document.getElementById('flatTypeSection');
+      if (flatTypes.length > 1) {
+        ftSection.style.display = '';
+        let selectedFt = 0;
+        function renderFtCards() {
+          document.getElementById('flatTypeCards').innerHTML = flatTypes.map((ft, i) => `
+            <div class="ft-card ${i === selectedFt ? 'ft-card-active' : ''}" onclick="selectFt(${i})">
+              <div class="ft-card-bhk">${ft.bhk}</div>
+              <div class="ft-card-rent">${formatRent(ft.rent)}</div>
+              ${ft.units ? `<div class="ft-card-units">${ft.units} unit${ft.units>1?'s':''}</div>` : ''}
+            </div>
+          `).join('');
+        }
+        window.selectFt = function(i) {
+          selectedFt = i;
+          document.getElementById('propRent').textContent = formatRent(flatTypes[i].rent);
+          renderFtCards();
+        };
+        renderFtCards();
+      }
 
       // Amenities
       document.getElementById('amenitiesGrid').innerHTML = (p.amenities||[]).map(a => `

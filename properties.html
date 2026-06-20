@@ -185,8 +185,8 @@ function renderProps(props) {
         </div>
         <div class="prop-item-bottom">
           <div>
-            <div class="prop-item-rent">${formatRent(p.rent)}</div>
-            <div class="prop-item-meta">${p.bhk} · ${p.units} flats</div>
+            <div class="prop-item-rent">${formatRentFrom(p)}</div>
+            <div class="prop-item-meta">${getBhkLabel(p)} · ${getTotalUnits(p)} flats</div>
           </div>
           <div class="prop-item-actions">
             <a href="/property/${p.slug}.html" class="btn-ghost">View details</a>
