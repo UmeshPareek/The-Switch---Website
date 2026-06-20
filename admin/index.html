@@ -1107,11 +1107,17 @@ async function autoFillMap() {
   showToast('Map set ✓');
 }
 
-document.getElementById('pMap').addEventListener('input', function() {
-  let val = this.value.trim();
-  // Auto-extract src URL if user pastes a full <iframe> embed code
+function extractMapUrl(val) {
+  if (!val) return '';
+  val = val.trim();
+  // If user pasted a full <iframe> embed code, extract just the src URL
   const srcMatch = val.match(/src=["']([^"']+)["']/);
-  if (srcMatch) { val = srcMatch[1]; this.value = val; }
+  return srcMatch ? srcMatch[1] : val;
+}
+
+document.getElementById('pMap').addEventListener('input', function() {
+  const val = extractMapUrl(this.value);
+  if (val !== this.value.trim()) this.value = val;
   if (val) showMapPreview(val);
   else { const p = document.getElementById('mapPreview'); if (p) p.style.display = 'none'; }
 });
@@ -1137,7 +1143,7 @@ async function saveProperty() {
     rent:        parseInt(document.getElementById('pRent').value) || 0,
     status:      document.getElementById('pStatus').value,
     description: document.getElementById('pDesc').value.trim(),
-    map_embed:   document.getElementById('pMap').value.trim(),
+    map_embed:   extractMapUrl(document.getElementById('pMap').value),
     sort_order:  parseInt(document.getElementById('pOrder').value) || 1,
     amenities:   currentAmenities,
     images:      images
