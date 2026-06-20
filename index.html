@@ -304,6 +304,18 @@ async function loadProps(){
 loadProps();
 initFadeUp();
 initNav();
+
+// Apply site content from admin (Supabase site_content table)
+async function applySiteContent() {
+  const data = await getSiteContent();
+  if (!data) return;
+  const taglineEl = document.querySelector('.hero-tagline');
+  if (taglineEl && data.tagline) taglineEl.innerHTML = data.tagline.replace(/\n/g, '<br>');
+  // Update footer WhatsApp float visibility
+  const waFloat = document.querySelector('.wa-float');
+  if (waFloat && data.wa === false) waFloat.style.display = 'none';
+}
+applySiteContent();
 </script>
 </body>
 </html>

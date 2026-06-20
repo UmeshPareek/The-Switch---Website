@@ -135,6 +135,22 @@
   .img-hero-btn.active{background:rgba(184,65,15,.08);color:var(--orange);border-color:var(--orange)}
   .img-del{color:var(--muted);font-size:15px;padding:4px;transition:color .15s;margin-left:auto}
   .img-del:hover{color:var(--red)}
+
+  /* ── File upload ── */
+  .img-url-row{display:flex;gap:6px;align-items:center}
+  .img-url-row input{flex:1;min-width:0}
+  .img-upload-btn{font-size:10px;font-weight:500;letter-spacing:.06em;text-transform:uppercase;padding:7px 12px;border:1px solid var(--rule-2);color:var(--ink-3);cursor:pointer;white-space:nowrap;flex-shrink:0;display:inline-flex;align-items:center;gap:5px;transition:.15s}
+  .img-upload-btn:hover{border-color:var(--orange);color:var(--orange)}
+  .img-upload-status{font-size:10px;letter-spacing:.04em;color:var(--orange);display:none;padding:2px 0}
+  .drop-zone{border:1px dashed var(--rule-2);padding:20px;text-align:center;cursor:pointer;transition:all .2s;background:var(--paper-2);margin-bottom:10px}
+  .drop-zone:hover,.drop-zone.drag-over{border-color:var(--orange);background:rgba(184,65,15,.04)}
+  .drop-zone p{font-size:12px;color:var(--muted);margin-bottom:4px}
+  .drop-zone small{font-size:10px;color:var(--muted);letter-spacing:.04em;opacity:.7}
+
+  /* ── Google Maps badge ── */
+  .maps-badge{font-size:10px;letter-spacing:.06em;text-transform:uppercase;padding:3px 8px;border-radius:2px;display:inline-flex;align-items:center;gap:5px}
+  .maps-badge.connected{background:rgba(74,124,89,.1);color:#4a7c59}
+  .maps-badge.disconnected{background:rgba(122,117,104,.1);color:var(--muted)}
   .add-img-btn{font-size:11px;color:var(--orange);letter-spacing:.04em;display:inline-flex;align-items:center;gap:5px;padding:6px 0}
   .img-thumb-strip{display:flex;gap:6px;flex-wrap:wrap;margin-top:8px}
   .img-thumb{position:relative;width:72px;height:52px;overflow:hidden;border:1px solid var(--rule);flex-shrink:0}
@@ -393,6 +409,30 @@
             <label class="toggle"><input type="checkbox" checked><span class="toggle-slider"></span></label>
           </div>
         </div>
+        <div class="settings-section">
+          <h3>Google Maps Integration</h3>
+          <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:16px">
+            <p style="font-size:12px;color:var(--muted)">Powers location autocomplete and precise map embeds in the property editor.</p>
+            <span class="maps-badge disconnected" id="mapsBadge">● Not configured</span>
+          </div>
+          <div class="field-group"><label>Google Maps API Key</label>
+            <input class="field-input" id="s-gmaps" placeholder="AIzaSy…">
+          </div>
+          <p style="font-size:11px;color:var(--muted);margin-bottom:12px">Get a key at <strong>console.cloud.google.com</strong> → Enable <em>Maps JavaScript API</em> + <em>Places API</em>. The key is stored in your browser only.</p>
+          <button class="btn-sm btn-primary-sm" onclick="saveMapsKey()">Save API Key</button>
+        </div>
+        <div class="settings-section">
+          <h3>Supabase Storage (Image Uploads)</h3>
+          <p style="font-size:12px;color:var(--muted);margin-bottom:12px">To enable direct image uploads from the property editor, create a storage bucket in your Supabase dashboard:</p>
+          <ol style="font-size:12px;color:var(--ink-3);line-height:2;padding-left:18px">
+            <li>Go to <strong>Storage</strong> in your Supabase dashboard</li>
+            <li>Click <strong>New bucket</strong> → name it <code style="background:var(--paper-3);padding:1px 5px">property-images</code></li>
+            <li>Check <strong>Public bucket</strong> → Create</li>
+            <li>Go to <strong>SQL Editor</strong> and run:<br>
+              <code style="display:block;background:var(--paper-3);padding:8px 10px;margin-top:4px;font-size:11px;line-height:1.8">CREATE TABLE IF NOT EXISTS site_content (id int PRIMARY KEY DEFAULT 1, data jsonb);<br>INSERT INTO site_content (id, data) VALUES (1, '{}') ON CONFLICT (id) DO NOTHING;</code>
+            </li>
+          </ol>
+        </div>
         <div class="danger-zone">
           <h3>⚠ Danger Zone</h3>
           <div class="settings-row">
@@ -450,22 +490,31 @@
       </div>
 
       <div class="field-section">Photos</div>
-      <p style="font-size:11px;color:var(--muted);margin-bottom:10px">Add photos with room tags. Mark one as the hero (shown on cards and detail page header).</p>
+      <p style="font-size:11px;color:var(--muted);margin-bottom:10px">Upload photos or paste URLs. Tag each room. Mark one as the <strong>hero</strong> — shown on cards and the property header.</p>
+      <div class="drop-zone" id="imgDropZone">
+        <p>↑ Drop images here or click to upload</p>
+        <small>JPG, PNG, WEBP · Multiple files supported</small>
+        <input type="file" id="imgBulkInput" accept="image/*" multiple style="display:none" onchange="handleBulkUpload(this)">
+      </div>
       <div class="img-manager" id="imgManager"></div>
       <button class="add-img-btn" onclick="addImgCard()">+ Add photo URL</button>
       <div id="imgThumbStrip" class="img-thumb-strip"></div>
 
-      <div class="field-section">Location</div>
-      <div class="field-group"><label>Google Maps Embed URL <span style="color:var(--muted);font-weight:300">(optional — auto-generated from location if empty)</span></label>
+      <div class="field-section">Location &amp; Map</div>
+      <div class="field-group" id="placesSearchGroup">
+        <label>Search Address <span id="placesStatusLabel" style="color:var(--muted);font-weight:300;text-transform:none;letter-spacing:0">(add Google Maps API key in Settings to enable autocomplete)</span></label>
+        <input class="field-input" id="pAddressSearch" placeholder="Start typing an address…" autocomplete="off">
+      </div>
+      <div class="field-group"><label>Google Maps Embed URL <span style="color:var(--muted);font-weight:300">(auto-filled when you search above)</span></label>
         <div style="display:flex;gap:8px">
-          <input class="field-input" id="pMap" placeholder="Leave empty to auto-generate from location name">
+          <input class="field-input" id="pMap" placeholder="Leave empty to auto-generate from location">
           <button class="btn-sm btn-ghost-sm" onclick="autoFillMap()" style="white-space:nowrap;flex-shrink:0">Auto-fill</button>
         </div>
       </div>
-      <div id="mapPreview" style="margin-top:8px;display:none;border:1px solid var(--border);border-radius:5px;overflow:hidden">
-        <iframe id="mapPreviewFrame" style="width:100%;height:200px;border:none" loading="lazy"></iframe>
+      <div id="mapPreview" style="margin-top:8px;display:none;overflow:hidden">
+        <iframe id="mapPreviewFrame" style="width:100%;height:220px;border:none" loading="lazy" allowfullscreen referrerpolicy="no-referrer-when-downgrade"></iframe>
       </div>
-      <p style="font-size:11px;color:var(--muted);margin-top:6px">Or: Google Maps → Share → Embed a map → copy the src="" value</p>
+      <p style="font-size:11px;color:var(--muted);margin-top:6px">Tip: Google Maps → Share → Embed a map → copy the src="" value for the most precise embed.</p>
 
       <div class="field-section">Sort Order</div>
       <div class="field-group"><label>Order (lower = first)</label><input class="field-input" id="pOrder" type="number" value="1"></div>
@@ -580,8 +629,25 @@ document.querySelectorAll('.panel-overlay').forEach(p => {
   p.addEventListener('click', e => { if (e.target === p) closePanel(p.id); });
 });
 
+// ── Startup wiring ────────────────────────────────────────
+(function initStartup() {
+  // Load Maps API key from storage
+  const mapsKey = getMapsKey();
+  const mapsKeyInput = document.getElementById('s-gmaps');
+  if (mapsKeyInput && mapsKey) mapsKeyInput.value = mapsKey;
+  if (mapsKey) { updateMapsBadge(true); loadMapsScript(mapsKey); }
+
+  // Wire drop zone after DOM is ready
+  document.addEventListener('DOMContentLoaded', initDropZone);
+  if (document.readyState !== 'loading') initDropZone();
+})();
+
+
 // ── Dashboard ─────────────────────────────────────────────
 async function initDashboard() {
+  // Load site content into Content page fields
+  loadSiteContent();
+
   const props = await getProperties();
   const avail = props.filter(p => p.status === 'available').length;
   document.getElementById('ds-props').textContent = props.length;
@@ -682,6 +748,15 @@ function openPropertyPanel(prop = null) {
   imgs.forEach(img => addImgCard(img));
   renderImgThumbs(imgs);
 
+  // Reset address search
+  const addrSearch = document.getElementById('pAddressSearch');
+  if (addrSearch) addrSearch.value = '';
+  // Wire Places autocomplete if Maps API is loaded
+  if (mapsLoaded) setTimeout(initPlacesAutocomplete, 80);
+  // Show existing map embed in preview
+  const existingMap = prop?.map_embed || '';
+  if (existingMap) setTimeout(() => showMapPreview(existingMap), 50);
+
   openPanel('propPanel');
 }
 
@@ -716,20 +791,26 @@ const IMG_TAGS_LIST = [
   {v:'building',l:'Building'},{v:'other',l:'Other'}
 ];
 
-function addImgCard(imgObj = null) {
+function addImgCard(imgObj = null, prefillUrl = '') {
   const id = 'img_' + Date.now() + '_' + Math.random().toString(36).slice(2,6);
-  const url = imgObj?.url || '';
+  const url = prefillUrl || imgObj?.url || '';
   const tag = imgObj?.tag || 'living-room';
   const isHero = imgObj?.is_hero || imgObj?.isHero || false;
   const card = document.createElement('div');
   card.className = 'img-card'; card.id = id;
   card.innerHTML = `
     <div class="img-card-row">
-      <div class="${url ? '' : 'img-preview-empty'}" id="prev_${id}" style="${url ? '' : 'display:flex;align-items:center;justify-content:center;font-size:14px;color:var(--muted)'}">
+      <div class="${url ? '' : 'img-preview-empty'}" id="prev_${id}">
         ${url ? `<img class="img-preview" src="${url}" onerror="this.parentElement.classList.add('img-preview-empty');this.remove()">` : '🖼'}
       </div>
       <div class="img-card-meta">
-        <input class="field-input img-url-input" placeholder="https://images.unsplash.com/…" value="${url}" oninput="updatePreview('${id}', this.value)" style="font-size:12px;padding:7px 10px">
+        <div class="img-url-row">
+          <input class="field-input img-url-input" placeholder="Paste URL or upload →" value="${url}" oninput="updatePreview('${id}', this.value)" style="font-size:12px;padding:7px 10px">
+          <label class="img-upload-btn" title="Upload from computer">
+            ↑ Upload
+            <input type="file" accept="image/*" style="display:none" onchange="handleImgUpload('${id}', this)">
+          </label>
+        </div>
         <div class="img-card-controls">
           <select class="img-tag-sel img-tag-input" onchange="refreshThumbs()">
             ${IMG_TAGS_LIST.map(t=>`<option value="${t.v}" ${tag===t.v?'selected':''}>${t.l}</option>`).join('')}
@@ -737,11 +818,13 @@ function addImgCard(imgObj = null) {
           <button class="img-hero-btn ${isHero?'active':''}" onclick="setHero('${id}')" title="Set as hero">
             ${isHero ? '★ Hero' : '☆ Set hero'}
           </button>
+          <span class="img-upload-status" id="upstat_${id}"></span>
         </div>
       </div>
       <button class="img-del" onclick="removeImgCard('${id}');refreshThumbs()">✕</button>
     </div>`;
   document.getElementById('imgManager').appendChild(card);
+  if (url) refreshThumbs();
 }
 
 function updatePreview(id, url) {
@@ -760,6 +843,136 @@ function setHero(id) {
 }
 
 function removeImgCard(id) { document.getElementById(id)?.remove(); }
+
+// ── Image upload handlers ─────────────────────────────────
+async function handleImgUpload(cardId, input) {
+  const file = input.files[0];
+  if (!file) return;
+  const statEl = document.getElementById('upstat_' + cardId);
+  if (statEl) { statEl.style.display = 'inline'; statEl.textContent = 'Uploading…'; }
+  try {
+    const url = await uploadImage(file);
+    const urlInput = document.querySelector(`#${cardId} .img-url-input`);
+    if (urlInput) { urlInput.value = url; updatePreview(cardId, url); }
+    if (statEl) { statEl.textContent = '✓ Uploaded'; setTimeout(() => { statEl.style.display = 'none'; }, 3000); }
+    showToast('Image uploaded');
+  } catch (err) {
+    if (statEl) { statEl.style.display = 'none'; }
+    showToast('Upload failed — check Storage bucket is set up', 'error');
+    console.error('Upload:', err);
+  }
+  input.value = '';
+}
+
+async function handleBulkUpload(input) {
+  const files = [...input.files];
+  if (!files.length) return;
+  showToast(`Uploading ${files.length} image${files.length > 1 ? 's' : ''}…`);
+  let done = 0;
+  for (const file of files) {
+    try {
+      const url = await uploadImage(file);
+      addImgCard(null, url);
+      done++;
+    } catch (err) {
+      console.error('Bulk upload error:', err);
+    }
+  }
+  input.value = '';
+  showToast(done === files.length ? `${done} image${done > 1 ? 's' : ''} uploaded` : `${done}/${files.length} uploaded`, done < files.length ? 'error' : 'success');
+  refreshThumbs();
+}
+
+// Drop zone
+function initDropZone() {
+  const zone = document.getElementById('imgDropZone');
+  if (!zone) return;
+  zone.addEventListener('click', () => document.getElementById('imgBulkInput').click());
+  zone.addEventListener('dragover', e => { e.preventDefault(); zone.classList.add('drag-over'); });
+  zone.addEventListener('dragleave', () => zone.classList.remove('drag-over'));
+  zone.addEventListener('drop', async e => {
+    e.preventDefault();
+    zone.classList.remove('drag-over');
+    const files = [...e.dataTransfer.files].filter(f => f.type.startsWith('image/'));
+    if (!files.length) return;
+    const fakeInput = { files };
+    await handleBulkUpload(fakeInput);
+  });
+}
+
+// ── Google Maps / Places ──────────────────────────────────
+let mapsLoaded = false;
+let placesAutocomplete = null;
+
+function getMapsKey() {
+  return localStorage.getItem('gmaps_api_key') || '';
+}
+
+function saveMapsKey() {
+  const key = document.getElementById('s-gmaps').value.trim();
+  if (!key) { showToast('Enter an API key', 'error'); return; }
+  localStorage.setItem('gmaps_api_key', key);
+  updateMapsBadge(true);
+  loadMapsScript(key);
+  showToast('Google Maps API key saved');
+}
+
+function updateMapsBadge(connected) {
+  const badge = document.getElementById('mapsBadge');
+  if (!badge) return;
+  if (connected) {
+    badge.className = 'maps-badge connected'; badge.textContent = '● Connected';
+  } else {
+    badge.className = 'maps-badge disconnected'; badge.textContent = '● Not configured';
+  }
+}
+
+function loadMapsScript(key) {
+  if (mapsLoaded || document.getElementById('gmaps-script')) return;
+  const s = document.createElement('script');
+  s.id = 'gmaps-script';
+  s.src = `https://maps.googleapis.com/maps/api/js?key=${key}&libraries=places&callback=onMapsLoaded`;
+  s.async = true; s.defer = true;
+  document.head.appendChild(s);
+}
+
+window.onMapsLoaded = function() {
+  mapsLoaded = true;
+  updateMapsBadge(true);
+  const label = document.getElementById('placesStatusLabel');
+  if (label) { label.textContent = ''; }
+  initPlacesAutocomplete();
+};
+
+function initPlacesAutocomplete() {
+  const input = document.getElementById('pAddressSearch');
+  if (!input || !window.google?.maps?.places) return;
+  if (placesAutocomplete) return;
+  placesAutocomplete = new google.maps.places.Autocomplete(input, {
+    componentRestrictions: { country: 'in' },
+    fields: ['geometry', 'name', 'formatted_address']
+  });
+  placesAutocomplete.addListener('place_changed', () => {
+    const place = placesAutocomplete.getPlace();
+    if (!place.geometry) return;
+    const lat = place.geometry.location.lat();
+    const lng = place.geometry.location.lng();
+    // Auto-fill the location field with the name
+    const nameParts = (place.name || place.formatted_address || '').split(',');
+    document.getElementById('pLocation').value = nameParts[0]?.trim() || place.name;
+    // Generate a precise embed URL using lat/lng
+    const embedUrl = `https://www.google.com/maps/embed?pb=!1m14!1m8!1m3!1d2000!2d${lng}!3d${lat}!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x0:0x0!2z${encodeURIComponent(place.name)}!5e0!3m2!1sen!2sin!4v1`;
+    document.getElementById('pMap').value = embedUrl;
+    showMapPreview(embedUrl);
+    showToast('Location set from Google Places');
+  });
+}
+
+function showMapPreview(url) {
+  const preview = document.getElementById('mapPreview');
+  const frame   = document.getElementById('mapPreviewFrame');
+  if (preview && frame && url) { frame.src = url; preview.style.display = 'block'; }
+}
 
 function refreshThumbs() {
   const imgs = getImagesFromForm();
@@ -794,18 +1007,20 @@ function autoFillMap() {
   const q = encodeURIComponent(loc + (area ? ', ' + area : '') + ', India');
   const url = 'https://maps.google.com/maps?q=' + q + '&output=embed&z=15';
   document.getElementById('pMap').value = url;
-  const preview = document.getElementById('mapPreview');
-  const frame   = document.getElementById('mapPreviewFrame');
-  if (preview && frame) { frame.src = url; preview.style.display = 'block'; }
-  showToast('Map auto-filled from location');
+  showMapPreview(url);
+  showToast('Map auto-filled — or paste an embed URL for precision');
 }
 
 document.getElementById('pMap').addEventListener('input', function() {
-  const preview = document.getElementById('mapPreview');
-  const frame   = document.getElementById('mapPreviewFrame');
-  if (!preview || !frame) return;
-  if (this.value.trim()) { frame.src = this.value.trim(); preview.style.display = 'block'; }
-  else { preview.style.display = 'none'; }
+  if (this.value.trim()) showMapPreview(this.value.trim());
+  else { const p = document.getElementById('mapPreview'); if (p) p.style.display = 'none'; }
+});
+
+// Also auto-fill map when location field loses focus (if no map set yet)
+document.getElementById('pLocation').addEventListener('blur', function() {
+  if (!mapsLoaded && !document.getElementById('pMap').value.trim() && this.value.trim()) {
+    autoFillMap();
+  }
 });
 
 async function saveProperty() {
@@ -1074,8 +1289,10 @@ async function deleteGridMember() {
   showToast('Member deleted', 'error');
 }
 
-// ── Content save ──────────────────────────────────────────
-function saveContent() {
+// ── Content save / load (Supabase) ───────────────────────
+async function saveContent() {
+  const btn = document.querySelector('#page-content .btn-primary-sm');
+  if (btn) { btn.textContent = 'Saving…'; btn.disabled = true; }
   const data = {
     tagline: document.getElementById('c-tagline').value,
     sub:     document.getElementById('c-sub').value,
@@ -1085,8 +1302,34 @@ function saveContent() {
     li:      document.getElementById('c-li').value,
     wa:      document.getElementById('c-wa').checked,
   };
+  // Save to Supabase (public pages read from here)
+  const { ok, error } = await saveSiteContent(data);
+  // Also save locally as fallback
   localStorage.setItem('switch_content', JSON.stringify(data));
-  showToast('Content saved');
+  if (btn) { btn.textContent = 'Save Changes'; btn.disabled = false; }
+  if (ok) {
+    showToast('Content saved — public site will reflect changes');
+  } else {
+    console.warn('Supabase content save error:', error);
+    showToast('Saved locally (Supabase table not set up yet)');
+  }
+}
+
+async function loadSiteContent() {
+  // Try Supabase first, fall back to localStorage
+  let data = await getSiteContent();
+  if (!data) {
+    const local = localStorage.getItem('switch_content');
+    data = local ? JSON.parse(local) : null;
+  }
+  if (!data) return;
+  if (data.tagline) document.getElementById('c-tagline').value = data.tagline;
+  if (data.sub)     document.getElementById('c-sub').value     = data.sub;
+  if (data.phone)   document.getElementById('c-phone').value   = data.phone;
+  if (data.email)   document.getElementById('c-email').value   = data.email;
+  if (data.ig)      document.getElementById('c-ig').value      = data.ig;
+  if (data.li)      document.getElementById('c-li').value      = data.li;
+  if (data.wa !== undefined) document.getElementById('c-wa').checked = data.wa;
 }
 
 // ── Settings ──────────────────────────────────────────────
