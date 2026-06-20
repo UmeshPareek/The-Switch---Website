@@ -25,16 +25,32 @@
     .prop-rent { font-size: 36px; font-weight: 500; }
     .prop-rent-meta { font-size: 13px; color: var(--muted); margin-top: 4px; }
 
-    /* ── Gallery ── */
-    .gallery-grid {
-      display: grid; grid-template-columns: 2fr 1fr 1fr;
-      grid-template-rows: 200px 200px;
-      gap: 8px; margin-bottom: 64px;
+    /* ── Gallery tabs ── */
+    .gallery-section { padding-top: 40px; margin-bottom: 64px; }
+    .gallery-tabs {
+      display: flex; gap: 0; border-bottom: 1px solid var(--border);
+      margin-bottom: 28px; overflow-x: auto;
+      scrollbar-width: none;
     }
-    .gallery-img { overflow: hidden; border-radius: var(--r-sm); background: var(--bg-3); }
-    .gallery-img img { width: 100%; height: 100%; object-fit: cover; cursor: pointer; transition: transform .3s; }
-    .gallery-img img:hover { transform: scale(1.04); }
-    .gallery-img:first-child { grid-row: span 2; }
+    .gallery-tabs::-webkit-scrollbar { display: none; }
+    .gallery-tab {
+      font-size: 11px; letter-spacing: .1em; text-transform: uppercase; font-weight: 600;
+      padding: 12px 24px; cursor: pointer; color: var(--muted);
+      border-bottom: 2px solid transparent; margin-bottom: -1px;
+      white-space: nowrap; transition: color .15s, border-color .15s;
+      flex-shrink: 0;
+    }
+    .gallery-tab:hover { color: var(--ink); }
+    .gallery-tab.active { color: var(--orange); border-bottom-color: var(--orange); }
+
+    /* ── Photo grid ── */
+    .photo-grid {
+      display: grid; grid-template-columns: repeat(4, 1fr); gap: 8px;
+    }
+    .photo-card { border-radius: var(--r-sm); overflow: hidden; background: var(--bg-3); aspect-ratio: 4/3; }
+    .photo-card img { width: 100%; height: 100%; object-fit: cover; cursor: pointer; transition: transform .35s; display: block; }
+    .photo-card img:hover { transform: scale(1.05); }
+    .photo-grid-empty { color: var(--muted); font-size: 13px; padding: 32px 0; }
 
     /* ── Content grid ── */
     .prop-content { display: grid; grid-template-columns: 1fr 380px; gap: 48px; align-items: start; }
@@ -89,10 +105,13 @@
     @media (max-width: 900px) {
       .prop-content { grid-template-columns: 1fr; }
       .enquiry-card { position: static; }
-      .gallery-grid { grid-template-columns: 1fr 1fr; grid-template-rows: auto; }
-      .gallery-img:first-child { grid-column: span 2; grid-row: span 1; height: 240px; }
+      .photo-grid { grid-template-columns: repeat(2, 1fr); }
       .prop-hero-info .container { flex-direction: column; align-items: flex-start; }
       .prop-rent-box { text-align: left; }
+    }
+    @media (max-width: 500px) {
+      .photo-grid { grid-template-columns: repeat(2, 1fr); gap: 4px; }
+      .gallery-tab { padding: 10px 16px; font-size: 10px; }
     }
   </style>
 </head>
@@ -118,8 +137,11 @@
   </div>
 
   <!-- Gallery -->
-  <div class="container" style="padding-top:32px">
-    <div class="gallery-grid" id="galleryGrid"></div>
+  <div class="container">
+    <div class="gallery-section">
+      <div class="gallery-tabs" id="galleryTabs"></div>
+      <div class="photo-grid" id="photoGrid"></div>
+    </div>
   </div>
 
   <!-- Content -->
@@ -247,16 +269,32 @@
       document.getElementById('propRent').textContent = formatRent(p.rent);
       document.getElementById('propMeta').textContent = `${p.bhk} · ${p.units} flats`;
 
-      // Gallery — grid is 3-col × 2-row with first image spanning 2 rows = 5 slots total
-      const gallery = document.getElementById('galleryGrid');
-      const GALLERY_COUNT = 5;
-      const fallback = 'https://images.unsplash.com/photo-1560448204-603b3fc33ddc?w=800&q=80';
-      const imgs = propImages.length >= GALLERY_COUNT
-        ? propImages.slice(0, GALLERY_COUNT)
-        : [...propImages, ...Array(GALLERY_COUNT - propImages.length).fill(propImages[0] || fallback)];
-      gallery.innerHTML = imgs.map((src,i) => `
-        <div class="gallery-img"><img src="${src}" alt="${p.name} ${i+1}" loading="${i>0?'lazy':'eager'}" onclick="openLightbox(${i})"></div>
-      `).join('');
+      // Gallery — tabbed by image tag
+      const TAG_LABELS = { 'living-room':'Living Room', bedroom:'Bedroom', kitchen:'Kitchen', bathroom:'Bathroom', balcony:'Balcony', 'common-area':'Common Area', building:'Building', other:'Other' };
+      const uniqueTags = [...new Set(rawImages.map(img => img.tag || 'other'))];
+
+      function renderPhotoGrid(filterTag) {
+        const filtered = filterTag === 'all' ? rawImages : rawImages.filter(img => (img.tag || 'other') === filterTag);
+        document.getElementById('photoGrid').innerHTML = filtered.length
+          ? filtered.map((img, i) => {
+              const url = typeof img === 'string' ? img : img.url;
+              const lightIdx = propImages.indexOf(url);
+              return `<div class="photo-card"><img src="${url}" alt="${p.name} photo ${i+1}" loading="${i>0?'lazy':'eager'}" onclick="openLightbox(${lightIdx >= 0 ? lightIdx : i})"></div>`;
+            }).join('')
+          : `<p class="photo-grid-empty">No photos in this category.</p>`;
+      }
+
+      window.switchGalleryTab = function(tag, el) {
+        document.querySelectorAll('.gallery-tab').forEach(t => t.classList.remove('active'));
+        el.classList.add('active');
+        renderPhotoGrid(tag);
+      };
+
+      const tabs = [{ tag: 'all', label: 'All Photos' }, ...uniqueTags.map(t => ({ tag: t, label: TAG_LABELS[t] || t }))];
+      document.getElementById('galleryTabs').innerHTML = tabs.map((t, i) =>
+        `<div class="gallery-tab${i === 0 ? ' active' : ''}" onclick="switchGalleryTab('${t.tag}', this)">${t.label}</div>`
+      ).join('');
+      renderPhotoGrid('all');
 
       // Description
       document.getElementById('propDesc').textContent = p.description;
