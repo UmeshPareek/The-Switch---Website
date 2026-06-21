@@ -56,20 +56,39 @@
     .hero {
       position: relative; height: 100vh; min-height: 640px;
       overflow: hidden;
-      /* poster baked in as CSS bg — shows instantly, zero flash */
-      background: var(--ink)
-        url('https://images.unsplash.com/photo-1618219944342-824e40a13285?w=1800&q=88&fit=crop')
-        center 30% / cover no-repeat;
+      background: var(--ink);
       display: flex; align-items: flex-end;
     }
     .hero-bg-video {
       position: absolute; inset: 0;
       width: 100%; height: 100%;
-      object-fit: cover; object-position: center 40%;
-      opacity: 0;                          /* hidden until canplay fires */
-      transition: opacity 1.4s ease;       /* smooth crossfade over poster */
+      object-fit: cover; object-position: center 50%;
+      opacity: 0;
+      transition: opacity 1.6s ease;
     }
-    .hero-bg-video.ready { opacity: .45; }
+    .hero-bg-video.ready { opacity: .52; }
+
+    /* ── Mute toggle ─────────────────────────────────────── */
+    .hero-sound {
+      position: absolute; bottom: 62px; left: 56px; z-index: 10;
+      display: flex; align-items: center; gap: 10px;
+      opacity: 0; animation: hFadeUp .5s ease 1.6s forwards;
+    }
+    .hero-sound-btn {
+      width: 36px; height: 36px; border-radius: 50%;
+      border: 1px solid rgba(247,244,239,.25);
+      background: rgba(14,13,10,.4);
+      display: flex; align-items: center; justify-content: center;
+      transition: border-color .2s, background .2s;
+      backdrop-filter: blur(6px);
+    }
+    .hero-sound-btn:hover { border-color: rgba(247,244,239,.6); background: rgba(14,13,10,.6); }
+    .hero-sound-btn svg { width: 14px; height: 14px; fill: rgba(247,244,239,.7); }
+    .hero-sound-lbl {
+      font-size: 9px; letter-spacing: .18em; text-transform: uppercase;
+      color: rgba(247,244,239,.25); transition: color .2s;
+    }
+    .hero-sound:hover .hero-sound-lbl { color: rgba(247,244,239,.5); }
     .hero-vignette {
       position: absolute; inset: 0; z-index: 1;
       background:
@@ -505,8 +524,10 @@
 <section class="hero" id="hero">
   <video class="hero-bg-video" id="heroVid"
     autoplay muted loop playsinline preload="auto">
-    <source src="https://videos.pexels.com/video-files/2829177/2829177-hd_1280_720_30fps.mp4" type="video/mp4">
-    <source src="https://videos.pexels.com/video-files/3571264/3571264-hd_1280_720_30fps.mp4" type="video/mp4">
+    <!-- Bengaluru city aerial / landscape footage -->
+    <source src="https://videos.pexels.com/video-files/4253948/4253948-hd_1280_720_25fps.mp4" type="video/mp4">
+    <source src="https://videos.pexels.com/video-files/3248452/3248452-hd_1280_720_25fps.mp4" type="video/mp4">
+    <source src="https://videos.pexels.com/video-files/1510496/1510496-hd_1280_720_24fps.mp4" type="video/mp4">
   </video>
   <div class="hero-vignette"></div>
   <div class="hero-body">
@@ -533,6 +554,17 @@
       </div>
     </div>
   </div>
+  <!-- Sound toggle -->
+  <div class="hero-sound" id="heroSound">
+    <button class="hero-sound-btn" id="heroSoundBtn" aria-label="Toggle sound" onclick="toggleSound()">
+      <!-- muted icon (default) -->
+      <svg id="iconMuted" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M16.5 12A4.5 4.5 0 0014 7.97v2.21l2.45 2.45c.03-.2.05-.41.05-.63zm2.5 0c0 .94-.2 1.82-.54 2.64l1.51 1.51A8.796 8.796 0 0021 12c0-4.28-2.99-7.86-7-8.77v2.06c2.89.86 5 3.54 5 6.71zM4.27 3L3 4.27 7.73 9H3v6h4l5 5v-6.73l4.25 4.25c-.67.52-1.42.93-2.25 1.18v2.06A8.99 8.99 0 0019 19.73L20.73 21 22 19.73 5.27 2 4.27 3zM12 4L9.91 6.09 12 8.18V4z"/></svg>
+      <!-- unmuted icon (hidden until active) -->
+      <svg id="iconSound" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg" style="display:none"><path d="M3 9v6h4l5 5V4L7 9H3zm13.5 3A4.5 4.5 0 0014 7.97v8.05c1.48-.73 2.5-2.25 2.5-4.02zM14 3.23v2.06c2.89.86 5 3.54 5 6.71s-2.11 5.85-5 6.71v2.06c4.01-.91 7-4.49 7-8.77s-2.99-7.86-7-8.77z"/></svg>
+    </button>
+    <span class="hero-sound-lbl" id="heroSoundLbl">sound off</span>
+  </div>
+
   <div class="hero-scroll">
     <div class="hero-scroll-line"></div>
     <span class="hero-scroll-txt">scroll</span>
@@ -731,13 +763,26 @@
   const n = buildLine(document.getElementById('heroLine1'), 'the', 0);
   buildLine(document.getElementById('heroLine2'), 'switch.', n + 1);
 
-  /* ── Video fade-in: poster → video crossfade ─────────────── */
+  /* ── Video: fade in once playable, sound toggle ──────────── */
   const heroVid = document.getElementById('heroVid');
+  let soundOn = false;
+
   if (heroVid) {
     heroVid.addEventListener('canplay', () => {
       heroVid.classList.add('ready');
     }, { once: true });
   }
+
+  window.toggleSound = function () {
+    if (!heroVid) return;
+    soundOn = !soundOn;
+    heroVid.muted = !soundOn;
+    document.getElementById('iconMuted').style.display  = soundOn ? 'none'  : '';
+    document.getElementById('iconSound').style.display  = soundOn ? ''      : 'none';
+    document.getElementById('heroSoundLbl').textContent = soundOn ? 'sound on' : 'sound off';
+    // First unmute needs volume reset (some browsers default to 0)
+    if (soundOn) heroVid.volume = 0.4;
+  };
 
   /* ── Parallax (split image only — no transform on video) ── */
   const splitImgEl = document.getElementById('splitImg');
