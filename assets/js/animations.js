@@ -10,7 +10,7 @@
     el.id = 'sw-loader';
     el.innerHTML = '<div class="sw-loader-brand">the switch<span class="sw-loader-dot">.</span></div>';
     document.body.prepend(el);
-    setTimeout(() => el.remove(), 2200);
+    setTimeout(() => el.remove(), 1200);
   }
 
   /* ── Progress bar ────────────────────────────────────── */
@@ -30,7 +30,7 @@
     s.src = 'https://cdn.jsdelivr.net/npm/lenis@1.1.14/dist/lenis.min.js';
     s.onload = () => {
       const lenis = new Lenis({
-        duration: 1.3,
+        duration: 1.0,
         easing: t => Math.min(1, 1.001 - Math.pow(2, -10 * t)),
         smoothWheel: true,
       });
@@ -143,7 +143,7 @@
     initTilt();
     initImages();
     // re-bind after async property cards load
-    setTimeout(() => { initReveals(); initMagnetic(); initTilt(); }, 2400);
+    setTimeout(() => { initReveals(); initMagnetic(); initTilt(); }, 1500);
   }
 
   if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', run);
