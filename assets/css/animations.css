@@ -1,30 +1,11 @@
 /* the switch. — animations.css v3.1 */
 
-/* ── Page loader ─────────────────────────────────────── */
-#sw-loader {
-  position: fixed; inset: 0;
-  background: var(--ink);
-  z-index: 9999;
-  display: flex; align-items: center; justify-content: center;
-  pointer-events: none;
-  animation: loaderOut .6s cubic-bezier(.76,0,.24,1) .6s forwards;
-}
-@keyframes loaderOut { to { transform: translateY(-100%); } }
-.sw-loader-brand {
-  font-family: var(--font-serif);
-  font-size: 26px; letter-spacing: .04em;
-  color: var(--paper);
-  opacity: 0;
-  animation: fadeUp .4s ease .1s forwards;
-}
-.sw-loader-dot { color: var(--orange); }
-
 /* ── Hero entrance ───────────────────────────────────── */
 .hero-content {
-  animation: heroIn .7s cubic-bezier(.25,.46,.45,.94) .8s both;
+  animation: heroIn .6s cubic-bezier(.25,.46,.45,.94) .1s both;
 }
 @keyframes heroIn {
-  from { opacity: 0; transform: translateY(20px); }
+  from { opacity: 0; transform: translateY(16px); }
   to   { opacity: 1; transform: translateY(0); }
 }
 
@@ -51,21 +32,6 @@
 .anim.visible, .anim-fade.visible,
 .anim-scale.visible, .anim-left.visible {
   opacity: 1; transform: none;
-}
-
-@keyframes fadeUp {
-  from { opacity: 0; transform: translateY(10px); }
-  to   { opacity: 1; transform: none; }
-}
-
-/* ── Scroll progress ─────────────────────────────────── */
-#sw-progress {
-  position: fixed; top: 0; left: 0;
-  height: 2px; width: 0;
-  background: var(--orange);
-  z-index: 9998;
-  transition: width .08s linear;
-  pointer-events: none;
 }
 
 /* ── Nav transitions ─────────────────────────────────── */
