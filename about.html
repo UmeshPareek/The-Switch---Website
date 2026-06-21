@@ -7,6 +7,23 @@
   <link rel="stylesheet" href="/assets/css/main.css">
   <link rel="stylesheet" href="/assets/css/animations.css">
   <style>
+    /* ── CURSOR ──────────────────────────────────────────── */
+    * { cursor: none !important; }
+    .cur-ring { position:fixed;z-index:99999;pointer-events:none;width:36px;height:36px;border-radius:50%;border:1px solid rgba(247,244,239,.65);transform:translate(-50%,-50%);transition:width .28s,height .28s,border-color .2s;mix-blend-mode:difference;will-change:left,top }
+    .cur-ring.hov { width:64px;height:64px;border-color:rgba(247,244,239,1) }
+    .cur-ring.click { width:22px;height:22px }
+    .cur-dot { position:fixed;z-index:99999;pointer-events:none;width:5px;height:5px;border-radius:50%;background:rgba(247,244,239,.9);transform:translate(-50%,-50%);mix-blend-mode:difference;will-change:left,top }
+    /* ── GRAIN ───────────────────────────────────────────── */
+    .grain-overlay { position:fixed;inset:0;z-index:9990;pointer-events:none;background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='300' height='300'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.8' numOctaves='4' stitchTiles='stitch'/%3E%3CfeColorMatrix type='saturate' values='0'/%3E%3C/filter%3E%3Crect width='300' height='300' filter='url(%23n)'/%3E%3C/svg%3E");opacity:.038;mix-blend-mode:overlay }
+    /* ── NAV ─────────────────────────────────────────────── */
+    .nav { background:transparent !important;box-shadow:none !important }
+    .nav.nav-scrolled { background:rgba(14,13,10,.96) !important;box-shadow:none !important }
+    .nav-logo { color:var(--paper) !important }
+    .nav-logo .nav-dot { color:var(--orange) !important }
+    .nav-links a { color:rgba(247,244,239,.55) !important }
+    .nav-links a:hover { color:var(--paper) !important }
+    .nav-cta { border-color:rgba(247,244,239,.28) !important;color:rgba(247,244,239,.55) !important }
+    .nav-cta:hover { background:var(--paper) !important;color:var(--ink) !important }
     /* ─── PAGE HERO ─────────────────────────────────────── */
     .page-hero {
       background: var(--ink);
@@ -172,6 +189,9 @@
   </style>
 </head>
 <body>
+<div class="cur-ring" id="curRing"></div>
+<div class="cur-dot"  id="curDot"></div>
+<div class="grain-overlay" aria-hidden="true"></div>
 <div id="nav-mount"></div>
 
 <!-- HERO -->
@@ -323,6 +343,20 @@
   document.getElementById('nav-mount').innerHTML    = navComponent('About');
   document.getElementById('footer-mount').innerHTML = footerComponent();
   initFadeUp(); initNav();
+  (function(){
+    const ring=document.getElementById('curRing'),dot=document.getElementById('curDot');
+    if(!ring||!dot) return;
+    let mx=-200,my=-200,rx=-200,ry=-200;
+    document.addEventListener('mousemove',e=>{mx=e.clientX;my=e.clientY});
+    document.addEventListener('mousedown',()=>ring.classList.add('click'));
+    document.addEventListener('mouseup',()=>ring.classList.remove('click'));
+    function tick(){rx+=(mx-rx)*.115;ry+=(my-ry)*.115;ring.style.left=rx+'px';ring.style.top=ry+'px';dot.style.left=mx+'px';dot.style.top=my+'px';requestAnimationFrame(tick);}
+    tick();
+    document.querySelectorAll('a,button').forEach(el=>{
+      el.addEventListener('mouseenter',()=>ring.classList.add('hov'));
+      el.addEventListener('mouseleave',()=>ring.classList.remove('hov'));
+    });
+  })();
 </script>
 </body>
 </html>
