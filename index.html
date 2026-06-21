@@ -55,23 +55,21 @@
     /* ── HERO ────────────────────────────────────────────── */
     .hero {
       position: relative; height: 100vh; min-height: 640px;
-      overflow: hidden; background: var(--ink);
+      overflow: hidden;
+      /* poster baked in as CSS bg — shows instantly, zero flash */
+      background: var(--ink)
+        url('https://images.unsplash.com/photo-1618219944342-824e40a13285?w=1800&q=88&fit=crop')
+        center 30% / cover no-repeat;
       display: flex; align-items: flex-end;
-    }
-    .hero-bg {
-      position: absolute; inset: -15% 0 -15%;
-      width: 100%; height: 130%;
-      object-fit: cover; object-position: center 30%;
-      opacity: .48;
-      will-change: transform;
     }
     .hero-bg-video {
       position: absolute; inset: 0;
       width: 100%; height: 100%;
       object-fit: cover; object-position: center 40%;
-      opacity: .45;
-      /* no transform/will-change — video + GPU transform = compositor glitch */
+      opacity: 0;                          /* hidden until canplay fires */
+      transition: opacity 1.4s ease;       /* smooth crossfade over poster */
     }
+    .hero-bg-video.ready { opacity: .45; }
     .hero-vignette {
       position: absolute; inset: 0; z-index: 1;
       background:
@@ -505,13 +503,10 @@
 
 <!-- ── HERO ─────────────────────────────────────────────── -->
 <section class="hero" id="hero">
-  <video class="hero-bg-video"
-    autoplay muted loop playsinline preload="auto"
-    poster="https://images.unsplash.com/photo-1618219944342-824e40a13285?w=1800&q=88&fit=crop">
-    <!-- 720p only — light enough to stream smoothly as background -->
+  <video class="hero-bg-video" id="heroVid"
+    autoplay muted loop playsinline preload="auto">
     <source src="https://videos.pexels.com/video-files/2829177/2829177-hd_1280_720_30fps.mp4" type="video/mp4">
     <source src="https://videos.pexels.com/video-files/3571264/3571264-hd_1280_720_30fps.mp4" type="video/mp4">
-    <img src="https://images.unsplash.com/photo-1618219944342-824e40a13285?w=1800&q=88&fit=crop" alt="">
   </video>
   <div class="hero-vignette"></div>
   <div class="hero-body">
@@ -735,6 +730,14 @@
   }
   const n = buildLine(document.getElementById('heroLine1'), 'the', 0);
   buildLine(document.getElementById('heroLine2'), 'switch.', n + 1);
+
+  /* ── Video fade-in: poster → video crossfade ─────────────── */
+  const heroVid = document.getElementById('heroVid');
+  if (heroVid) {
+    heroVid.addEventListener('canplay', () => {
+      heroVid.classList.add('ready');
+    }, { once: true });
+  }
 
   /* ── Parallax (split image only — no transform on video) ── */
   const splitImgEl = document.getElementById('splitImg');
