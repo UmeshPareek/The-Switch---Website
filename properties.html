@@ -6,10 +6,29 @@
   <title>Properties — the switch.</title>
   <meta name="description" content="Three buildings in Bengaluru. Fully furnished. Zero broker.">
   <link rel="stylesheet" href="/assets/css/main.css">
+  <link rel="stylesheet" href="/assets/css/animations.css">
   <style>
-    .page-hero{padding-top:calc(var(--nav-h) + 64px);padding-bottom:48px;border-bottom:1px solid var(--rule)}
-    .page-hero h1{font-size:clamp(40px,6vw,72px);margin-bottom:12px}
-    .page-hero p{font-size:15px;color:var(--muted);max-width:480px}
+    .page-hero {
+      background: var(--ink);
+      padding: 140px 56px 96px;
+    }
+    .page-hero-inner { max-width: 1400px; margin: 0 auto; }
+    .page-hero-tag {
+      font-size: 10px; letter-spacing: .22em;
+      text-transform: uppercase;
+      color: rgba(247,244,239,.28);
+      margin-bottom: 32px;
+    }
+    .page-hero h1 {
+      font-family: var(--font-display);
+      font-weight: 300;
+      font-size: clamp(56px, 9vw, 120px);
+      line-height: .88; color: var(--paper);
+      letter-spacing: -.03em;
+    }
+    .page-hero h1 em { font-style: italic; color: rgba(247,244,239,.38); }
+    .page-hero p { font-size: 15px; color: rgba(247,244,239,.38); margin-top: 28px; max-width: 400px; line-height: 1.75; }
+    @media (max-width: 600px) { .page-hero { padding: 120px 20px 72px; } }
 
     /* ── Search + filter bar ── */
     .search-bar{background:var(--paper-2);border-bottom:1px solid var(--rule);padding:20px 0;position:sticky;top:var(--nav-h);z-index:10}
@@ -83,9 +102,9 @@
 
 <!-- Page hero -->
 <div class="page-hero">
-  <div class="container">
-    <div class="eyebrow" style="margin-bottom:12px">Where we are</div>
-    <h1 id="heroHeading">Three buildings.<br><em class="serif">One city.</em></h1>
+  <div class="page-hero-inner">
+    <p class="page-hero-tag">Where we are</p>
+    <h1 id="heroHeading">Our<br><em>homes.</em></h1>
     <p id="heroSub">Curated homes across Bengaluru. Fully managed. Zero broker. Walk in.</p>
   </div>
 </div>
@@ -140,6 +159,7 @@
 <div id="footer-mount"></div>
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
 <script src="/assets/js/supabase.js"></script>
+<script src="/assets/js/animations.js"></script>
 <script>
 document.getElementById('nav-mount').innerHTML = navComponent('Properties');
 document.getElementById('footer-mount').innerHTML = footerComponent();
