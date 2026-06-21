@@ -5,309 +5,310 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>the switch. — just show up.</title>
   <meta name="description" content="Managed co-living in Bengaluru. Fully furnished. Zero broker. Walk in with a suitcase.">
-<link rel="stylesheet" href="/assets/css/main.css">
+  <link rel="stylesheet" href="/assets/css/main.css">
   <link rel="stylesheet" href="/assets/css/animations.css">
   <style>
 
-    /* ─── HERO SPLIT ───────────────────────────────────────── */
+    /* ─── GLOBAL OVERRIDES FOR THIS PAGE ───────────────── */
+    body { background: var(--paper); }
+
+    /* Minimal nav: strip it down on homepage */
+    .nav { background: transparent !important; box-shadow: none !important; }
+    .nav.nav-scrolled { background: rgba(14,13,10,.92) !important; }
+    .nav-links { display: none; }
+    .nav-cta { display: none; }
+    .nav-hamburger { display: none !important; }
+    .nav-logo { color: var(--paper) !important; }
+    .nav-logo .nav-dot { color: var(--orange) !important; }
+    .nav-toggle { background: var(--paper) !important; }
+    .nav-toggle::before, .nav-toggle::after { background: var(--paper) !important; }
+    /* Single right link */
+    .nav-inner::after {
+      content: 'homes →';
+      font-size: 11px; letter-spacing: .12em;
+      text-transform: uppercase;
+      color: rgba(247,244,239,.45);
+      transition: color .2s;
+      cursor: pointer;
+    }
+    .nav-inner:hover::after { color: var(--paper); }
+    .nav-inner a[href="/properties.html"]::after { content: 'homes →'; }
+
+    /* ─── HERO ──────────────────────────────────────────── */
     .hero {
       display: grid;
-      grid-template-columns: 1fr 1fr;
+      grid-template-columns: 45% 55%;
       height: 100vh; min-height: 600px;
+      position: relative;
       overflow: hidden;
     }
 
-    /* Left: dark panel */
+    /* Left dark panel — clean empty space */
     .hero-panel {
       background: var(--ink);
+      position: relative;
+      z-index: 2;
       display: flex; flex-direction: column;
       justify-content: space-between;
-      padding: 40px 56px 56px;
+      padding: 0 0 52px 0;
     }
-    .hero-top {
-      display: flex; justify-content: space-between;
-      align-items: center;
-    }
-    .hero-tag {
-      font-size: 10px; letter-spacing: .2em;
+    .hero-panel-top {
+      padding: 28px 40px;
+      font-size: 9px; letter-spacing: .22em;
       text-transform: uppercase;
-      color: rgba(247,244,239,.28);
-    }
-    .hero-year {
-      font-size: 10px; letter-spacing: .14em;
       color: rgba(247,244,239,.2);
     }
-    .hero-mid {
-      padding: 0;
+    .hero-panel-bottom {
+      padding: 0 40px;
+      display: flex; align-items: center; gap: 10px;
     }
-    .hero-h1 {
-      font-family: var(--font-display);
-      font-weight: 300;
-      font-size: clamp(72px, 9vw, 144px);
-      line-height: .84;
-      color: var(--paper);
-      letter-spacing: -.03em;
-      margin-bottom: 32px;
+    .hero-scroll-line {
+      width: 1px; height: 36px;
+      background: rgba(247,244,239,.2);
     }
-    .hero-h1 em {
-      font-style: italic;
-      color: rgba(247,244,239,.38);
-    }
-    .hero-sub {
-      font-size: 14px;
-      color: rgba(247,244,239,.4);
-      line-height: 1.7;
-      max-width: 320px;
-      margin-bottom: 40px;
-    }
-    .hero-cta {
-      display: inline-flex; align-items: center; gap: 10px;
-      background: var(--paper); color: var(--ink);
-      font-size: 11px; font-weight: 500; letter-spacing: .1em;
+    .hero-scroll-txt {
+      font-size: 9px; letter-spacing: .2em;
       text-transform: uppercase;
-      padding: 16px 36px;
-      transition: background .2s, color .2s;
-      cursor: pointer;
-    }
-    .hero-cta:hover { background: var(--orange); color: var(--paper); }
-    .hero-bottom {
-      display: flex; justify-content: space-between;
-      align-items: flex-end;
-    }
-    .hero-stats {
-      display: flex; gap: 40px;
-    }
-    .hero-stat-val {
-      font-family: var(--font-serif);
-      font-size: 22px; color: rgba(247,244,239,.22);
-      line-height: 1;
-    }
-    .hero-stat-lbl {
-      font-size: 9px; letter-spacing: .16em;
-      text-transform: uppercase;
-      color: rgba(247,244,239,.15);
-      margin-top: 5px;
-    }
-    .hero-tagline {
-      font-family: var(--font-serif);
-      font-style: italic;
-      font-size: 13px;
-      color: rgba(247,244,239,.18);
-      text-align: right;
-      max-width: 180px;
-      line-height: 1.6;
+      color: rgba(247,244,239,.2);
     }
 
-    /* Right: photo, no overlay */
+    /* Right photo — 100% brightness, zero treatment */
     .hero-photo {
       position: relative; overflow: hidden;
     }
     .hero-photo img {
       width: 100%; height: 100%;
-      object-fit: cover;
+      object-fit: cover; object-position: center;
       display: block;
     }
 
-    /* ─── PROPERTIES ───────────────────────────────────────── */
-    .props-section { padding: 120px 0 0; }
-    .props-header {
-      max-width: 1400px; margin: 0 auto;
-      padding: 0 56px;
-      display: flex; justify-content: space-between;
-      align-items: baseline; margin-bottom: 48px;
-    }
-    .props-header h2 {
-      font-family: var(--font-display);
-      font-weight: 300;
-      font-size: clamp(36px, 5vw, 64px);
+    /* The type: absolutely over the whole hero, bleeds right */
+    .hero-type {
+      position: absolute;
+      bottom: 52px; left: 40px;
+      z-index: 10;
+      pointer-events: none;
       line-height: 1;
     }
-    .props-header h2 em { font-style: italic; color: var(--muted); }
-    .props-header a {
-      font-size: 11px; letter-spacing: .1em;
-      text-transform: uppercase; color: var(--muted);
-      transition: color .2s;
+    .hero-h1 {
+      font-family: var(--font-display);
+      font-weight: 300;
+      font-size: clamp(88px, 17vw, 220px);
+      line-height: .84;
+      color: var(--paper);
+      letter-spacing: -.04em;
+      white-space: nowrap;
+      text-shadow: 0 4px 60px rgba(14,13,10,.18);
     }
-    .props-header a:hover { color: var(--orange); }
-    .props-grid {
-      max-width: 1400px; margin: 0 auto;
-      padding: 0 56px;
-      display: grid; grid-template-columns: repeat(3,1fr);
-      gap: 1px; background: var(--rule);
-    }
-    .props-grid .property-card {
-      background: var(--paper);
+    .hero-h1 em {
+      font-style: italic;
+      display: block;
+      color: rgba(247,244,239,.75);
     }
 
-    /* ─── NUMBERS ──────────────────────────────────────────── */
+    /* ─── NUMBERS ───────────────────────────────────────── */
     .numbers {
-      background: var(--ink);
-      padding: 140px 56px;
+      background: var(--paper);
+      padding: 160px 56px;
+      border-top: 1px solid var(--rule);
     }
     .numbers-inner {
       max-width: 1400px; margin: 0 auto;
       display: grid; grid-template-columns: repeat(3,1fr);
-      gap: 0;
-      border-left: 1px solid rgba(247,244,239,.07);
+      border-left: 1px solid var(--rule);
     }
     .num-item {
-      padding: 0 64px 0 48px;
-      border-right: 1px solid rgba(247,244,239,.07);
+      padding: 0 72px 0 56px;
+      border-right: 1px solid var(--rule);
     }
     .num-val {
       font-family: var(--font-display);
       font-weight: 300;
-      font-size: clamp(80px, 11vw, 140px);
-      line-height: .88;
-      color: var(--paper);
-      letter-spacing: -.03em;
-      margin-bottom: 20px;
+      font-size: clamp(80px, 12vw, 160px);
+      line-height: .84;
+      color: var(--ink);
+      letter-spacing: -.04em;
+      margin-bottom: 24px;
     }
-    .num-val em { font-style: italic; color: rgba(247,244,239,.22); font-size: .55em; }
+    .num-val em {
+      font-style: italic;
+      color: var(--muted);
+      font-size: .5em;
+    }
     .num-label {
-      font-size: 10px; letter-spacing: .18em;
+      font-size: 9px; letter-spacing: .2em;
       text-transform: uppercase;
-      color: rgba(247,244,239,.28);
+      color: var(--muted);
     }
 
-    /* ─── INCLUDED ─────────────────────────────────────────── */
-    .included {
-      padding: 140px 56px;
-      background: var(--paper);
+    /* ─── PROPERTIES ────────────────────────────────────── */
+    .props-section {
+      padding: 120px 56px 160px;
+      background: var(--ink);
     }
-    .included-inner {
-      max-width: 1400px; margin: 0 auto;
+    .props-inner { max-width: 1400px; margin: 0 auto; }
+    .props-eyebrow {
+      font-size: 9px; letter-spacing: .22em;
+      text-transform: uppercase;
+      color: rgba(247,244,239,.22);
+      margin-bottom: 56px;
+      display: flex; align-items: center; justify-content: space-between;
     }
-    .included-h {
+    .props-eyebrow a {
+      color: rgba(247,244,239,.22);
+      transition: color .2s;
+    }
+    .props-eyebrow a:hover { color: rgba(247,244,239,.6); }
+    .props-grid {
+      display: grid;
+      grid-template-columns: repeat(3,1fr);
+      gap: 2px;
+    }
+
+    /* Art-style property card */
+    .prop-art {
+      position: relative;
+      aspect-ratio: 2/3;
+      overflow: hidden;
+      cursor: pointer;
+      background: var(--ink-2);
+    }
+    .prop-art img {
+      width: 100%; height: 100%;
+      object-fit: cover;
+      display: block;
+      transition: transform .9s cubic-bezier(.25,.46,.45,.94);
+    }
+    .prop-art:hover img { transform: scale(1.06); }
+
+    /* Info overlay — always visible at bottom */
+    .prop-art-info {
+      position: absolute;
+      bottom: 0; left: 0; right: 0;
+      padding: 48px 28px 28px;
+      background: linear-gradient(transparent, rgba(14,13,10,.88));
+    }
+    .prop-art-loc {
+      font-size: 9px; letter-spacing: .16em;
+      text-transform: uppercase;
+      color: rgba(247,244,239,.35);
+      margin-bottom: 8px;
+    }
+    .prop-art-name {
       font-family: var(--font-display);
       font-weight: 300;
-      font-size: clamp(36px, 5vw, 64px);
-      line-height: 1;
-      margin-bottom: 80px;
+      font-size: clamp(24px, 2.5vw, 34px);
+      color: var(--paper); line-height: 1;
+      margin-bottom: 10px;
     }
-    .included-h em { font-style: italic; color: var(--muted); }
-    .included-list {
-      display: grid;
-      grid-template-columns: repeat(3, 1fr);
-      row-gap: 0;
-    }
-    .inc-row {
-      display: contents;
-    }
-    .inc-cell {
-      padding: 36px 0;
-      border-top: 1px solid var(--rule);
-      padding-right: 48px;
-    }
-    .inc-cell:nth-child(3n) { padding-right: 0; }
-    .inc-name {
-      font-family: var(--font-serif);
-      font-size: 22px; margin-bottom: 6px;
-    }
-    .inc-note {
-      font-size: 13px; color: var(--muted); line-height: 1.65;
+    .prop-art-rent {
+      font-size: 12px; color: rgba(247,244,239,.45);
+      letter-spacing: .04em;
     }
 
-    /* ─── CTA ──────────────────────────────────────────────── */
-    .cta-section {
-      background: var(--ink);
-      padding: 160px 56px;
-      text-align: center;
+    /* Hover reveal: link */
+    .prop-art-hover {
+      position: absolute;
+      inset: 0;
+      background: rgba(14,13,10,.35);
+      display: flex; align-items: center; justify-content: center;
+      opacity: 0;
+      transition: opacity .35s;
     }
-    .cta-inner { max-width: 900px; margin: 0 auto; }
+    .prop-art:hover .prop-art-hover { opacity: 1; }
+    .prop-art-link {
+      font-size: 10px; letter-spacing: .14em;
+      text-transform: uppercase; color: var(--paper);
+      border: 1px solid rgba(247,244,239,.5);
+      padding: 13px 28px;
+      transition: background .2s, border-color .2s;
+    }
+    .prop-art-link:hover { background: var(--paper); color: var(--ink); border-color: var(--paper); }
+
+    /* Status badge inside card */
+    .prop-art-badge {
+      position: absolute;
+      top: 20px; left: 20px;
+      font-size: 9px; letter-spacing: .12em;
+      text-transform: uppercase; color: var(--paper);
+      background: var(--orange); padding: 4px 10px;
+    }
+    .prop-art-badge.available { background: transparent; border: 1px solid rgba(247,244,239,.3); }
+    .prop-art-badge.coming-soon { background: rgba(14,13,10,.6); }
+
+    /* ─── CTA ───────────────────────────────────────────── */
+    .cta-section {
+      background: var(--paper);
+      padding: 160px 56px;
+      display: flex; align-items: center;
+      border-top: 1px solid var(--rule);
+    }
+    .cta-inner { max-width: 1400px; margin: 0 auto; width: 100%; }
     .cta-h {
       font-family: var(--font-display);
       font-weight: 300;
-      font-size: clamp(72px, 13vw, 160px);
+      font-size: clamp(80px, 15vw, 200px);
       line-height: .84;
-      color: var(--paper);
-      letter-spacing: -.03em;
-      margin-bottom: 48px;
+      color: var(--ink);
+      letter-spacing: -.04em;
+      margin-bottom: 64px;
     }
-    .cta-h em { font-style: italic; color: rgba(247,244,239,.28); }
-    .cta-btn {
-      display: inline-flex; align-items: center; gap: 10px;
-      background: var(--orange); color: var(--paper);
-      font-size: 11px; font-weight: 500; letter-spacing: .1em;
-      text-transform: uppercase;
-      padding: 18px 44px;
-      transition: opacity .2s;
-      cursor: pointer;
+    .cta-h em { font-style: italic; color: var(--muted); }
+    .cta-link {
+      display: inline-flex; align-items: center; gap: 16px;
+      font-size: 11px; letter-spacing: .14em;
+      text-transform: uppercase; color: var(--ink);
+      border-bottom: 1px solid var(--ink);
+      padding-bottom: 4px;
+      transition: color .2s, border-color .2s;
     }
-    .cta-btn:hover { opacity: .85; }
+    .cta-link:hover { color: var(--orange); border-color: var(--orange); }
 
-    /* ─── RESPONSIVE ───────────────────────────────────────── */
+    /* ─── RESPONSIVE ────────────────────────────────────── */
     @media (max-width: 960px) {
-      .hero { grid-template-columns: 1fr; grid-template-rows: 60vh 40vh; }
-      .hero-panel { padding: 28px 32px 36px; }
-      .hero-h1 { font-size: clamp(64px, 14vw, 100px); }
-      .props-header, .numbers, .included, .cta-section { padding-left: 32px; padding-right: 32px; }
-      .props-grid { padding: 0 32px; grid-template-columns: 1fr; }
-      .props-grid .property-card { border-bottom: 1px solid var(--rule); }
+      .hero { grid-template-columns: 1fr; grid-template-rows: 55vh 45vh; }
+      .hero-h1 { font-size: clamp(72px, 15vw, 120px); }
+      .numbers, .props-section, .cta-section { padding-left: 32px; padding-right: 32px; }
       .numbers-inner { grid-template-columns: 1fr; border-left: none; }
-      .num-item { border-right: none; border-top: 1px solid rgba(247,244,239,.07); padding: 48px 0; }
-      .included-list { grid-template-columns: 1fr 1fr; }
-      .inc-cell:nth-child(3n) { padding-right: 48px; }
-      .inc-cell:nth-child(2n) { padding-right: 0; }
+      .num-item { border-right: none; border-top: 1px solid var(--rule); padding: 56px 0; }
+      .props-grid { grid-template-columns: 1fr 1fr; gap: 2px; }
+      .cta-h { font-size: clamp(64px, 14vw, 120px); }
     }
     @media (max-width: 600px) {
-      .hero { grid-template-rows: 65vh 35vh; }
-      .hero-panel { padding: 24px 20px 28px; }
-      .hero-h1 { font-size: clamp(60px, 17vw, 88px); }
-      .hero-bottom { display: none; }
-      .props-header, .numbers, .included, .cta-section { padding-left: 20px; padding-right: 20px; }
-      .props-grid { padding: 0 20px; }
-      .included-list { grid-template-columns: 1fr; }
-      .inc-cell { padding-right: 0 !important; }
+      .hero { grid-template-rows: 60vh 40vh; }
+      .hero-type { left: 20px; bottom: 40px; }
+      .hero-h1 { font-size: clamp(64px, 18vw, 96px); }
+      .hero-panel { display: none; }
+      .nav-inner::after { display: none; }
+      .numbers, .props-section, .cta-section { padding-left: 20px; padding-right: 20px; }
+      .props-grid { grid-template-columns: 1fr; }
+      .prop-art { aspect-ratio: 3/4; }
     }
   </style>
 </head>
 <body>
 <div id="nav-mount"></div>
 
-<!-- HERO -->
+<!-- ── HERO ────────────────────────────────────────────── -->
 <section class="hero">
-  <!-- Left dark panel -->
   <div class="hero-panel">
-    <div class="hero-top">
-      <span class="hero-tag">Bengaluru · Co-Living</span>
-      <span class="hero-year">Est. 2026</span>
-    </div>
-    <div class="hero-mid">
-      <h1 class="hero-h1">the<br><em>switch.</em></h1>
-      <p class="hero-sub">Walk in with a suitcase.<br>Everything else is already there.</p>
-      <a href="/properties.html" class="hero-cta btn-mag">See our homes →</a>
-    </div>
-    <div class="hero-bottom">
-      <div class="hero-stats">
-        <div>
-          <div class="hero-stat-val">₹0</div>
-          <div class="hero-stat-lbl">Broker fee</div>
-        </div>
-        <div>
-          <div class="hero-stat-val">1mo</div>
-          <div class="hero-stat-lbl">Deposit</div>
-        </div>
-      </div>
-      <p class="hero-tagline">Managed living,<br>done right.</p>
+    <div class="hero-panel-top">Est. 2026 · Bengaluru</div>
+    <div class="hero-panel-bottom">
+      <div class="hero-scroll-line"></div>
+      <span class="hero-scroll-txt">scroll</span>
     </div>
   </div>
-  <!-- Right photo — no overlay, full brightness -->
   <div class="hero-photo">
-    <img src="https://images.unsplash.com/photo-1522708323590-d24dbb6b0267?w=1400&q=90&fit=crop&crop=center" alt="Switch home interior">
+    <img src="https://images.unsplash.com/photo-1522708323590-d24dbb6b0267?w=1600&q=92&fit=crop&crop=center"
+         alt="Switch home interior">
+  </div>
+  <!-- Type over both panels -->
+  <div class="hero-type">
+    <h1 class="hero-h1">the<br><em>switch.</em></h1>
   </div>
 </section>
 
-<!-- PROPERTIES -->
-<section class="props-section">
-  <div class="props-header">
-    <h2 class="anim">Where<br><em>we are.</em></h2>
-    <a href="/properties.html" class="anim">View all →</a>
-  </div>
-  <div class="props-grid" id="propsGrid"></div>
-</section>
-
-<!-- NUMBERS -->
+<!-- ── NUMBERS ─────────────────────────────────────────── -->
 <section class="numbers">
   <div class="numbers-inner" data-stagger>
     <div class="num-item">
@@ -325,44 +326,22 @@
   </div>
 </section>
 
-<!-- INCLUDED -->
-<section class="included">
-  <div class="included-inner">
-    <h2 class="included-h anim">Everything<br><em>already there.</em></h2>
-    <div class="included-list" data-stagger>
-      <div class="inc-cell">
-        <div class="inc-name">High-speed WiFi</div>
-        <p class="inc-note">Works from the day you arrive.</p>
-      </div>
-      <div class="inc-cell">
-        <div class="inc-name">Fully Furnished</div>
-        <p class="inc-note">Bed, desk, wardrobe, sofa. Not hostel bunks.</p>
-      </div>
-      <div class="inc-cell">
-        <div class="inc-name">Gas & Kitchen</div>
-        <p class="inc-note">Stove, fridge, water purifier. Cook the first night.</p>
-      </div>
-      <div class="inc-cell">
-        <div class="inc-name">Caretaker On-site</div>
-        <p class="inc-note">A real person who picks up the phone. Every time.</p>
-      </div>
-      <div class="inc-cell">
-        <div class="inc-name">Utilities Included</div>
-        <p class="inc-note">One clean rent number. No electricity battles.</p>
-      </div>
-      <div class="inc-cell">
-        <div class="inc-name">Zero Broker</div>
-        <p class="inc-note">You deal with us. No commission, no surprises.</p>
-      </div>
+<!-- ── PROPERTIES ──────────────────────────────────────── -->
+<section class="props-section">
+  <div class="props-inner">
+    <div class="props-eyebrow">
+      <span>Our homes</span>
+      <a href="/properties.html">View all →</a>
     </div>
+    <div class="props-grid" id="propsGrid"></div>
   </div>
 </section>
 
-<!-- CTA -->
+<!-- ── CTA ─────────────────────────────────────────────── -->
 <section class="cta-section">
-  <div class="cta-inner anim">
-    <h2 class="cta-h">Just<br><em>show up.</em></h2>
-    <a href="/properties.html" class="cta-btn btn-mag">Book a viewing →</a>
+  <div class="cta-inner">
+    <h2 class="cta-h anim">Walk<br><em>in.</em></h2>
+    <a href="/properties.html" class="cta-link anim btn-mag">Book a viewing →</a>
   </div>
 </section>
 
@@ -375,32 +354,34 @@
   document.getElementById('nav-mount').innerHTML    = navComponent();
   document.getElementById('footer-mount').innerHTML = footerComponent();
 
+  function artBadge(status) {
+    if (status === 'filling-fast') return `<span class="prop-art-badge">Filling fast</span>`;
+    if (status === 'coming-soon')  return `<span class="prop-art-badge coming-soon">Coming soon</span>`;
+    return `<span class="prop-art-badge available">Available</span>`;
+  }
+
   async function loadProps() {
     const props = await getProperties();
     const el = document.getElementById('propsGrid');
     if (!el) return;
     el.innerHTML = props.slice(0, 3).map(p => {
-      const hero = getHeroImage(p.images);
-      return `<div class="property-card tilt-card">
-        <div class="property-card-img">
-          <img src="${hero}" alt="${p.name}" loading="lazy">${statusBadge(p.status)}
+      const img = getHeroImage(p.images);
+      const slug = `/property/${p.slug}.html`;
+      return `<a href="${slug}" class="prop-art">
+        <img src="${img}" alt="${p.name}" loading="lazy">
+        ${artBadge(p.status)}
+        <div class="prop-art-info">
+          <div class="prop-art-loc">${p.location}, ${p.area}</div>
+          <div class="prop-art-name">${p.name}</div>
+          <div class="prop-art-rent">${formatRentFrom(p)}</div>
         </div>
-        <div class="property-card-body">
-          <div class="property-card-loc">
-            <svg width="9" height="11" viewBox="0 0 10 12" fill="none"><path d="M5 0C2.24 0 0 2.24 0 5c0 3.75 5 7 5 7s5-3.25 5-7c0-2.76-2.24-5-5-5zm0 6.5A1.5 1.5 0 115 3.5a1.5 1.5 0 010 3z" fill="currentColor"/></svg>
-            ${p.location}, ${p.area}
-          </div>
-          <div class="property-card-name">${p.name}</div>
-          <div class="property-card-rent">${formatRentFrom(p)} <span>· ${getBhkLabel(p)} · ${getTotalUnits(p)} flats</span></div>
-          <div class="property-card-tags">${(p.amenities||[]).slice(0,4).map(a=>`<span class="property-card-tag">${a}</span>`).join('')}</div>
+        <div class="prop-art-hover">
+          <span class="prop-art-link">${p.status === 'coming-soon' ? 'Join waitlist' : 'View home'} →</span>
         </div>
-        <div class="property-card-footer">
-          <a href="/property/${p.slug}.html" class="btn-text">${p.status==='coming-soon'?'Join waitlist':'Enquire now'} →</a>
-        </div>
-      </div>`;
+      </a>`;
     }).join('');
-    initFadeUp();
   }
+
   loadProps();
   initFadeUp();
   initNav();
