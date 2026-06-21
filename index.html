@@ -9,49 +9,56 @@
   <link rel="stylesheet" href="/assets/css/animations.css">
   <style>
 
-    /* ─── HERO ─────────────────────────────────────────────── */
+    /* ─── HERO SPLIT ───────────────────────────────────────── */
     .hero {
-      position: relative;
+      display: grid;
+      grid-template-columns: 1fr 1fr;
       height: 100vh; min-height: 600px;
-      display: flex; align-items: flex-end;
       overflow: hidden;
+    }
+
+    /* Left: dark panel */
+    .hero-panel {
       background: var(--ink);
+      display: flex; flex-direction: column;
+      justify-content: space-between;
+      padding: 40px 56px 56px;
     }
-    .hero-bg {
-      position: absolute; inset: 0;
-      width: 100%; height: 100%;
-      object-fit: cover; opacity: .38;
+    .hero-top {
+      display: flex; justify-content: space-between;
+      align-items: center;
     }
-    .hero-overlay {
-      position: absolute; inset: 0;
-      background:
-        linear-gradient(to top, rgba(14,13,10,.96) 0%, rgba(14,13,10,.1) 60%),
-        linear-gradient(to right, rgba(14,13,10,.4) 0%, transparent 50%);
-    }
-    .hero-content {
-      position: relative; z-index: 2;
-      width: 100%;
-      padding: 0 56px 72px;
-      max-width: 1400px; margin: 0 auto;
-    }
-    .hero-eyebrow {
-      font-size: 10px; letter-spacing: .22em;
+    .hero-tag {
+      font-size: 10px; letter-spacing: .2em;
       text-transform: uppercase;
-      color: rgba(247,244,239,.3);
-      margin-bottom: 28px;
+      color: rgba(247,244,239,.28);
+    }
+    .hero-year {
+      font-size: 10px; letter-spacing: .14em;
+      color: rgba(247,244,239,.2);
+    }
+    .hero-mid {
+      padding: 0;
     }
     .hero-h1 {
       font-family: var(--font-display);
       font-weight: 300;
-      font-size: clamp(100px, 16vw, 200px);
+      font-size: clamp(72px, 9vw, 144px);
       line-height: .84;
       color: var(--paper);
       letter-spacing: -.03em;
-      margin-bottom: 40px;
+      margin-bottom: 32px;
     }
     .hero-h1 em {
       font-style: italic;
-      color: rgba(247,244,239,.42);
+      color: rgba(247,244,239,.38);
+    }
+    .hero-sub {
+      font-size: 14px;
+      color: rgba(247,244,239,.4);
+      line-height: 1.7;
+      max-width: 320px;
+      margin-bottom: 40px;
     }
     .hero-cta {
       display: inline-flex; align-items: center; gap: 10px;
@@ -63,6 +70,43 @@
       cursor: pointer;
     }
     .hero-cta:hover { background: var(--orange); color: var(--paper); }
+    .hero-bottom {
+      display: flex; justify-content: space-between;
+      align-items: flex-end;
+    }
+    .hero-stats {
+      display: flex; gap: 40px;
+    }
+    .hero-stat-val {
+      font-family: var(--font-serif);
+      font-size: 22px; color: rgba(247,244,239,.22);
+      line-height: 1;
+    }
+    .hero-stat-lbl {
+      font-size: 9px; letter-spacing: .16em;
+      text-transform: uppercase;
+      color: rgba(247,244,239,.15);
+      margin-top: 5px;
+    }
+    .hero-tagline {
+      font-family: var(--font-serif);
+      font-style: italic;
+      font-size: 13px;
+      color: rgba(247,244,239,.18);
+      text-align: right;
+      max-width: 180px;
+      line-height: 1.6;
+    }
+
+    /* Right: photo, no overlay */
+    .hero-photo {
+      position: relative; overflow: hidden;
+    }
+    .hero-photo img {
+      width: 100%; height: 100%;
+      object-fit: cover;
+      display: block;
+    }
 
     /* ─── PROPERTIES ───────────────────────────────────────── */
     .props-section { padding: 120px 0 0; }
@@ -194,7 +238,10 @@
 
     /* ─── RESPONSIVE ───────────────────────────────────────── */
     @media (max-width: 960px) {
-      .hero-content, .props-header, .numbers, .included, .cta-section { padding-left: 32px; padding-right: 32px; }
+      .hero { grid-template-columns: 1fr; grid-template-rows: 60vh 40vh; }
+      .hero-panel { padding: 28px 32px 36px; }
+      .hero-h1 { font-size: clamp(64px, 14vw, 100px); }
+      .props-header, .numbers, .included, .cta-section { padding-left: 32px; padding-right: 32px; }
       .props-grid { padding: 0 32px; grid-template-columns: 1fr; }
       .props-grid .property-card { border-bottom: 1px solid var(--rule); }
       .numbers-inner { grid-template-columns: 1fr; border-left: none; }
@@ -204,8 +251,10 @@
       .inc-cell:nth-child(2n) { padding-right: 0; }
     }
     @media (max-width: 600px) {
-      .hero-content { padding: 0 20px 56px; }
-      .hero-h1 { font-size: clamp(80px, 20vw, 120px); }
+      .hero { grid-template-rows: 65vh 35vh; }
+      .hero-panel { padding: 24px 20px 28px; }
+      .hero-h1 { font-size: clamp(60px, 17vw, 88px); }
+      .hero-bottom { display: none; }
       .props-header, .numbers, .included, .cta-section { padding-left: 20px; padding-right: 20px; }
       .props-grid { padding: 0 20px; }
       .included-list { grid-template-columns: 1fr; }
@@ -218,15 +267,34 @@
 
 <!-- HERO -->
 <section class="hero">
-  <video class="hero-bg" autoplay muted loop playsinline
-    poster="https://images.pexels.com/videos/11630727/pexels-photo-11630727.jpeg?auto=compress&cs=tinysrgb&h=627&fit=crop&w=1200">
-    <source src="https://videos.pexels.com/video-files/11630727/11630727-hd_1920_1080_25fps.mp4" type="video/mp4">
-  </video>
-  <div class="hero-overlay"></div>
-  <div class="hero-content">
-    <p class="hero-eyebrow">Bengaluru · Managed Co-Living · Est. 2026</p>
-    <h1 class="hero-h1">the<br><em>switch.</em></h1>
-    <a href="/properties.html" class="hero-cta btn-mag">See our homes →</a>
+  <!-- Left dark panel -->
+  <div class="hero-panel">
+    <div class="hero-top">
+      <span class="hero-tag">Bengaluru · Co-Living</span>
+      <span class="hero-year">Est. 2026</span>
+    </div>
+    <div class="hero-mid">
+      <h1 class="hero-h1">the<br><em>switch.</em></h1>
+      <p class="hero-sub">Walk in with a suitcase.<br>Everything else is already there.</p>
+      <a href="/properties.html" class="hero-cta btn-mag">See our homes →</a>
+    </div>
+    <div class="hero-bottom">
+      <div class="hero-stats">
+        <div>
+          <div class="hero-stat-val">₹0</div>
+          <div class="hero-stat-lbl">Broker fee</div>
+        </div>
+        <div>
+          <div class="hero-stat-val">1mo</div>
+          <div class="hero-stat-lbl">Deposit</div>
+        </div>
+      </div>
+      <p class="hero-tagline">Managed living,<br>done right.</p>
+    </div>
+  </div>
+  <!-- Right photo — no overlay, full brightness -->
+  <div class="hero-photo">
+    <img src="https://images.unsplash.com/photo-1586023492125-27b2c045efd7?w=1400&q=90&fit=crop&crop=center" alt="Switch home interior">
   </div>
 </section>
 
