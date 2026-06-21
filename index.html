@@ -56,7 +56,9 @@
     .hero {
       position: relative; height: 100vh; min-height: 640px;
       overflow: hidden;
-      background: var(--ink);
+      background: var(--ink)
+        url('https://images.unsplash.com/photo-1587474260584-136574528ed5?w=1800&q=80&fit=crop')
+        center / cover no-repeat;
       display: flex; align-items: flex-end;
     }
     .hero-bg-video {
@@ -524,10 +526,12 @@
 <section class="hero" id="hero">
   <video class="hero-bg-video" id="heroVid"
     autoplay muted loop playsinline preload="auto">
-    <!-- Bengaluru city aerial / landscape footage -->
-    <source src="https://videos.pexels.com/video-files/4253948/4253948-hd_1280_720_25fps.mp4" type="video/mp4">
-    <source src="https://videos.pexels.com/video-files/3248452/3248452-hd_1280_720_25fps.mp4" type="video/mp4">
-    <source src="https://videos.pexels.com/video-files/1510496/1510496-hd_1280_720_24fps.mp4" type="video/mp4">
+    <!-- Bengaluru IT hub at sunrise — aerial drone, 1080p -->
+    <source src="https://videos.pexels.com/video-files/30590791/13099131_1920_1080_30fps.mp4" type="video/mp4">
+    <!-- Bengaluru city traffic aerial — 1080p -->
+    <source src="https://videos.pexels.com/video-files/30808379/13176685_1920_1080_48fps.mp4" type="video/mp4">
+    <!-- 4K fallback if 1080p unavailable -->
+    <source src="https://videos.pexels.com/video-files/30590791/13099131_2560_1440_30fps.mp4" type="video/mp4">
   </video>
   <div class="hero-vignette"></div>
   <div class="hero-body">
