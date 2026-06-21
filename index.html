@@ -65,13 +65,12 @@
       opacity: .48;
       will-change: transform;
     }
-    /* video overrides */
     .hero-bg-video {
-      position: absolute; inset: -15% 0 -15%;
-      width: 100%; height: 130%;
+      position: absolute; inset: 0;
+      width: 100%; height: 100%;
       object-fit: cover; object-position: center 40%;
-      opacity: .42;
-      will-change: transform;
+      opacity: .45;
+      /* no transform/will-change — video + GPU transform = compositor glitch */
     }
     .hero-vignette {
       position: absolute; inset: 0; z-index: 1;
@@ -506,12 +505,12 @@
 
 <!-- ── HERO ─────────────────────────────────────────────── -->
 <section class="hero" id="hero">
-  <video class="hero-bg-video" id="heroBg"
-    autoplay muted loop playsinline
+  <video class="hero-bg-video"
+    autoplay muted loop playsinline preload="auto"
     poster="https://images.unsplash.com/photo-1618219944342-824e40a13285?w=1800&q=88&fit=crop">
-    <source src="https://videos.pexels.com/video-files/3571264/3571264-uhd_2560_1440_30fps.mp4" type="video/mp4">
-    <source src="https://videos.pexels.com/video-files/2829177/2829177-hd_1920_1080_30fps.mp4" type="video/mp4">
-    <!-- fallback image if video blocked -->
+    <!-- 720p only — light enough to stream smoothly as background -->
+    <source src="https://videos.pexels.com/video-files/2829177/2829177-hd_1280_720_30fps.mp4" type="video/mp4">
+    <source src="https://videos.pexels.com/video-files/3571264/3571264-hd_1280_720_30fps.mp4" type="video/mp4">
     <img src="https://images.unsplash.com/photo-1618219944342-824e40a13285?w=1800&q=88&fit=crop" alt="">
   </video>
   <div class="hero-vignette"></div>
@@ -737,15 +736,10 @@
   const n = buildLine(document.getElementById('heroLine1'), 'the', 0);
   buildLine(document.getElementById('heroLine2'), 'switch.', n + 1);
 
-  /* ── Parallax ─────────────────────────────────────────── */
-  const heroBgEl = document.getElementById('heroBg');
+  /* ── Parallax (split image only — no transform on video) ── */
   const splitImgEl = document.getElementById('splitImg');
 
   function onScroll() {
-    const sy = window.scrollY;
-    if (heroBgEl) {
-      heroBgEl.style.transform = `translateY(${sy * 0.28}px)`;
-    }
     if (splitImgEl) {
       const wrap = splitImgEl.closest('.split-photo');
       if (wrap) {
