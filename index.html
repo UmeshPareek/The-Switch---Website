@@ -9,107 +9,259 @@
   <link rel="stylesheet" href="/assets/css/animations.css">
   <style>
 
-    /* ─── GLOBAL OVERRIDES FOR THIS PAGE ───────────────── */
-    body { background: var(--paper); }
+    /* ── CURSOR ──────────────────────────────────────────── */
+    * { cursor: none !important; }
+    .cur-ring {
+      position: fixed; z-index: 99999; pointer-events: none;
+      width: 36px; height: 36px; border-radius: 50%;
+      border: 1px solid rgba(247,244,239,.7);
+      transform: translate(-50%,-50%);
+      transition: width .28s cubic-bezier(.25,.46,.45,.94),
+                  height .28s cubic-bezier(.25,.46,.45,.94),
+                  opacity .2s, border-color .2s;
+      mix-blend-mode: difference;
+      will-change: left, top;
+    }
+    .cur-ring.hov { width: 64px; height: 64px; border-color: rgba(247,244,239,1); }
+    .cur-ring.click { width: 22px; height: 22px; }
+    .cur-dot {
+      position: fixed; z-index: 99999; pointer-events: none;
+      width: 5px; height: 5px; border-radius: 50%;
+      background: rgba(247,244,239,.9);
+      transform: translate(-50%,-50%);
+      mix-blend-mode: difference;
+      will-change: left, top;
+    }
 
-    /* Minimal nav: strip it down on homepage */
+    /* ── GRAIN ───────────────────────────────────────────── */
+    .grain-overlay {
+      position: fixed; inset: 0; z-index: 9990;
+      pointer-events: none;
+      background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='300' height='300'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.8' numOctaves='4' stitchTiles='stitch'/%3E%3CfeColorMatrix type='saturate' values='0'/%3E%3C/filter%3E%3Crect width='300' height='300' filter='url(%23n)'/%3E%3C/svg%3E");
+      opacity: .038; mix-blend-mode: overlay;
+    }
+
+    /* ── NAV OVERRIDES ───────────────────────────────────── */
+    body { background: var(--paper); overflow-x: hidden; }
     .nav { background: transparent !important; box-shadow: none !important; }
-    .nav.nav-scrolled { background: rgba(14,13,10,.92) !important; }
-    .nav-links { display: none; }
-    .nav-cta { display: none; }
-    .nav-hamburger { display: none !important; }
+    .nav.nav-scrolled { background: rgba(14,13,10,.96) !important; box-shadow: none !important; }
     .nav-logo { color: var(--paper) !important; }
     .nav-logo .nav-dot { color: var(--orange) !important; }
-    .nav-toggle { background: var(--paper) !important; }
-    .nav-toggle::before, .nav-toggle::after { background: var(--paper) !important; }
-    /* Single right link */
-    .nav-inner::after {
-      content: 'homes →';
-      font-size: 11px; letter-spacing: .12em;
-      text-transform: uppercase;
-      color: rgba(247,244,239,.45);
-      transition: color .2s;
-      cursor: pointer;
-    }
-    .nav-inner:hover::after { color: var(--paper); }
-    .nav-inner a[href="/properties.html"]::after { content: 'homes →'; }
+    .nav-links a { color: rgba(247,244,239,.55) !important; }
+    .nav-links a:hover { color: var(--paper) !important; }
+    .nav-cta { border-color: rgba(247,244,239,.28) !important; color: rgba(247,244,239,.55) !important; }
+    .nav-cta:hover { background: var(--paper) !important; color: var(--ink) !important; }
 
-    /* ─── HERO ──────────────────────────────────────────── */
+    /* ── HERO ────────────────────────────────────────────── */
     .hero {
-      display: grid;
-      grid-template-columns: 45% 55%;
-      height: 100vh; min-height: 600px;
-      position: relative;
-      overflow: hidden;
+      position: relative; height: 100vh; min-height: 640px;
+      overflow: hidden; background: var(--ink);
+      display: flex; align-items: flex-end;
     }
+    .hero-bg {
+      position: absolute; inset: -15% 0 -15%; /* extra for parallax travel */
+      width: 100%; height: 130%;
+      object-fit: cover; object-position: center 30%;
+      opacity: .38;
+      will-change: transform;
+    }
+    .hero-vignette {
+      position: absolute; inset: 0; z-index: 1;
+      background:
+        linear-gradient(to top, rgba(14,13,10,.98) 0%, rgba(14,13,10,.55) 35%, rgba(14,13,10,.1) 75%, transparent 100%),
+        linear-gradient(to right, rgba(14,13,10,.6) 0%, transparent 55%);
+    }
+    .hero-body {
+      position: relative; z-index: 2;
+      width: 100%; max-width: 1400px; margin: 0 auto;
+      padding: 0 56px 60px;
+      display: grid; grid-template-columns: 1fr auto;
+      align-items: flex-end; gap: 40px;
+    }
+    .hero-left {}
+    .hero-eyebrow {
+      font-size: 9px; letter-spacing: .24em; text-transform: uppercase;
+      color: rgba(247,244,239,.25); margin-bottom: 20px;
+      opacity: 0; animation: hFadeUp .6s ease .15s forwards;
+    }
+    /* Character-by-character h1 */
+    .hero-h1 {
+      font-family: var(--font-display); font-weight: 300;
+      font-size: clamp(88px, 16vw, 210px);
+      line-height: .85; letter-spacing: -.04em;
+      color: var(--paper); margin-bottom: 36px;
+      overflow: visible;
+    }
+    .hero-h1 .hero-line { display: block; overflow: hidden; }
+    .hero-h1 .hero-line em {
+      font-style: italic; display: inline-block;
+      color: rgba(247,244,239,.72);
+    }
+    .char {
+      display: inline-block;
+      opacity: 0; transform: translateY(1.1em);
+      animation: charUp .75s cubic-bezier(0.22, 1, 0.36, 1) forwards;
+      animation-delay: calc(var(--ci) * 38ms);
+    }
+    @keyframes charUp { to { opacity: 1; transform: translateY(0); } }
 
-    /* Left dark panel — clean empty space */
-    .hero-panel {
-      background: var(--ink);
-      position: relative;
-      z-index: 2;
-      display: flex; flex-direction: column;
-      justify-content: space-between;
-      padding: 0 0 52px 0;
+    .hero-sub {
+      font-size: 15px; color: rgba(247,244,239,.38);
+      line-height: 1.8; max-width: 380px; margin-bottom: 40px;
+      opacity: 0; animation: hFadeUp .6s ease .9s forwards;
     }
-    .hero-panel-top {
-      padding: 28px 40px;
-      font-size: 9px; letter-spacing: .22em;
+    .hero-actions {
+      display: flex; align-items: center; gap: 20px;
+      opacity: 0; animation: hFadeUp .6s ease 1.05s forwards;
+    }
+    .hero-btn {
+      display: inline-flex; align-items: center; gap: 10px;
+      position: relative; overflow: hidden;
+      background: var(--paper); color: var(--ink);
+      font-size: 10px; font-weight: 600; letter-spacing: .14em;
+      text-transform: uppercase; padding: 15px 36px;
+      transition: color .3s;
+    }
+    .hero-btn::before {
+      content: ''; position: absolute; inset: 0;
+      background: var(--orange); transform: translateX(-101%);
+      transition: transform .35s cubic-bezier(.25,.46,.45,.94);
+    }
+    .hero-btn:hover::before { transform: translateX(0); }
+    .hero-btn:hover { color: var(--paper); }
+    .hero-btn span { position: relative; z-index: 1; }
+    .hero-ghost {
+      font-size: 10px; letter-spacing: .14em;
       text-transform: uppercase;
-      color: rgba(247,244,239,.2);
+      color: rgba(247,244,239,.3);
+      position: relative; transition: color .2s;
     }
-    .hero-panel-bottom {
-      padding: 0 40px;
-      display: flex; align-items: center; gap: 10px;
+    .hero-ghost::after {
+      content: ''; position: absolute;
+      bottom: -2px; left: 0; right: 0; height: 1px;
+      background: var(--orange); transform: scaleX(0);
+      transform-origin: left; transition: transform .25s ease;
+    }
+    .hero-ghost:hover { color: var(--paper); }
+    .hero-ghost:hover::after { transform: scaleX(1); }
+    /* Right side quiet stats */
+    .hero-right {
+      display: flex; flex-direction: column; gap: 28px;
+      align-items: flex-end;
+      opacity: 0; animation: hFadeUp .6s ease 1.2s forwards;
+    }
+    .hero-stat {}
+    .hero-stat-val {
+      font-family: var(--font-display); font-size: 30px; font-weight: 300;
+      color: rgba(247,244,239,.12); text-align: right; line-height: 1;
+    }
+    .hero-stat-lbl {
+      font-size: 8px; letter-spacing: .18em; text-transform: uppercase;
+      color: rgba(247,244,239,.1); text-align: right; margin-top: 5px;
+    }
+    /* Scroll indicator bottom-right */
+    .hero-scroll {
+      position: absolute; bottom: 62px; right: 56px; z-index: 2;
+      display: flex; align-items: center; gap: 12px;
+      opacity: 0; animation: hFadeUp .5s ease 1.4s forwards;
     }
     .hero-scroll-line {
-      width: 1px; height: 36px;
-      background: rgba(247,244,239,.2);
+      width: 40px; height: 1px;
+      background: rgba(247,244,239,.18);
+      transform-origin: right;
+      animation: scrollPulse 2.5s ease-in-out 1.8s infinite;
+    }
+    @keyframes scrollPulse {
+      0%,100% { opacity: .18; } 50% { opacity: .55; }
     }
     .hero-scroll-txt {
-      font-size: 9px; letter-spacing: .2em;
-      text-transform: uppercase;
+      font-size: 8px; letter-spacing: .2em; text-transform: uppercase;
       color: rgba(247,244,239,.2);
     }
+    @keyframes hFadeUp {
+      from { opacity: 0; transform: translateY(14px); }
+      to   { opacity: 1; transform: translateY(0); }
+    }
 
-    /* Right photo — 100% brightness, zero treatment */
-    .hero-photo {
+    /* ── MARQUEE ─────────────────────────────────────────── */
+    .marquee-wrap {
+      background: var(--orange); overflow: hidden;
+      padding: 13px 0; position: relative;
+    }
+    .marquee-wrap::before,
+    .marquee-wrap::after {
+      content: ''; position: absolute; top: 0; bottom: 0;
+      width: 60px; z-index: 2; pointer-events: none;
+    }
+    .marquee-wrap::before { left: 0; background: linear-gradient(to right, var(--orange), transparent); }
+    .marquee-wrap::after  { right: 0; background: linear-gradient(to left, var(--orange), transparent); }
+    .marquee-track {
+      display: flex; white-space: nowrap;
+      animation: marqueeFwd 20s linear infinite;
+    }
+    .marquee-track:hover { animation-play-state: paused; }
+    @keyframes marqueeFwd { to { transform: translateX(-50%); } }
+    .m-item {
+      display: inline-flex; align-items: center; gap: 24px;
+      padding: 0 24px;
+      font-size: 10px; font-weight: 600; letter-spacing: .2em;
+      text-transform: uppercase; color: rgba(247,244,239,.9);
+      flex-shrink: 0;
+    }
+    .m-dot {
+      width: 3px; height: 3px; border-radius: 50%;
+      background: rgba(247,244,239,.5); flex-shrink: 0;
+    }
+
+    /* ── SPLIT ───────────────────────────────────────────── */
+    .split {
+      display: grid; grid-template-columns: 48% 52%;
+      min-height: 700px;
+    }
+    .split-copy {
+      background: var(--ink); padding: 100px 72px 100px 56px;
+      display: flex; flex-direction: column; justify-content: center;
+    }
+    .split-tag {
+      font-size: 9px; letter-spacing: .22em; text-transform: uppercase;
+      color: rgba(247,244,239,.2); margin-bottom: 32px;
+    }
+    .split-h {
+      font-family: var(--font-display); font-weight: 300;
+      font-size: clamp(40px, 4.8vw, 66px);
+      line-height: 1.04; color: var(--paper); margin-bottom: 28px;
+    }
+    .split-h em { font-style: italic; color: rgba(247,244,239,.35); }
+    .split-body {
+      font-size: 15px; color: rgba(247,244,239,.38);
+      line-height: 1.85; max-width: 400px; margin-bottom: 40px;
+    }
+    .split-link {
+      display: inline-flex; align-items: center; gap: 10px;
+      font-size: 10px; letter-spacing: .14em; text-transform: uppercase;
+      color: rgba(247,244,239,.3); position: relative; transition: color .2s;
+    }
+    .split-link::after {
+      content: ''; position: absolute;
+      bottom: -3px; left: 0; right: 0; height: 1px;
+      background: var(--orange); transform: scaleX(0);
+      transform-origin: left; transition: transform .25s ease;
+    }
+    .split-link:hover { color: var(--paper); }
+    .split-link:hover::after { transform: scaleX(1); }
+    .split-photo {
       position: relative; overflow: hidden;
     }
-    .hero-photo img {
-      width: 100%; height: 100%;
+    .split-photo img {
+      width: 100%; height: 118%; /* extra for parallax */
       object-fit: cover; object-position: center;
-      display: block;
+      position: absolute; top: -9%;
+      will-change: transform;
     }
 
-    /* The type: absolutely over the whole hero, bleeds right */
-    .hero-type {
-      position: absolute;
-      bottom: 52px; left: 40px;
-      z-index: 10;
-      pointer-events: none;
-      line-height: 1;
-    }
-    .hero-h1 {
-      font-family: var(--font-display);
-      font-weight: 300;
-      font-size: clamp(88px, 17vw, 220px);
-      line-height: .84;
-      color: var(--paper);
-      letter-spacing: -.04em;
-      white-space: nowrap;
-      text-shadow: 0 4px 60px rgba(14,13,10,.18);
-    }
-    .hero-h1 em {
-      font-style: italic;
-      display: block;
-      color: rgba(247,244,239,.75);
-    }
-
-    /* ─── NUMBERS ───────────────────────────────────────── */
-    .numbers {
-      background: var(--paper);
-      padding: 160px 56px;
+    /* ── NUMBERS ─────────────────────────────────────────── */
+    .numbers-section {
+      background: var(--paper); padding: 128px 56px;
       border-top: 1px solid var(--rule);
     }
     .numbers-inner {
@@ -118,230 +270,394 @@
       border-left: 1px solid var(--rule);
     }
     .num-item {
-      padding: 0 72px 0 56px;
+      padding: 0 64px 0 56px;
       border-right: 1px solid var(--rule);
     }
     .num-val {
-      font-family: var(--font-display);
-      font-weight: 300;
-      font-size: clamp(80px, 12vw, 160px);
-      line-height: .84;
-      color: var(--ink);
-      letter-spacing: -.04em;
-      margin-bottom: 24px;
-    }
-    .num-val em {
-      font-style: italic;
-      color: var(--muted);
-      font-size: .5em;
-    }
-    .num-label {
-      font-size: 9px; letter-spacing: .2em;
-      text-transform: uppercase;
-      color: var(--muted);
-    }
-
-    /* ─── PROPERTIES ────────────────────────────────────── */
-    .props-section {
-      padding: 120px 56px 160px;
-      background: var(--ink);
-    }
-    .props-inner { max-width: 1400px; margin: 0 auto; }
-    .props-eyebrow {
-      font-size: 9px; letter-spacing: .22em;
-      text-transform: uppercase;
-      color: rgba(247,244,239,.22);
-      margin-bottom: 56px;
-      display: flex; align-items: center; justify-content: space-between;
-    }
-    .props-eyebrow a {
-      color: rgba(247,244,239,.22);
-      transition: color .2s;
-    }
-    .props-eyebrow a:hover { color: rgba(247,244,239,.6); }
-    .props-grid {
-      display: grid;
-      grid-template-columns: repeat(3,1fr);
-      gap: 2px;
-    }
-
-    /* Art-style property card */
-    .prop-art {
-      position: relative;
-      aspect-ratio: 2/3;
+      font-family: var(--font-display); font-weight: 300;
+      font-size: clamp(72px, 10vw, 140px);
+      line-height: .84; letter-spacing: -.04em;
+      color: var(--ink); margin-bottom: 20px;
       overflow: hidden;
-      cursor: pointer;
-      background: var(--ink-2);
     }
-    .prop-art img {
-      width: 100%; height: 100%;
-      object-fit: cover;
+    .num-val .count-num { display: inline-block; }
+    .num-val em { font-style: italic; color: var(--muted); font-size: .52em; }
+    .num-label {
+      font-size: 9px; letter-spacing: .2em; text-transform: uppercase;
+      color: var(--muted); margin-bottom: 10px;
+    }
+    .num-desc {
+      font-size: 13px; color: var(--muted); line-height: 1.8;
+      max-width: 240px;
+    }
+
+    /* ── PROPERTIES ──────────────────────────────────────── */
+    .homes-section {
+      background: var(--ink); padding: 128px 56px;
+    }
+    .homes-inner { max-width: 1400px; margin: 0 auto; }
+    .homes-header {
+      display: flex; justify-content: space-between;
+      align-items: flex-end; margin-bottom: 56px;
+    }
+    .homes-h {
+      font-family: var(--font-display); font-weight: 300;
+      font-size: clamp(44px, 7vw, 90px);
+      line-height: .88; color: var(--paper); letter-spacing: -.03em;
+    }
+    .homes-h em { font-style: italic; color: rgba(247,244,239,.3); }
+    .homes-all {
+      font-size: 10px; letter-spacing: .14em; text-transform: uppercase;
+      color: rgba(247,244,239,.28); position: relative; transition: color .2s;
+    }
+    .homes-all::after {
+      content: ''; position: absolute;
+      bottom: -2px; left: 0; right: 0; height: 1px;
+      background: var(--orange); transform: scaleX(0);
+      transform-origin: left; transition: transform .25s ease;
+    }
+    .homes-all:hover { color: var(--paper); }
+    .homes-all:hover::after { transform: scaleX(1); }
+    .homes-grid {
+      display: grid; grid-template-columns: repeat(3,1fr);
+      gap: 16px;
+    }
+
+    /* 3D card */
+    .h-card {
+      position: relative; overflow: hidden;
+      aspect-ratio: 3/4;
+      background: #111;
+      transform-style: preserve-3d;
+      will-change: transform;
+    }
+    .h-card-img {
+      width: 100%; height: 100%; object-fit: cover;
       display: block;
       transition: transform .9s cubic-bezier(.25,.46,.45,.94);
+      will-change: transform;
     }
-    .prop-art:hover img { transform: scale(1.06); }
-
-    /* Info overlay — always visible at bottom */
-    .prop-art-info {
-      position: absolute;
-      bottom: 0; left: 0; right: 0;
-      padding: 48px 28px 28px;
-      background: linear-gradient(transparent, rgba(14,13,10,.88));
+    .h-card:hover .h-card-img { transform: scale(1.07); }
+    .h-card-shine {
+      position: absolute; inset: 0; z-index: 2;
+      opacity: 0; pointer-events: none;
+      transition: opacity .2s;
     }
-    .prop-art-loc {
-      font-size: 9px; letter-spacing: .16em;
-      text-transform: uppercase;
-      color: rgba(247,244,239,.35);
-      margin-bottom: 8px;
+    .h-card-badge {
+      position: absolute; top: 18px; left: 18px; z-index: 3;
+      font-size: 8px; letter-spacing: .14em; text-transform: uppercase;
+      padding: 5px 11px; color: var(--paper);
     }
-    .prop-art-name {
-      font-family: var(--font-display);
-      font-weight: 300;
-      font-size: clamp(24px, 2.5vw, 34px);
-      color: var(--paper); line-height: 1;
-      margin-bottom: 10px;
+    .h-card-badge.filling { background: var(--orange); }
+    .h-card-badge.available { border: 1px solid rgba(247,244,239,.3); }
+    .h-card-badge.soon { background: rgba(14,13,10,.65); border: 1px solid rgba(247,244,239,.15); }
+    .h-card-info {
+      position: absolute; bottom: 0; left: 0; right: 0; z-index: 3;
+      padding: 90px 24px 24px;
+      background: linear-gradient(transparent, rgba(14,13,10,.93));
     }
-    .prop-art-rent {
-      font-size: 12px; color: rgba(247,244,239,.45);
-      letter-spacing: .04em;
+    .h-card-loc {
+      font-size: 9px; letter-spacing: .14em; text-transform: uppercase;
+      color: rgba(247,244,239,.38); margin-bottom: 7px;
     }
-
-    /* Hover reveal: link */
-    .prop-art-hover {
-      position: absolute;
-      inset: 0;
-      background: rgba(14,13,10,.35);
+    .h-card-name {
+      font-family: var(--font-display); font-weight: 300;
+      font-size: clamp(24px, 2.4vw, 34px);
+      color: var(--paper); line-height: 1; margin-bottom: 8px;
+    }
+    .h-card-rent { font-size: 12px; color: rgba(247,244,239,.38); }
+    .h-card-hover {
+      position: absolute; inset: 0; z-index: 5;
       display: flex; align-items: center; justify-content: center;
-      opacity: 0;
-      transition: opacity .35s;
+      background: rgba(14,13,10,.28);
+      opacity: 0; transition: opacity .32s;
     }
-    .prop-art:hover .prop-art-hover { opacity: 1; }
-    .prop-art-link {
-      font-size: 10px; letter-spacing: .14em;
-      text-transform: uppercase; color: var(--paper);
-      border: 1px solid rgba(247,244,239,.5);
-      padding: 13px 28px;
-      transition: background .2s, border-color .2s;
+    .h-card:hover .h-card-hover { opacity: 1; }
+    .h-card-btn {
+      font-size: 10px; letter-spacing: .14em; text-transform: uppercase;
+      color: var(--paper); border: 1px solid rgba(247,244,239,.5);
+      padding: 13px 30px; background: transparent;
+      transition: background .2s, border-color .2s, color .2s;
     }
-    .prop-art-link:hover { background: var(--paper); color: var(--ink); border-color: var(--paper); }
+    .h-card-btn:hover { background: var(--paper); color: var(--ink); border-color: var(--paper); }
 
-    /* Status badge inside card */
-    .prop-art-badge {
-      position: absolute;
-      top: 20px; left: 20px;
-      font-size: 9px; letter-spacing: .12em;
-      text-transform: uppercase; color: var(--paper);
-      background: var(--orange); padding: 4px 10px;
+    /* ── FEATURES STRIP ──────────────────────────────────── */
+    .features-strip {
+      background: var(--paper-2); overflow: hidden;
+      border-top: 1px solid var(--rule); border-bottom: 1px solid var(--rule);
     }
-    .prop-art-badge.available { background: transparent; border: 1px solid rgba(247,244,239,.3); }
-    .prop-art-badge.coming-soon { background: rgba(14,13,10,.6); }
+    .features-track {
+      display: flex; white-space: nowrap;
+      animation: marqueeFwd 32s linear infinite;
+      padding: 18px 0;
+    }
+    .features-track:hover { animation-play-state: paused; }
+    .feat-item {
+      display: inline-flex; align-items: center; gap: 14px;
+      padding: 0 36px; flex-shrink: 0;
+      font-family: var(--font-serif); font-size: 14px;
+      color: var(--muted);
+    }
+    .feat-dot { width: 5px; height: 5px; border-radius: 50%; background: var(--orange); flex-shrink: 0; }
 
-    /* ─── CTA ───────────────────────────────────────────── */
-    .cta-section {
-      background: var(--paper);
-      padding: 160px 56px;
-      display: flex; align-items: center;
-      border-top: 1px solid var(--rule);
+    /* ── CTA ─────────────────────────────────────────────── */
+    .cta-final {
+      position: relative; min-height: 640px;
+      display: flex; align-items: center; justify-content: center;
+      text-align: center; overflow: hidden; background: var(--ink);
     }
-    .cta-inner { max-width: 1400px; margin: 0 auto; width: 100%; }
+    .cta-bg-img {
+      position: absolute; inset: 0;
+      width: 100%; height: 100%; object-fit: cover;
+      opacity: .24;
+    }
+    .cta-overlay {
+      position: absolute; inset: 0;
+      background: linear-gradient(to top, rgba(14,13,10,.9) 0%, rgba(14,13,10,.4) 100%);
+    }
+    .cta-inner {
+      position: relative; z-index: 2;
+      padding: 120px 40px; max-width: 940px;
+    }
+    .cta-tag {
+      font-size: 9px; letter-spacing: .24em; text-transform: uppercase;
+      color: rgba(247,244,239,.22); margin-bottom: 28px;
+    }
     .cta-h {
-      font-family: var(--font-display);
-      font-weight: 300;
-      font-size: clamp(80px, 15vw, 200px);
-      line-height: .84;
-      color: var(--ink);
-      letter-spacing: -.04em;
-      margin-bottom: 64px;
+      font-family: var(--font-display); font-weight: 300;
+      font-size: clamp(80px, 14vw, 170px);
+      line-height: .86; letter-spacing: -.04em;
+      color: var(--paper); margin-bottom: 24px;
     }
-    .cta-h em { font-style: italic; color: var(--muted); }
-    .cta-link {
-      display: inline-flex; align-items: center; gap: 16px;
-      font-size: 11px; letter-spacing: .14em;
-      text-transform: uppercase; color: var(--ink);
-      border-bottom: 1px solid var(--ink);
-      padding-bottom: 4px;
-      transition: color .2s, border-color .2s;
+    .cta-h em { font-style: italic; color: rgba(247,244,239,.28); }
+    .cta-sub {
+      font-size: 15px; color: rgba(247,244,239,.35);
+      line-height: 1.85; margin-bottom: 48px;
     }
-    .cta-link:hover { color: var(--orange); border-color: var(--orange); }
+    .cta-actions { display: flex; justify-content: center; gap: 14px; flex-wrap: wrap; }
+    .cta-btn-main {
+      display: inline-flex; align-items: center; gap: 10px;
+      position: relative; overflow: hidden;
+      background: transparent; color: var(--paper);
+      border: 1px solid rgba(247,244,239,.38);
+      font-size: 10px; font-weight: 600; letter-spacing: .14em;
+      text-transform: uppercase; padding: 15px 44px;
+      transition: color .3s, border-color .3s;
+    }
+    .cta-btn-main::before {
+      content: ''; position: absolute; inset: 0;
+      background: var(--paper); transform: translateX(-101%);
+      transition: transform .35s cubic-bezier(.25,.46,.45,.94);
+    }
+    .cta-btn-main:hover { color: var(--ink); border-color: var(--paper); }
+    .cta-btn-main:hover::before { transform: translateX(0); }
+    .cta-btn-main span { position: relative; z-index: 1; }
+    .cta-btn-sec {
+      display: inline-flex; align-items: center;
+      font-size: 10px; letter-spacing: .14em; text-transform: uppercase;
+      color: rgba(247,244,239,.28); padding: 15px 24px;
+      transition: color .2s;
+    }
+    .cta-btn-sec:hover { color: var(--paper); }
 
-    /* ─── RESPONSIVE ────────────────────────────────────── */
+    /* ── RESPONSIVE ──────────────────────────────────────── */
     @media (max-width: 960px) {
-      .hero { grid-template-columns: 1fr; grid-template-rows: 55vh 45vh; }
-      .hero-h1 { font-size: clamp(72px, 15vw, 120px); }
-      .numbers, .props-section, .cta-section { padding-left: 32px; padding-right: 32px; }
+      .hero-body { padding: 0 32px 52px; }
+      .hero-h1 { font-size: clamp(72px, 13vw, 120px); }
+      .hero-right { display: none; }
+      .hero-scroll { right: 32px; }
+      .split { grid-template-columns: 1fr; }
+      .split-photo { height: 55vw; min-height: 360px; }
+      .split-photo img { width: 100%; height: 130%; position: absolute; top: -15%; }
+      .split-copy { padding: 72px 32px; }
+      .numbers-section, .homes-section { padding-left: 32px; padding-right: 32px; }
       .numbers-inner { grid-template-columns: 1fr; border-left: none; }
-      .num-item { border-right: none; border-top: 1px solid var(--rule); padding: 56px 0; }
-      .props-grid { grid-template-columns: 1fr 1fr; gap: 2px; }
-      .cta-h { font-size: clamp(64px, 14vw, 120px); }
+      .num-item { border-right: none; border-top: 1px solid var(--rule); padding: 52px 0; }
+      .homes-grid { grid-template-columns: 1fr 1fr; gap: 12px; }
     }
     @media (max-width: 600px) {
-      .hero { grid-template-rows: 60vh 40vh; }
-      .hero-type { left: 20px; bottom: 40px; }
-      .hero-h1 { font-size: clamp(64px, 18vw, 96px); }
-      .hero-panel { display: none; }
-      .nav-inner::after { display: none; }
-      .numbers, .props-section, .cta-section { padding-left: 20px; padding-right: 20px; }
-      .props-grid { grid-template-columns: 1fr; }
-      .prop-art { aspect-ratio: 3/4; }
+      .hero-body { padding: 0 20px 44px; }
+      .hero-h1 { font-size: clamp(68px, 18vw, 96px); }
+      .hero-eyebrow { display: none; }
+      .numbers-section, .homes-section { padding-left: 20px; padding-right: 20px; }
+      .homes-grid { grid-template-columns: 1fr; }
+      .h-card { aspect-ratio: 3/4; }
+      .cta-inner { padding: 80px 24px; }
     }
   </style>
 </head>
 <body>
+
+<!-- Custom cursor -->
+<div class="cur-ring" id="curRing"></div>
+<div class="cur-dot"  id="curDot"></div>
+<!-- Grain texture -->
+<div class="grain-overlay" aria-hidden="true"></div>
+
 <div id="nav-mount"></div>
 
-<!-- ── HERO ────────────────────────────────────────────── -->
-<section class="hero">
-  <div class="hero-panel">
-    <div class="hero-panel-top">Est. 2026 · Bengaluru</div>
-    <div class="hero-panel-bottom">
-      <div class="hero-scroll-line"></div>
-      <span class="hero-scroll-txt">scroll</span>
+<!-- ── HERO ─────────────────────────────────────────────── -->
+<section class="hero" id="hero">
+  <img class="hero-bg" id="heroBg"
+    src="https://images.unsplash.com/photo-1618219944342-824e40a13285?w=1800&q=88&fit=crop"
+    alt="">
+  <div class="hero-vignette"></div>
+  <div class="hero-body">
+    <div class="hero-left">
+      <p class="hero-eyebrow">Bengaluru · Managed Co-living · Est. 2026</p>
+      <h1 class="hero-h1" id="heroH1" aria-label="the switch.">
+        <span class="hero-line" id="heroLine1"></span>
+        <span class="hero-line" id="heroLine2"></span>
+      </h1>
+      <p class="hero-sub">Walk in with a suitcase.<br>Everything else is already there.</p>
+      <div class="hero-actions">
+        <a href="/properties.html" class="hero-btn"><span>See our homes →</span></a>
+        <a href="/about.html" class="hero-ghost">Our story</a>
+      </div>
+    </div>
+    <div class="hero-right">
+      <div class="hero-stat">
+        <div class="hero-stat-val">₹0</div>
+        <div class="hero-stat-lbl">Broker fee</div>
+      </div>
+      <div class="hero-stat">
+        <div class="hero-stat-val">1 mo</div>
+        <div class="hero-stat-lbl">Deposit</div>
+      </div>
     </div>
   </div>
-  <div class="hero-photo">
-    <img src="https://images.unsplash.com/photo-1522708323590-d24dbb6b0267?w=1600&q=92&fit=crop&crop=center"
-         alt="Switch home interior">
-  </div>
-  <!-- Type over both panels -->
-  <div class="hero-type">
-    <h1 class="hero-h1">the<br><em>switch.</em></h1>
+  <div class="hero-scroll">
+    <div class="hero-scroll-line"></div>
+    <span class="hero-scroll-txt">scroll</span>
   </div>
 </section>
 
-<!-- ── NUMBERS ─────────────────────────────────────────── -->
-<section class="numbers">
-  <div class="numbers-inner" data-stagger>
+<!-- ── MARQUEE ────────────────────────────────────────────── -->
+<div class="marquee-wrap" aria-hidden="true">
+  <div class="marquee-track" id="marqueeTrack">
+    <!-- Duplicated for seamless loop -->
+    <span class="m-item">₹0 Broker<span class="m-dot"></span></span>
+    <span class="m-item">Just show up<span class="m-dot"></span></span>
+    <span class="m-item">Bengaluru<span class="m-dot"></span></span>
+    <span class="m-item">Fully Furnished<span class="m-dot"></span></span>
+    <span class="m-item">No Middleman<span class="m-dot"></span></span>
+    <span class="m-item">Walk In<span class="m-dot"></span></span>
+    <span class="m-item">Managed Living<span class="m-dot"></span></span>
+    <span class="m-item">1 Month Deposit<span class="m-dot"></span></span>
+    <span class="m-item">Day One Ready<span class="m-dot"></span></span>
+    <span class="m-item">₹0 Broker<span class="m-dot"></span></span>
+    <span class="m-item">Just show up<span class="m-dot"></span></span>
+    <span class="m-item">Bengaluru<span class="m-dot"></span></span>
+    <span class="m-item">Fully Furnished<span class="m-dot"></span></span>
+    <span class="m-item">No Middleman<span class="m-dot"></span></span>
+    <span class="m-item">Walk In<span class="m-dot"></span></span>
+    <span class="m-item">Managed Living<span class="m-dot"></span></span>
+    <span class="m-item">1 Month Deposit<span class="m-dot"></span></span>
+    <span class="m-item">Day One Ready<span class="m-dot"></span></span>
+  </div>
+</div>
+
+<!-- ── SPLIT ──────────────────────────────────────────────── -->
+<section class="split">
+  <div class="split-copy">
+    <p class="split-tag anim-left">About us</p>
+    <h2 class="split-h anim">
+      Not a broker.<br>
+      Not a developer.<br>
+      <em>An operator.</em>
+    </h2>
+    <p class="split-body anim">
+      We lease entire buildings, fit them out ourselves, and hand you the keys on day one.
+      Fixed rent, zero hidden fees, a caretaker on-call. That's the whole model.
+    </p>
+    <a href="/about.html" class="split-link anim">Read our story →</a>
+  </div>
+  <div class="split-photo">
+    <img id="splitImg"
+      src="https://images.unsplash.com/photo-1600210492486-724fe5c67fb0?w=1200&q=88&fit=crop&crop=center"
+      alt="Switch interior — warm living space" loading="lazy">
+  </div>
+</section>
+
+<!-- ── NUMBERS ────────────────────────────────────────────── -->
+<section class="numbers-section">
+  <div class="numbers-inner">
     <div class="num-item">
-      <div class="num-val">₹0</div>
+      <div class="num-val"><span class="count-num" data-from="50000" data-to="0" data-prefix="₹" data-format="indian">₹0</span></div>
       <div class="num-label">Broker fee</div>
+      <p class="num-desc">What you'd typically pay. What you pay with us. Zero.</p>
     </div>
     <div class="num-item">
-      <div class="num-val">1<em>mo</em></div>
-      <div class="num-label">Deposit</div>
+      <div class="num-val"><span class="count-num" data-from="0" data-to="30" data-suffix="+">0+</span></div>
+      <div class="num-label">Residents & growing</div>
+      <p class="num-desc">Professionals, founders, and freelancers who switched.</p>
     </div>
     <div class="num-item">
-      <div class="num-val">Day<em>one</em></div>
-      <div class="num-label">Move-in ready</div>
+      <div class="num-val"><span class="count-num" data-from="3" data-to="1">1</span><em>mo</em></div>
+      <div class="num-label">Deposit — not three</div>
+      <p class="num-desc">One month to move in. Not three. Your money stays yours.</p>
     </div>
   </div>
 </section>
 
-<!-- ── PROPERTIES ──────────────────────────────────────── -->
-<section class="props-section">
-  <div class="props-inner">
-    <div class="props-eyebrow">
-      <span>Our homes</span>
-      <a href="/properties.html">View all →</a>
+<!-- ── PROPERTIES ─────────────────────────────────────────── -->
+<section class="homes-section">
+  <div class="homes-inner">
+    <div class="homes-header">
+      <h2 class="homes-h anim">Our<br><em>homes.</em></h2>
+      <a href="/properties.html" class="homes-all anim">View all →</a>
     </div>
-    <div class="props-grid" id="propsGrid"></div>
+    <div class="homes-grid" id="homesGrid">
+      <!-- Skeleton placeholders while loading -->
+      <div style="aspect-ratio:3/4;background:rgba(247,244,239,.04);"></div>
+      <div style="aspect-ratio:3/4;background:rgba(247,244,239,.04);"></div>
+      <div style="aspect-ratio:3/4;background:rgba(247,244,239,.04);"></div>
+    </div>
   </div>
 </section>
 
-<!-- ── CTA ─────────────────────────────────────────────── -->
-<section class="cta-section">
+<!-- ── FEATURES STRIP ─────────────────────────────────────── -->
+<div class="features-strip" aria-hidden="true">
+  <div class="features-track">
+    <span class="feat-item">High-speed WiFi<span class="feat-dot"></span></span>
+    <span class="feat-item">Fully Furnished<span class="feat-dot"></span></span>
+    <span class="feat-item">Washing Machine<span class="feat-dot"></span></span>
+    <span class="feat-item">Modular Kitchen<span class="feat-dot"></span></span>
+    <span class="feat-item">On-call Caretaker<span class="feat-dot"></span></span>
+    <span class="feat-item">Power Backup<span class="feat-dot"></span></span>
+    <span class="feat-item">CCTV Security<span class="feat-dot"></span></span>
+    <span class="feat-item">Housekeeping<span class="feat-dot"></span></span>
+    <span class="feat-item">Water 24/7<span class="feat-dot"></span></span>
+    <span class="feat-item">Zero Broker<span class="feat-dot"></span></span>
+    <span class="feat-item">Community Events<span class="feat-dot"></span></span>
+    <span class="feat-item">High-speed WiFi<span class="feat-dot"></span></span>
+    <span class="feat-item">Fully Furnished<span class="feat-dot"></span></span>
+    <span class="feat-item">Washing Machine<span class="feat-dot"></span></span>
+    <span class="feat-item">Modular Kitchen<span class="feat-dot"></span></span>
+    <span class="feat-item">On-call Caretaker<span class="feat-dot"></span></span>
+    <span class="feat-item">Power Backup<span class="feat-dot"></span></span>
+    <span class="feat-item">CCTV Security<span class="feat-dot"></span></span>
+    <span class="feat-item">Housekeeping<span class="feat-dot"></span></span>
+    <span class="feat-item">Water 24/7<span class="feat-dot"></span></span>
+    <span class="feat-item">Zero Broker<span class="feat-dot"></span></span>
+    <span class="feat-item">Community Events<span class="feat-dot"></span></span>
+  </div>
+</div>
+
+<!-- ── CTA ────────────────────────────────────────────────── -->
+<section class="cta-final">
+  <img class="cta-bg-img"
+    src="https://images.unsplash.com/photo-1560448204-603b3fc33ddc?w=1800&q=85&fit=crop&crop=center"
+    alt="" loading="lazy">
+  <div class="cta-overlay"></div>
   <div class="cta-inner">
-    <h2 class="cta-h anim">Walk<br><em>in.</em></h2>
-    <a href="/properties.html" class="cta-link anim btn-mag">Book a viewing →</a>
+    <p class="cta-tag anim-fade">Bengaluru · Managed co-living</p>
+    <h2 class="cta-h anim">Just<br><em>show up.</em></h2>
+    <p class="cta-sub anim">Walk in with a suitcase. The furniture is there. The WiFi is live.<br>The caretaker knows your name. Everything else is handled.</p>
+    <div class="cta-actions anim">
+      <a href="/properties.html" class="cta-btn-main"><span>Book a viewing →</span></a>
+      <a href="/contact.html" class="cta-btn-sec">Or say hello</a>
+    </div>
   </div>
 </section>
 
@@ -351,40 +667,207 @@
 <script src="/assets/js/supabase.js"></script>
 <script src="/assets/js/animations.js"></script>
 <script>
+(function () {
+  'use strict';
+
+  /* ── Nav / Footer ─────────────────────────────────────── */
   document.getElementById('nav-mount').innerHTML    = navComponent();
   document.getElementById('footer-mount').innerHTML = footerComponent();
 
-  function artBadge(status) {
-    if (status === 'filling-fast') return `<span class="prop-art-badge">Filling fast</span>`;
-    if (status === 'coming-soon')  return `<span class="prop-art-badge coming-soon">Coming soon</span>`;
-    return `<span class="prop-art-badge available">Available</span>`;
+  /* ── Custom cursor ────────────────────────────────────── */
+  const ring = document.getElementById('curRing');
+  const dot  = document.getElementById('curDot');
+  let mx = -200, my = -200, rx = -200, ry = -200;
+
+  document.addEventListener('mousemove', e => { mx = e.clientX; my = e.clientY; });
+  document.addEventListener('mousedown', () => ring.classList.add('click'));
+  document.addEventListener('mouseup',   () => ring.classList.remove('click'));
+
+  function tickCursor() {
+    rx += (mx - rx) * .115;
+    ry += (my - ry) * .115;
+    ring.style.left = rx + 'px';
+    ring.style.top  = ry + 'px';
+    dot.style.left  = mx + 'px';
+    dot.style.top   = my + 'px';
+    requestAnimationFrame(tickCursor);
+  }
+  tickCursor();
+
+  document.querySelectorAll('a, button, .h-card').forEach(el => {
+    el.addEventListener('mouseenter', () => ring.classList.add('hov'));
+    el.addEventListener('mouseleave', () => ring.classList.remove('hov'));
+  });
+
+  /* ── Hero character reveal ────────────────────────────── */
+  function buildLine(el, text, startIndex) {
+    el.innerHTML = '';
+    let i = startIndex;
+    [...text].forEach(c => {
+      if (c === ' ') {
+        const sp = document.createElement('span');
+        sp.style.display = 'inline-block';
+        sp.style.width = '.28em';
+        el.appendChild(sp);
+        i++;
+      } else {
+        const s = document.createElement('span');
+        s.className = 'char';
+        s.style.setProperty('--ci', i);
+        s.textContent = c;
+        el.appendChild(s);
+        i++;
+      }
+    });
+    return i;
+  }
+  const n = buildLine(document.getElementById('heroLine1'), 'the', 0);
+  buildLine(document.getElementById('heroLine2'), 'switch.', n + 1);
+
+  /* ── Parallax ─────────────────────────────────────────── */
+  const heroBgEl = document.getElementById('heroBg');
+  const splitImgEl = document.getElementById('splitImg');
+
+  function onScroll() {
+    const sy = window.scrollY;
+    if (heroBgEl) {
+      heroBgEl.style.transform = `translateY(${sy * 0.28}px)`;
+    }
+    if (splitImgEl) {
+      const wrap = splitImgEl.closest('.split-photo');
+      if (wrap) {
+        const rect = wrap.getBoundingClientRect();
+        const mid = rect.top + rect.height / 2;
+        const offset = (window.innerHeight / 2 - mid) * 0.12;
+        splitImgEl.style.transform = `translateY(${-9 + offset}%)`;
+      }
+    }
+  }
+  window.addEventListener('scroll', onScroll, { passive: true });
+  onScroll();
+
+  /* ── Counter animation ────────────────────────────────── */
+  function animCount(el) {
+    const from   = parseInt(el.dataset.from) || 0;
+    const to     = parseInt(el.dataset.to)   || 0;
+    const prefix = el.dataset.prefix || '';
+    const suffix = el.dataset.suffix || '';
+    const fmt    = el.dataset.format === 'indian';
+    const dur    = Math.abs(to - from) > 100 ? 1600 : 1000;
+    const start  = performance.now();
+
+    function fmt_num(n) {
+      if (!fmt) return n;
+      // Indian number format: last 3 + groups of 2
+      if (n === 0) return '0';
+      const s = n.toString();
+      if (s.length <= 3) return s;
+      const last3 = s.slice(-3);
+      const rest  = s.slice(0, -3);
+      return rest.replace(/\B(?=(\d{2})+(?!\d))/g, ',') + ',' + last3;
+    }
+
+    function tick(now) {
+      const p = Math.min((now - start) / dur, 1);
+      const ease = 1 - Math.pow(1 - p, 4); // ease out quart
+      const current = Math.round(from + (to - from) * ease);
+      el.textContent = prefix + fmt_num(current) + suffix;
+      if (p < 1) requestAnimationFrame(tick);
+    }
+    requestAnimationFrame(tick);
   }
 
-  async function loadProps() {
-    const props = await getProperties();
-    const el = document.getElementById('propsGrid');
-    if (!el) return;
-    el.innerHTML = props.slice(0, 3).map(p => {
-      const img = getHeroImage(p.images);
-      const slug = `/property/${p.slug}.html`;
-      return `<a href="${slug}" class="prop-art">
-        <img src="${img}" alt="${p.name}" loading="lazy">
-        ${artBadge(p.status)}
-        <div class="prop-art-info">
-          <div class="prop-art-loc">${p.location}, ${p.area}</div>
-          <div class="prop-art-name">${p.name}</div>
-          <div class="prop-art-rent">${formatRentFrom(p)}</div>
-        </div>
-        <div class="prop-art-hover">
-          <span class="prop-art-link">${p.status === 'coming-soon' ? 'Join waitlist' : 'View home'} →</span>
-        </div>
-      </a>`;
-    }).join('');
+  const countObs = new IntersectionObserver(entries => {
+    entries.forEach(e => {
+      if (!e.isIntersecting) return;
+      animCount(e.target);
+      countObs.unobserve(e.target);
+    });
+  }, { threshold: 0.6 });
+
+  document.querySelectorAll('.count-num').forEach(el => countObs.observe(el));
+
+  /* ── 3D card tilt ─────────────────────────────────────── */
+  function initTilt3D() {
+    if (!matchMedia('(hover: hover)').matches) return;
+    document.querySelectorAll('.h-card').forEach(card => {
+      const shine = card.querySelector('.h-card-shine');
+      card.addEventListener('mousemove', e => {
+        const r  = card.getBoundingClientRect();
+        const px = (e.clientX - r.left) / r.width;
+        const py = (e.clientY - r.top)  / r.height;
+        const rx = (py - .5) * -18;
+        const ry = (px - .5) *  18;
+        card.style.transform = `perspective(900px) rotateX(${rx}deg) rotateY(${ry}deg) scale3d(1.025,1.025,1.025)`;
+        card.style.transition = 'transform .1s ease';
+        if (shine) {
+          shine.style.background = `radial-gradient(circle at ${px*100}% ${py*100}%, rgba(255,255,255,.18) 0%, transparent 56%)`;
+          shine.style.opacity = '1';
+        }
+      });
+      card.addEventListener('mouseleave', () => {
+        card.style.transform = '';
+        card.style.transition = 'transform .7s cubic-bezier(.25,.46,.45,.94)';
+        if (shine) shine.style.opacity = '0';
+      });
+    });
   }
 
-  loadProps();
+  /* ── Load properties ──────────────────────────────────── */
+  function cardBadge(status) {
+    if (status === 'filling-fast')
+      return `<span class="h-card-badge filling">Filling fast</span>`;
+    if (status === 'coming-soon')
+      return `<span class="h-card-badge soon">Coming soon</span>`;
+    return `<span class="h-card-badge available">Available</span>`;
+  }
+
+  async function loadHomes() {
+    try {
+      const props = await getProperties();
+      const grid  = document.getElementById('homesGrid');
+      if (!grid || !props.length) return;
+
+      grid.innerHTML = props.slice(0, 3).map(p => {
+        const img  = getHeroImage(p.images);
+        const slug = `/property/${p.slug}.html`;
+        return `<a href="${slug}" class="h-card">
+          <img class="h-card-img" src="${img}" alt="${p.name}" loading="lazy">
+          <div class="h-card-shine"></div>
+          ${cardBadge(p.status)}
+          <div class="h-card-info">
+            <div class="h-card-loc">${p.location}, ${p.area}</div>
+            <div class="h-card-name">${p.name}</div>
+            <div class="h-card-rent">${formatRentFrom(p)}</div>
+          </div>
+          <div class="h-card-hover">
+            <span class="h-card-btn">${p.status === 'coming-soon' ? 'Join waitlist' : 'View home'} →</span>
+          </div>
+        </a>`;
+      }).join('');
+
+      initTilt3D();
+
+      // Re-observe new cards for cursor hover
+      document.querySelectorAll('.h-card').forEach(el => {
+        el.addEventListener('mouseenter', () => ring.classList.add('hov'));
+        el.addEventListener('mouseleave', () => ring.classList.remove('hov'));
+      });
+
+      // Re-run reveal animations on new elements
+      setTimeout(() => {
+        if (typeof initFadeUp === 'function') initFadeUp();
+      }, 80);
+
+    } catch(err) {
+      console.warn('Properties load failed:', err);
+    }
+  }
+
+  loadHomes();
   initFadeUp();
   initNav();
+})();
 </script>
 </body>
 </html>
